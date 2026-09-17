@@ -164,7 +164,7 @@
     "events": {
         "onEvent": {
             "description": "Triggered whenever the widget generates an event."
-       
+        }
             "onStart": {
         "description": "Triggered when the Excel upload process is started."
     },
