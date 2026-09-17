@@ -451,11 +451,11 @@
                     </button>
 
                     <button
-                        id="deleteButton"
-                        class="action-button danger"
-                        disabled>
-                        Delete Selected
-                    </button>
+    id="deleteButton"
+    class="action-button danger"
+    style="display: none;">
+    Delete Selected
+</button>
 
                     <button
                         id="validateButton"
@@ -1789,147 +1789,170 @@
            ATTACH ROW EVENTS
            ===================================================== */
 
-        _attachRowEvents(
-            tr,
-            rowIndex
-        ) {
+       _attachRowEvents(
+    tr,
+    rowIndex
+) {
 
-            var controls =
-                tr.querySelectorAll(
-                    "[data-field]"
-                );
-
-
-            for (
-                var i = 0;
-                i < controls.length;
-                i++
-            ) {
-
-                var control =
-                    controls[i];
+    var controls =
+        tr.querySelectorAll(
+            "[data-field]"
+        );
 
 
-                control.addEventListener(
-                    "change",
-                    () => {
+    for (
+        let i = 0;
+        i < controls.length;
+        i++
+    ) {
 
-                        var fieldName =
-                            control.dataset.field;
-
-
-                        var value;
-
-
-                        if (
-                            control.type ===
-                            "checkbox"
-                        ) {
-
-                            value =
-                                control.checked
-                                    ? "true"
-                                    : "false";
+        let control =
+            controls[i];
 
 
-                        } else {
+        control.addEventListener(
+            "change",
+            () => {
 
-                            value =
-                                control.value;
-
-                        }
-
-
-                        if (
-                            this._rows[rowIndex]
-                        ) {
-
-                            this._rows[rowIndex][fieldName] =
-                                value;
-
-                        }
+                var fieldName =
+                    control.dataset.field;
 
 
-                        /*
-                         * Update selected row appearance
-                         */
-
-                        if (
-                            fieldName ===
-                            "selected"
-                        ) {
-
-                            if (
-                                value === "true"
-                            ) {
-
-                                tr.classList.add(
-                                    "selected-row"
-                                );
-
-                            } else {
-
-                                tr.classList.remove(
-                                    "selected-row"
-                                );
-
-                            }
-
-                            this._updateDeleteButton();
-
-                            this._updateSelectAll();
-
-                        }
+                var value;
 
 
-                        /*
-                         * Any field modification
-                         */
+                if (
+                    control.type ===
+                    "checkbox"
+                ) {
 
-                        if (
-                            fieldName !==
-                            "selected"
-                        ) {
+                    value =
+                        control.checked
+                            ? "true"
+                            : "false";
 
-                            this._rows[rowIndex].isModified =
-                                true;
+                } else {
 
-                            this._changeStatus =
-                                "CHANGED";
+                    value =
+                        control.value;
 
-                        }
+                }
 
 
-                        /*
-                         * Field Change Event
-                         *
-                         * This is the format your
-                         * SAC script expects:
-                         *
-                         * fieldChange|
-                         * rowIndex|
-                         * fieldName|
-                         * fieldValue
-                         */
+                /*
+                 * Update row data
+                 */
 
-                        this._emitEvent(
-                            "onFieldChange",
-                            "fieldChange|" +
-                            rowIndex +
-                            "|" +
-                            fieldName +
-                            "|" +
-                            value
+                if (
+                    this._rows[rowIndex]
+                ) {
+
+                    if (
+                        fieldName ===
+                        "selected"
+                    ) {
+
+                        this._rows[rowIndex].selected =
+                            control.checked;
+
+                    } else {
+
+                        this._rows[rowIndex][fieldName] =
+                            value;
+
+                    }
+
+                }
+
+
+                /*
+                 * Individual row selection
+                 */
+
+                if (
+                    fieldName ===
+                    "selected"
+                ) {
+
+                    if (
+                        control.checked
+                    ) {
+
+                        tr.classList.add(
+                            "selected-row"
+                        );
+
+                    } else {
+
+                        tr.classList.remove(
+                            "selected-row"
                         );
 
                     }
+
+
+                    /*
+                     * Update Select All
+                     */
+
+                    this._updateSelectAll();
+
+
+                    /*
+                     * Show / hide Delete button
+                     */
+
+                    this._updateDeleteButton();
+
+
+                    /*
+                     * Update status
+                     */
+
+                    this._updateStatus();
+
+
+                    return;
+
+                }
+
+
+                /*
+                 * Normal field change
+                 */
+
+                this._rows[rowIndex].isModified =
+                    true;
+
+
+                this._changeStatus =
+                    "CHANGED";
+
+
+                /*
+                 * Event sent to SAC
+                 *
+                 * Example:
+                 *
+                 * fieldChange|0|companyCode|1000
+                 */
+
+                this._emitEvent(
+                    "onFieldChange",
+                    "fieldChange|" +
+                    rowIndex +
+                    "|" +
+                    fieldName +
+                    "|" +
+                    value
                 );
 
             }
+        );
 
-        }
+    }
 
-
+}
         /* =====================================================
            GET LAST EVENT
            ===================================================== */
