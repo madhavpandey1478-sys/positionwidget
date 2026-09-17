@@ -1,10 +1,10 @@
 {
     "id": "com.madhav.positionentry",
-    "version": "1.0.0",
+    "version": "1.1.0",
     "name": "Position Entry",
     "description": "Position creation and maintenance data entry widget",
     "newInstancePrefix": "PositionEntry",
-    "vendor": "Custom",
+    "vendor": "Madhav Pandey",
     "eula": "",
     "license": "",
 
@@ -164,6 +164,15 @@
     "events": {
         "onEvent": {
             "description": "Triggered whenever the widget generates an event."
+       
+            "onStart": {
+        "description": "Triggered when the Excel upload process is started."
+    },
+    "onValidate": {
+        "description": "Triggered when the Excel file is validated."
+    },
+    "onClear": {
+        "description": "Triggered when the uploaded Excel data is cleared."
         }
     }
 }
