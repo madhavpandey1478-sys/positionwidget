@@ -967,41 +967,49 @@
                ============================================= */
 
             this.shadowRoot
-                .getElementById("selectAllCheckbox")
-                .addEventListener(
-                    "change",
-                    (event) => {
+    .getElementById("selectAllCheckbox")
+    .addEventListener(
+        "change",
+        (event) => {
 
-                        var checked =
-                            event.target.checked;
+            var checked =
+                event.target.checked;
 
-                        for (
-                            var i = 0;
-                            i < this._rows.length;
-                            i++
-                        ) {
 
-                            this._rows[i].selected =
-                                checked;
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
 
-                        }
+                this._rows[i].selected =
+                    checked;
 
-                        this._changeStatus =
-                            "CHANGED";
+            }
 
-                        this._render();
 
-                        this._emitEvent(
-                            "onDataEntry",
-                            "dataEntry|selectAll|" +
-                            (checked ? "true" : "false")
-                        );
+            this._changeStatus =
+                "CHANGED";
 
-                    }
-                );
+
+            this._render();
+
+
+            this._updateDeleteButton();
+
+
+            this._emitEvent(
+                "onDataEntry",
+                "dataEntry|selectAll|" +
+                (
+                    checked
+                        ? "true"
+                        : "false"
+                )
+            );
 
         }
-
+    );
 
         /* =====================================================
            ADD ROW
@@ -1196,85 +1204,116 @@
            DELETE SELECTED ROWS
            ===================================================== */
 
-        _deleteSelectedRows() {
+       _deleteSelectedRows() {
 
-            var remainingRows = [];
+    var remainingRows = [];
 
-            var deletedCount = 0;
-
-
-            for (
-                var i = 0;
-                i < this._rows.length;
-                i++
-            ) {
-
-                var selected =
-                    this._rows[i].selected;
+    var deletedCount = 0;
 
 
-                if (
-                    selected === true ||
-                    selected === "true"
-                ) {
+    for (
+        var i = 0;
+        i < this._rows.length;
+        i++
+    ) {
 
-                    deletedCount++;
-
-                } else {
-
-                    remainingRows.push(
-                        this._rows[i]
-                    );
-
-                }
-
-            }
+        var isSelected =
+            this._rows[i].selected === true ||
+            this._rows[i].selected === "true";
 
 
-            if (
-                deletedCount === 0
-            ) {
+        if (
+            isSelected
+        ) {
 
-                return;
+            deletedCount++;
 
-            }
+        } else {
 
-
-            this._rows =
-                remainingRows;
-
-
-            /*
-             * Re-number rows
-             */
-
-            for (
-                var j = 0;
-                j < this._rows.length;
-                j++
-            ) {
-
-                this._rows[j].rowId =
-                    j + 1;
-
-            }
-
-
-            this._changeStatus =
-                "CHANGED";
-
-
-            this._render();
-
-
-            this._emitEvent(
-                "onDataEntry",
-                "dataEntry|delete|" +
-                deletedCount
+            remainingRows.push(
+                this._rows[i]
             );
 
         }
 
+    }
+
+
+    /*
+     * Nothing selected
+     */
+
+    if (
+        deletedCount === 0
+    ) {
+
+        this._updateDeleteButton();
+
+        return;
+
+    }
+
+
+    /*
+     * Replace rows
+     */
+
+    this._rows =
+        remainingRows;
+
+
+    /*
+     * Re-number remaining rows
+     */
+
+    for (
+        var j = 0;
+        j < this._rows.length;
+        j++
+    ) {
+
+        this._rows[j].rowId =
+            j + 1;
+
+        this._rows[j].selected =
+            false;
+
+    }
+
+
+    /*
+     * Clear selection state
+     */
+
+    this._changeStatus =
+        "CHANGED";
+
+
+    /*
+     * Re-render table
+     */
+
+    this._render();
+
+
+    /*
+     * Make sure Delete disappears
+     */
+
+    this._updateDeleteButton();
+
+
+    /*
+     * Tell SAC what happened
+     */
+
+    this._emitEvent(
+        "onDataEntry",
+        "dataEntry|delete|" +
+        deletedCount
+    );
+
+}
 
         /* =====================================================
            RENDER
@@ -2577,9 +2616,56 @@
              * at least one row is selected.
              */
 
-            deleteButton.disabled =
-                selectedCount === 0;
+           _updateDeleteButton() {
 
+    var deleteButton =
+        this.shadowRoot
+            .getElementById(
+                "deleteButton"
+            );
+
+
+    var selectedCount = 0;
+
+
+    for (
+        var i = 0;
+        i < this._rows.length;
+        i++
+    ) {
+
+        if (
+            this._rows[i].selected === true ||
+            this._rows[i].selected === "true"
+        ) {
+
+            selectedCount++;
+
+        }
+
+    }
+
+
+    /*
+     * Show Delete button when
+     * at least one row is selected.
+     */
+
+    if (
+        selectedCount > 0
+    ) {
+
+        deleteButton.style.display =
+            "inline-block";
+
+    } else {
+
+        deleteButton.style.display =
+            "none";
+
+    }
+
+}
         }
 
 
