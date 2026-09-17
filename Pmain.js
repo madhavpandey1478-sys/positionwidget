@@ -1,6 +1,18 @@
 (function () {
 
-    let template = document.createElement("template");
+    "use strict";
+
+    /* =========================================================
+       POSITION ENTRY CUSTOM WIDGET
+       UI + ROW MANAGEMENT + EVENTS + SAC API
+       ========================================================= */
+
+
+    /* =========================================================
+       TEMPLATE
+       ========================================================= */
+
+    var template = document.createElement("template");
 
     template.innerHTML = `
 
@@ -10,201 +22,456 @@
                 display: block;
                 width: 100%;
                 height: 100%;
-                overflow: hidden;
+                min-width: 800px;
+                min-height: 250px;
                 font-family: Arial, Helvetica, sans-serif;
                 box-sizing: border-box;
+                overflow: hidden;
             }
 
             * {
                 box-sizing: border-box;
             }
 
-            .widget-container {
+
+            /* =================================================
+               MAIN CONTAINER
+               ================================================= */
+
+            .main-container {
                 width: 100%;
                 height: 100%;
-                border: 1px solid #8aa4bd;
                 background: #ffffff;
+                border: 1px solid #d2dce6;
+                border-radius: 10px;
                 overflow: hidden;
+                display: flex;
+                flex-direction: column;
             }
 
-            /* HEADER */
 
-            .header {
-                height: 38px;
+            /* =================================================
+               TITLE / ACTION HEADER
+               ================================================= */
+
+            .title-bar {
+                position: relative;
+                height: 55px;
+                min-height: 55px;
+                background: #f6f9fc;
+                border-bottom: 1px solid #d8e1ea;
                 display: flex;
                 align-items: center;
-                padding: 0 8px;
-                border-bottom: 1px solid #d5dfe8;
-                background: #f4f7fa;
+                justify-content: center;
+                padding: 0 10px;
             }
 
-            .title {
-                font-size: 12px;
-                font-weight: 600;
-                color: #3a556d;
-            }
-
-            .header-actions {
-                margin-left: auto;
-                display: flex;
-                gap: 5px;
-            }
-
-            button {
-                height: 25px;
-                padding: 0 12px;
-                border: 1px solid #8aa4bd;
-                border-radius: 3px;
-                background: #ffffff;
-                color: #1f4e79;
-                font-size: 11px;
-                cursor: pointer;
-            }
-
-            button:hover {
-                background: #eef5fb;
-            }
-
-            button.primary {
-                background: #0a6ed1;
-                border-color: #0a6ed1;
-                color: white;
-            }
-
-            /* TABS */
-
-            .tabs {
-                height: 34px;
-                display: flex;
-                align-items: center;
-                border-bottom: 1px solid #d4dce5;
-                background: #ffffff;
-            }
-
-            .tab {
-                height: 33px;
-                padding: 0 12px;
-                display: flex;
-                align-items: center;
-                font-size: 11px;
-                color: #435b70;
-                cursor: pointer;
-                border-bottom: 2px solid transparent;
-            }
-
-            .tab.active {
-                color: #0a6ed1;
-                font-weight: 600;
-                border-bottom: 2px solid #0a6ed1;
-            }
-
-            /* TABLE */
-
-            .table-wrapper {
-                width: 100%;
-                height: calc(100% - 72px);
-                overflow: auto;
-            }
-
-            table {
-                border-collapse: collapse;
-                min-width: 1800px;
-                width: max-content;
-                table-layout: fixed;
-            }
-
-            th {
-                height: 31px;
-                padding: 4px 6px;
-                background: #eef3f7;
-                border-right: 1px solid #cbd6df;
-                border-bottom: 1px solid #cbd6df;
-                color: #334b60;
-                font-size: 9px;
-                font-weight: 600;
-                text-align: left;
+            .widget-title {
+                color: #1683e8;
+                font-size: 26px;
+                font-weight: 700;
+                line-height: 1;
                 white-space: nowrap;
             }
 
-            td {
-                height: 34px;
-                padding: 3px;
-                border-right: 1px solid #d7dfe7;
-                border-bottom: 1px solid #d7dfe7;
-                background: white;
+            .action-container {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                align-items: center;
+                gap: 8px;
             }
 
-            td input,
-            td select {
-                width: 100%;
-                height: 25px;
-                border: 1px solid #c9d4df;
-                border-radius: 3px;
+
+            /* =================================================
+               BUTTONS
+               ================================================= */
+
+            .action-button {
+                height: 36px;
+                min-width: 82px;
+                padding: 0 15px;
+                border-radius: 9px;
+                border: 1px solid #b9cde1;
                 background: #ffffff;
-                font-size: 10px;
-                padding: 2px 5px;
-                color: #334b60;
+                color: #126bc4;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+                white-space: nowrap;
+                transition: background 0.15s ease,
+                            border-color 0.15s ease,
+                            opacity 0.15s ease;
             }
 
-            td input:focus,
-            td select:focus {
-                outline: none;
-                border-color: #0a6ed1;
+            .action-button:hover {
+                background: #f1f7fd;
+                border-color: #8db4d9;
             }
 
-            .checkbox-cell {
-                width: 35px;
+            .action-button:active {
+                background: #e8f2fc;
+            }
+
+            .action-button.primary {
+                background: #0878df;
+                border-color: #0878df;
+                color: #ffffff;
+            }
+
+            .action-button.primary:hover {
+                background: #056bc9;
+                border-color: #056bc9;
+            }
+
+            .action-button.danger {
+                color: #d40000;
+                border-color: #e4aaaa;
+                background: #ffffff;
+            }
+
+            .action-button.danger:hover {
+                background: #fff3f3;
+                border-color: #dc7777;
+            }
+
+            .action-button:disabled {
+                opacity: 0.45;
+                cursor: default;
+            }
+
+            .action-button:disabled:hover {
+                background: #ffffff;
+                border-color: #b9cde1;
+            }
+
+
+            /* =================================================
+               TABS
+               ================================================= */
+
+            .tabs-container {
+                height: 34px;
+                min-height: 34px;
+                display: flex;
+                align-items: stretch;
+                background: #ffffff;
+                border-bottom: 1px solid #d6dfe8;
+                padding-left: 8px;
+            }
+
+            .tab {
+                height: 34px;
+                padding: 0 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                color: #425a70;
+                cursor: pointer;
+                border-bottom: 2px solid transparent;
+                white-space: nowrap;
+            }
+
+            .tab:hover {
+                color: #0878df;
+            }
+
+            .tab.active {
+                color: #0878df;
+                font-weight: 700;
+                border-bottom: 2px solid #0878df;
+            }
+
+
+            /* =================================================
+               TABLE AREA
+               ================================================= */
+
+            .table-container {
+                flex: 1;
+                width: 100%;
+                overflow: auto;
+                background: #ffffff;
+                position: relative;
+            }
+
+            table {
+                border-collapse: separate;
+                border-spacing: 0;
+                table-layout: fixed;
+                min-width: 2150px;
+                width: 2150px;
+            }
+
+
+            /* =================================================
+               TABLE HEADER
+               ================================================= */
+
+            thead th {
+                height: 38px;
+                min-height: 38px;
+                background: #edf4fb;
+                color: #163a5c;
+                border-right: 1px solid #d3dfe9;
+                border-bottom: 1px solid #d0dce7;
+                padding: 5px 8px;
+                font-size: 12px;
+                font-weight: 700;
+                text-align: left;
+                white-space: nowrap;
+                position: sticky;
+                top: 0;
+                z-index: 5;
+            }
+
+            thead th:first-child {
                 text-align: center;
             }
 
-            .checkbox-cell input {
-                width: auto;
-                height: auto;
+
+            /* =================================================
+               TABLE BODY
+               ================================================= */
+
+            tbody tr {
+                background: #ffffff;
             }
 
-            .status-bar {
-                height: 25px;
-                display: flex;
-                align-items: center;
-                padding: 0 8px;
-                border-top: 1px solid #d5dfe8;
-                background: #f8fafc;
-                color: #617487;
-                font-size: 9px;
+            tbody tr.selected-row {
+                background: #fffbea;
             }
+
+            tbody td {
+                height: 48px;
+                padding: 6px;
+                border-right: 1px solid #d9e2eb;
+                border-bottom: 1px solid #d9e2eb;
+                background: inherit;
+                vertical-align: middle;
+            }
+
+
+            /* =================================================
+               INPUTS
+               ================================================= */
+
+            .cell-input {
+                width: 100%;
+                height: 38px;
+                border: 1px solid #c7d7e7;
+                border-radius: 7px;
+                background: #ffffff;
+                padding: 0 10px;
+                color: #253b50;
+                font-size: 12px;
+                outline: none;
+            }
+
+            .cell-input:hover {
+                border-color: #9fb9d1;
+            }
+
+            .cell-input:focus {
+                border-color: #0878df;
+                box-shadow: 0 0 0 1px #0878df;
+            }
+
+            .cell-input.readonly {
+                background: #f6f8fa;
+                color: #52697e;
+            }
+
+
+            /* =================================================
+               SELECT
+               ================================================= */
+
+            .cell-select {
+                width: 100%;
+                height: 38px;
+                border: 1px solid #c7d7e7;
+                border-radius: 7px;
+                background: #ffffff;
+                padding: 0 8px;
+                color: #253b50;
+                font-size: 12px;
+                outline: none;
+                cursor: pointer;
+            }
+
+            .cell-select:hover {
+                border-color: #9fb9d1;
+            }
+
+            .cell-select:focus {
+                border-color: #0878df;
+                box-shadow: 0 0 0 1px #0878df;
+            }
+
+
+            /* =================================================
+               CHECKBOX
+               ================================================= */
+
+            .selection-cell {
+                width: 55px;
+                text-align: center;
+            }
+
+            .selection-checkbox {
+                width: 20px;
+                height: 20px;
+                cursor: pointer;
+                accent-color: #0878df;
+            }
+
+
+            /* =================================================
+               EMPTY MESSAGE
+               ================================================= */
 
             .empty-message {
-                padding: 20px;
-                color: #7a8b99;
-                font-size: 11px;
+                display: none;
+                padding: 30px;
+                text-align: center;
+                color: #6b7f91;
+                font-size: 13px;
+            }
+
+
+            /* =================================================
+               STATUS BAR
+               ================================================= */
+
+            .status-bar {
+                height: 36px;
+                min-height: 36px;
+                background: #f6f9fc;
+                border-top: 1px solid #d4dee8;
+                display: flex;
+                align-items: center;
+                padding: 0 14px;
+                gap: 22px;
+                color: #28445f;
+                font-size: 12px;
+                white-space: nowrap;
+            }
+
+            .status-item {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .status-label {
+                margin-right: 5px;
+                color: #334f68;
+            }
+
+            .status-value {
+                font-weight: 600;
+            }
+
+            .status-changed {
+                color: #0878df;
+            }
+
+            .status-valid {
+                color: #218739;
+            }
+
+            .status-invalid {
+                color: #c62828;
+            }
+
+
+            /* =================================================
+               HIDDEN
+               ================================================= */
+
+            .hidden {
+                display: none !important;
+            }
+
+
+            /* =================================================
+               SCROLLBAR
+               ================================================= */
+
+            .table-container::-webkit-scrollbar {
+                width: 10px;
+                height: 10px;
+            }
+
+            .table-container::-webkit-scrollbar-track {
+                background: #f3f6f9;
+            }
+
+            .table-container::-webkit-scrollbar-thumb {
+                background: #bdcbd8;
+                border-radius: 6px;
+            }
+
+            .table-container::-webkit-scrollbar-thumb:hover {
+                background: #9eafbe;
             }
 
         </style>
 
 
-        <div class="widget-container">
+        <div class="main-container">
 
-            <div class="header">
 
-                <div class="title">
+            <!-- =============================================
+                 TITLE + BUTTONS
+                 ============================================= -->
+
+            <div class="title-bar">
+
+                <div class="widget-title">
                     New Position Creation
                 </div>
 
-                <div class="header-actions">
 
-                    <button id="addRowButton">
+                <div class="action-container">
+
+                    <button
+                        id="addRowButton"
+                        class="action-button">
                         Add Row
                     </button>
 
-                    <button id="validateButton">
+                    <button
+                        id="copyButton"
+                        class="action-button">
+                        Copy
+                    </button>
+
+                    <button
+                        id="deleteButton"
+                        class="action-button danger"
+                        disabled>
+                        Delete Selected
+                    </button>
+
+                    <button
+                        id="validateButton"
+                        class="action-button">
                         Validate
                     </button>
 
-                    <button id="approvalButton" class="primary">
+                    <button
+                        id="approvalButton"
+                        class="action-button primary">
                         Send for Approval
                     </button>
 
-                    <button id="clearButton">
+                    <button
+                        id="clearButton"
+                        class="action-button">
                         Clear
                     </button>
 
@@ -213,7 +480,11 @@
             </div>
 
 
-            <div class="tabs">
+            <!-- =============================================
+                 TABS
+                 ============================================= -->
+
+            <div class="tabs-container">
 
                 <div
                     id="createTab"
@@ -230,7 +501,13 @@
             </div>
 
 
-            <div class="table-wrapper">
+            <!-- =============================================
+                 TABLE
+                 ============================================= -->
+
+            <div
+                id="tableContainer"
+                class="table-container">
 
                 <table>
 
@@ -238,71 +515,79 @@
 
                         <tr>
 
-                            <th style="width:35px;">
-                                Sel
+                            <th
+                                class="selection-cell"
+                                style="width:55px;">
+
+                                <input
+                                    id="selectAllCheckbox"
+                                    class="selection-checkbox"
+                                    type="checkbox">
+
                             </th>
 
-                            <th style="width:90px;">
+
+                            <th style="width:110px;">
                                 Company Code
                             </th>
 
-                            <th style="width:120px;">
+                            <th style="width:130px;">
                                 Division
                             </th>
 
-                            <th style="width:120px;">
+                            <th style="width:140px;">
                                 Department
                             </th>
 
-                            <th style="width:120px;">
+                            <th style="width:140px;">
                                 Cost Center
                             </th>
 
-                            <th style="width:120px;">
+                            <th style="width:125px;">
                                 Job Code
                             </th>
 
-                            <th style="width:135px;">
+                            <th style="width:170px;">
                                 Position Title
                             </th>
 
-                            <th style="width:120px;">
+                            <th style="width:140px;">
                                 Position ID
                             </th>
 
-                            <th style="width:90px;">
+                            <th style="width:105px;">
                                 Pay Grade
                             </th>
 
-                            <th style="width:80px;">
+                            <th style="width:85px;">
                                 Level
                             </th>
 
-                            <th style="width:110px;">
+                            <th style="width:130px;">
                                 Hire Date
                             </th>
 
-                            <th style="width:110px;">
+                            <th style="width:120px;">
                                 Nationality
                             </th>
 
-                            <th style="width:110px;">
+                            <th style="width:130px;">
                                 Accommodation
                             </th>
 
-                            <th style="width:100px;">
+                            <th style="width:115px;">
                                 Transport
                             </th>
 
-                            <th style="width:100px;">
+                            <th style="width:125px;">
                                 Employee Class
                             </th>
 
-                            <th style="width:80px;">
+                            <th style="width:100px;">
                                 Overtime
                             </th>
 
-                            <th style="width:110px;">
+                            <th style="width:130px;">
                                 Special Approval
                             </th>
 
@@ -314,28 +599,88 @@
 
                     </thead>
 
-                    <tbody id="createTableBody">
 
+                    <tbody id="createTableBody">
                     </tbody>
 
                 </table>
+
 
                 <div
                     id="emptyMessage"
                     class="empty-message">
 
-                    Click "Add Row" to create a new position.
+                    Click <b>Add Row</b> to create a new position.
 
                 </div>
 
             </div>
 
 
+            <!-- =============================================
+                 STATUS
+                 ============================================= -->
+
             <div class="status-bar">
 
-                <span id="statusText">
-                    Total Rows: 0 &nbsp;&nbsp; Validation: True &nbsp;&nbsp; Error Rows: 0
-                </span>
+                <div class="status-item">
+
+                    <span class="status-label">
+                        Total Rows:
+                    </span>
+
+                    <span
+                        id="totalRows"
+                        class="status-value">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span class="status-label">
+                        Selected Rows:
+                    </span>
+
+                    <span
+                        id="selectedRows"
+                        class="status-value">
+                        0
+                    </span>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span class="status-label">
+                        Validation:
+                    </span>
+
+                    <span
+                        id="validationStatus"
+                        class="status-value status-valid">
+                        true
+                    </span>
+
+                </div>
+
+
+                <div class="status-item">
+
+                    <span class="status-label">
+                        Status:
+                    </span>
+
+                    <span
+                        id="changeStatus"
+                        class="status-value status-changed">
+                        READY
+                    </span>
+
+                </div>
 
             </div>
 
@@ -343,19 +688,35 @@
     `;
 
 
+    /* =========================================================
+       WEB COMPONENT
+       ========================================================= */
+
     class PositionEntry extends HTMLElement {
+
 
         constructor() {
 
             super();
 
+
+            /* =============================================
+               SHADOW DOM
+               ============================================= */
+
             this.attachShadow({
                 mode: "open"
             });
 
+
             this.shadowRoot.appendChild(
                 template.content.cloneNode(true)
             );
+
+
+            /* =============================================
+               INTERNAL DATA
+               ============================================= */
 
             this._rows = [];
 
@@ -364,6 +725,10 @@
             this._lastEvent = "";
 
             this._activeTab = "create";
+
+            this._validationStatus = true;
+
+            this._changeStatus = "READY";
 
             this._rowOptions = {};
 
@@ -377,176 +742,593 @@
 
 
         /* =====================================================
-           EVENT HANDLING
-        ===================================================== */
+           EVENT SYSTEM
+           ===================================================== */
+
+        _emitEvent(eventName, eventValue) {
+
+            if (
+                eventValue !== undefined &&
+                eventValue !== null &&
+                eventValue !== ""
+            ) {
+
+                this._lastEvent =
+                    eventValue;
+
+            } else {
+
+                this._lastEvent =
+                    eventName;
+
+            }
+
+
+            /*
+             * SAC Custom Widget Event
+             */
+
+            try {
+
+                this.dispatchEvent(
+                    new Event(eventName)
+                );
+
+            } catch (e) {
+
+                /*
+                 * Fallback
+                 */
+
+                this.dispatchEvent(
+                    new Event("onEvent")
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           BIND BUTTON EVENTS
+           ===================================================== */
 
         _bindEvents() {
 
+
+            /* =============================================
+               ADD ROW
+               ============================================= */
+
             this.shadowRoot
                 .getElementById("addRowButton")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._addRow();
+                        this._addRow();
 
-                });
+                    }
+                );
 
+
+            /* =============================================
+               COPY
+               ============================================= */
 
             this.shadowRoot
-                .getElementById("clearButton")
-                .addEventListener("click", () => {
+                .getElementById("copyButton")
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._rows = [];
+                        this._copySelectedRows();
 
-                    this._emitEvent("clear");
+                    }
+                );
 
-                    this._render();
 
-                });
+            /* =============================================
+               DELETE
+               ============================================= */
 
+            this.shadowRoot
+                .getElementById("deleteButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._deleteSelectedRows();
+
+                    }
+                );
+
+
+            /* =============================================
+               VALIDATE
+               ============================================= */
 
             this.shadowRoot
                 .getElementById("validateButton")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._emitEvent("validate");
+                        this._emitEvent(
+                            "onValidate",
+                            "validate"
+                        );
 
-                });
+                    }
+                );
 
+
+            /* =============================================
+               SEND FOR APPROVAL
+               ============================================= */
 
             this.shadowRoot
                 .getElementById("approvalButton")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._emitEvent("sendForApproval");
+                        this._emitEvent(
+                            "onSendForApproval",
+                            "sendForApproval"
+                        );
 
-                });
+                    }
+                );
 
+
+            /* =============================================
+               CLEAR
+               ============================================= */
+
+            this.shadowRoot
+                .getElementById("clearButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._rows = [];
+
+                        this._rowOptions = {};
+
+                        this._validationStatus = true;
+
+                        this._changeStatus = "CLEARED";
+
+                        this._emitEvent(
+                            "onClear",
+                            "clear"
+                        );
+
+                        this._render();
+
+                    }
+                );
+
+
+            /* =============================================
+               CREATE TAB
+               ============================================= */
 
             this.shadowRoot
                 .getElementById("createTab")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._activeTab = "create";
+                        this._activeTab =
+                            "create";
 
-                    this._emitEvent("tabChange|create");
+                        this._changeStatus =
+                            "READY";
 
-                    this._updateTabs();
+                        this._emitEvent(
+                            "onTabChange",
+                            "tabChange|create"
+                        );
 
-                });
+                        this._updateTabs();
 
+                    }
+                );
+
+
+            /* =============================================
+               MANAGE TAB
+               ============================================= */
 
             this.shadowRoot
                 .getElementById("manageTab")
-                .addEventListener("click", () => {
+                .addEventListener(
+                    "click",
+                    () => {
 
-                    this._activeTab = "manage";
+                        this._activeTab =
+                            "manage";
 
-                    this._emitEvent("tabChange|manage");
+                        this._emitEvent(
+                            "onTabChange",
+                            "tabChange|manage"
+                        );
 
-                    this._updateTabs();
+                        this._updateTabs();
 
-                });
+                    }
+                );
+
+
+            /* =============================================
+               SELECT ALL
+               ============================================= */
+
+            this.shadowRoot
+                .getElementById("selectAllCheckbox")
+                .addEventListener(
+                    "change",
+                    (event) => {
+
+                        var checked =
+                            event.target.checked;
+
+                        for (
+                            var i = 0;
+                            i < this._rows.length;
+                            i++
+                        ) {
+
+                            this._rows[i].selected =
+                                checked;
+
+                        }
+
+                        this._changeStatus =
+                            "CHANGED";
+
+                        this._render();
+
+                        this._emitEvent(
+                            "onDataEntry",
+                            "dataEntry|selectAll|" +
+                            (checked ? "true" : "false")
+                        );
+
+                    }
+                );
 
         }
 
 
         /* =====================================================
            ADD ROW
-        ===================================================== */
+           ===================================================== */
 
         _addRow() {
 
-            const row = {
+            var newRow = {
 
-                rowId: this._rows.length + 1,
+                rowId:
+                    this._rows.length + 1,
 
-                selected: false,
+                selected:
+                    false,
 
-                employeeId: "",
+                employeeId:
+                    "",
 
-                companyCode: "",
+                companyCode:
+                    "",
 
-                division: "",
+                division:
+                    "",
 
-                department: "",
+                department:
+                    "",
 
-                costCenter: "",
+                costCenter:
+                    "",
 
-                jobCode: "",
+                jobCode:
+                    "",
 
-                positionTitle: "",
+                positionTitle:
+                    "",
 
-                payGradeGroup: "",
+                payGradeGroup:
+                    "",
 
-                payGradeLevel: "",
+                payGradeLevel:
+                    "",
 
-                hireDate: "",
+                hireDate:
+                    "",
 
-                nationality: "",
+                nationality:
+                    "",
 
-                accommodation: "",
+                accommodation:
+                    "",
 
-                transport: "",
+                transport:
+                    "",
 
-                employeeClass: "",
+                employeeClass:
+                    "",
 
-                overtime: "",
+                overtime:
+                    "",
 
-                specialApproval: "",
+                specialApproval:
+                    "",
 
-                comment: ""
+                comment:
+                    "",
+
+                isModified:
+                    false
 
             };
 
 
-            this._rows.push(row);
+            this._rows.push(
+                newRow
+            );
+
+
+            this._changeStatus =
+                "CHANGED";
+
+
+            this._validationStatus =
+                true;
+
 
             this._render();
+
+
+            this._emitEvent(
+                "onDataEntry",
+                "dataEntry|" +
+                (this._rows.length - 1)
+            );
+
+        }
+
+
+        /* =====================================================
+           COPY SELECTED ROWS
+           ===================================================== */
+
+        _copySelectedRows() {
+
+            var selectedRows = [];
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true ||
+                    this._rows[i].selected === "true"
+                ) {
+
+                    selectedRows.push(
+                        this._rows[i]
+                    );
+
+                }
+
+            }
+
+
+            if (
+                selectedRows.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            var startingIndex =
+                this._rows.length;
+
+
+            for (
+                var j = 0;
+                j < selectedRows.length;
+                j++
+            ) {
+
+                var original =
+                    selectedRows[j];
+
+
+                var copied =
+                    JSON.parse(
+                        JSON.stringify(original)
+                    );
+
+
+                copied.rowId =
+                    startingIndex + j + 1;
+
+                copied.selected =
+                    false;
+
+                copied.employeeId =
+                    "";
+
+                copied.isModified =
+                    true;
+
+
+                this._rows.push(
+                    copied
+                );
+
+            }
+
+
+            this._changeStatus =
+                "CHANGED";
+
+
+            this._render();
+
+
+            this._emitEvent(
+                "onDataEntry",
+                "dataEntry|copy|" +
+                selectedRows.length
+            );
+
+        }
+
+
+        /* =====================================================
+           DELETE SELECTED ROWS
+           ===================================================== */
+
+        _deleteSelectedRows() {
+
+            var remainingRows = [];
+
+            var deletedCount = 0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                var selected =
+                    this._rows[i].selected;
+
+
+                if (
+                    selected === true ||
+                    selected === "true"
+                ) {
+
+                    deletedCount++;
+
+                } else {
+
+                    remainingRows.push(
+                        this._rows[i]
+                    );
+
+                }
+
+            }
+
+
+            if (
+                deletedCount === 0
+            ) {
+
+                return;
+
+            }
+
+
+            this._rows =
+                remainingRows;
+
+
+            /*
+             * Re-number rows
+             */
+
+            for (
+                var j = 0;
+                j < this._rows.length;
+                j++
+            ) {
+
+                this._rows[j].rowId =
+                    j + 1;
+
+            }
+
+
+            this._changeStatus =
+                "CHANGED";
+
+
+            this._render();
+
+
+            this._emitEvent(
+                "onDataEntry",
+                "dataEntry|delete|" +
+                deletedCount
+            );
 
         }
 
 
         /* =====================================================
            RENDER
-        ===================================================== */
+           ===================================================== */
 
         _render() {
 
-            const tbody =
+            var tbody =
                 this.shadowRoot
-                    .getElementById("createTableBody");
+                    .getElementById(
+                        "createTableBody"
+                    );
 
 
             tbody.innerHTML = "";
 
 
-            const empty =
+            var emptyMessage =
                 this.shadowRoot
-                    .getElementById("emptyMessage");
+                    .getElementById(
+                        "emptyMessage"
+                    );
 
 
-            if (this._rows.length === 0) {
+            if (
+                this._rows.length === 0
+            ) {
 
-                empty.style.display = "block";
+                emptyMessage.style.display =
+                    "block";
 
             } else {
 
-                empty.style.display = "none";
+                emptyMessage.style.display =
+                    "none";
 
             }
 
 
             for (
-                let i = 0;
+                var i = 0;
                 i < this._rows.length;
                 i++
             ) {
 
-                tbody.appendChild(
+                var rowElement =
                     this._createRowElement(
                         this._rows[i],
                         i
-                    )
+                    );
+
+
+                tbody.appendChild(
+                    rowElement
                 );
 
             }
@@ -554,168 +1336,322 @@
 
             this._updateStatus();
 
+            this._updateSelectAll();
+
+            this._updateDeleteButton();
+
         }
 
 
         /* =====================================================
            CREATE ROW
-        ===================================================== */
+           ===================================================== */
 
-        _createRowElement(row, index) {
+        _createRowElement(
+            row,
+            rowIndex
+        ) {
 
-            const tr =
+            var tr =
                 document.createElement("tr");
+
+
+            if (
+                row.selected === true ||
+                row.selected === "true"
+            ) {
+
+                tr.classList.add(
+                    "selected-row"
+                );
+
+            }
 
 
             tr.innerHTML = `
 
-                <td class="checkbox-cell">
+                <!-- SELECT -->
+
+                <td class="selection-cell">
 
                     <input
+                        class="selection-checkbox"
                         type="checkbox"
                         data-field="selected"
-                        ${row.selected ? "checked" : ""}
+                        ${(
+                            row.selected === true ||
+                            row.selected === "true"
+                        )
+                            ? "checked"
+                            : ""}
                     >
 
                 </td>
 
+
+                <!-- COMPANY -->
+
                 <td>
-                    ${this._selectHTML(
+
+                    ${this._createSelectHTML(
                         "companyCode",
-                        index
+                        row.companyCode,
+                        rowIndex
                     )}
+
                 </td>
 
+
+                <!-- DIVISION -->
+
                 <td>
-                    ${this._selectHTML(
+
+                    ${this._createSelectHTML(
                         "division",
-                        index
+                        row.division,
+                        rowIndex
                     )}
+
                 </td>
 
+
+                <!-- DEPARTMENT -->
+
                 <td>
-                    ${this._selectHTML(
+
+                    ${this._createSelectHTML(
                         "department",
-                        index
+                        row.department,
+                        rowIndex
                     )}
+
                 </td>
 
+
+                <!-- COST CENTER -->
+
                 <td>
-                    ${this._selectHTML(
+
+                    ${this._createSelectHTML(
                         "costCenter",
-                        index
+                        row.costCenter,
+                        rowIndex
                     )}
+
                 </td>
 
+
+                <!-- JOB CODE -->
+
                 <td>
-                    ${this._selectHTML(
+
+                    ${this._createSelectHTML(
                         "jobCode",
-                        index
+                        row.jobCode,
+                        rowIndex
                     )}
+
                 </td>
 
+
+                <!-- POSITION TITLE -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="positionTitle"
-                        value="${this._escape(row.positionTitle)}"
+                        value="${this._escape(
+                            row.positionTitle
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- POSITION ID -->
+
                 <td>
+
                     <input
+                        class="cell-input readonly"
                         type="text"
                         data-field="employeeId"
-                        value="${this._escape(row.employeeId)}"
+                        value="${this._escape(
+                            row.employeeId
+                        )}"
                         readonly
                     >
+
                 </td>
 
+
+                <!-- PAY GRADE -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="payGradeGroup"
-                        value="${this._escape(row.payGradeGroup)}"
+                        value="${this._escape(
+                            row.payGradeGroup
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- LEVEL -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="payGradeLevel"
-                        value="${this._escape(row.payGradeLevel)}"
+                        value="${this._escape(
+                            row.payGradeLevel
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- HIRE DATE -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="date"
                         data-field="hireDate"
-                        value="${this._escape(row.hireDate)}"
+                        value="${this._escape(
+                            row.hireDate
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- NATIONALITY -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="nationality"
-                        value="${this._escape(row.nationality)}"
+                        value="${this._escape(
+                            row.nationality
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- ACCOMMODATION -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="accommodation"
-                        value="${this._escape(row.accommodation)}"
+                        value="${this._escape(
+                            row.accommodation
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- TRANSPORT -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="transport"
-                        value="${this._escape(row.transport)}"
+                        value="${this._escape(
+                            row.transport
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- EMPLOYEE CLASS -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="employeeClass"
-                        value="${this._escape(row.employeeClass)}"
+                        value="${this._escape(
+                            row.employeeClass
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- OVERTIME -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="overtime"
-                        value="${this._escape(row.overtime)}"
+                        value="${this._escape(
+                            row.overtime
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- SPECIAL APPROVAL -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="specialApproval"
-                        value="${this._escape(row.specialApproval)}"
+                        value="${this._escape(
+                            row.specialApproval
+                        )}"
                     >
+
                 </td>
 
+
+                <!-- COMMENT -->
+
                 <td>
+
                     <input
+                        class="cell-input"
                         type="text"
                         data-field="comment"
-                        value="${this._escape(row.comment)}"
+                        value="${this._escape(
+                            row.comment
+                        )}"
                     >
+
                 </td>
+
             `;
 
 
             this._attachRowEvents(
                 tr,
-                index
+                rowIndex
             );
 
 
@@ -725,50 +1661,123 @@
 
 
         /* =====================================================
-           SELECT HTML
-        ===================================================== */
+           CREATE SELECT
+           ===================================================== */
 
-        _selectHTML(field, index) {
+        _createSelectHTML(
+            fieldName,
+            currentValue,
+            rowIndex
+        ) {
 
-            let options = [];
+            var options = [];
+
 
             if (
-                this._rowOptions[index] &&
-                this._rowOptions[index][field]
+                this._rowOptions[rowIndex] &&
+                this._rowOptions[rowIndex][fieldName]
             ) {
 
                 options =
-                    this._rowOptions[index][field];
+                    this._rowOptions[rowIndex][fieldName];
 
             }
 
 
-            let html =
-                `<select data-field="${field}">`;
+            var html =
+                '<select ' +
+                'class="cell-select" ' +
+                'data-field="' +
+                fieldName +
+                '">';
 
-            html += `<option value="">Select</option>`;
+
+            html +=
+                '<option value="">Select</option>';
+
+
+            /*
+             * Make sure current value is available
+             * even if SAC has not yet supplied options.
+             */
+
+            var currentExists = false;
 
 
             for (
-                let i = 0;
+                var i = 0;
                 i < options.length;
                 i++
             ) {
 
-                const option =
-                    options[i];
+                if (
+                    String(options[i].key) ===
+                    String(currentValue)
+                ) {
 
-                html += `
-                    <option
-                        value="${this._escape(option.key)}">
-                        ${this._escape(option.text)}
-                    </option>
-                `;
+                    currentExists = true;
+
+                }
 
             }
 
 
-            html += `</select>`;
+            if (
+                currentValue !== "" &&
+                currentValue !== undefined &&
+                currentValue !== null &&
+                !currentExists
+            ) {
+
+                html +=
+                    '<option value="' +
+                    this._escape(
+                        currentValue
+                    ) +
+                    '" selected>' +
+                    this._escape(
+                        currentValue
+                    ) +
+                    '</option>';
+
+            }
+
+
+            for (
+                var j = 0;
+                j < options.length;
+                j++
+            ) {
+
+                var option =
+                    options[j];
+
+
+                var selected =
+                    String(option.key) ===
+                    String(currentValue)
+                        ? "selected"
+                        : "";
+
+
+                html +=
+                    '<option value="' +
+                    this._escape(
+                        option.key
+                    ) +
+                    '" ' +
+                    selected +
+                    '>' +
+                    this._escape(
+                        option.text
+                    ) +
+                    '</option>';
+
+            }
+
+
+            html +=
+                '</select>';
 
 
             return html;
@@ -777,91 +1786,153 @@
 
 
         /* =====================================================
-           ROW EVENTS
-        ===================================================== */
+           ATTACH ROW EVENTS
+           ===================================================== */
 
-        _attachRowEvents(tr, index) {
+        _attachRowEvents(
+            tr,
+            rowIndex
+        ) {
 
-            const controls =
+            var controls =
                 tr.querySelectorAll(
                     "[data-field]"
                 );
 
 
-            controls.forEach(
-                control => {
+            for (
+                var i = 0;
+                i < controls.length;
+                i++
+            ) {
 
-                    control.addEventListener(
-                        "change",
-                        () => {
-
-                            const field =
-                                control.dataset.field;
+                var control =
+                    controls[i];
 
 
-                            let value;
+                control.addEventListener(
+                    "change",
+                    () => {
 
+                        var fieldName =
+                            control.dataset.field;
+
+
+                        var value;
+
+
+                        if (
+                            control.type ===
+                            "checkbox"
+                        ) {
+
+                            value =
+                                control.checked
+                                    ? "true"
+                                    : "false";
+
+
+                        } else {
+
+                            value =
+                                control.value;
+
+                        }
+
+
+                        if (
+                            this._rows[rowIndex]
+                        ) {
+
+                            this._rows[rowIndex][fieldName] =
+                                value;
+
+                        }
+
+
+                        /*
+                         * Update selected row appearance
+                         */
+
+                        if (
+                            fieldName ===
+                            "selected"
+                        ) {
 
                             if (
-                                control.type ===
-                                "checkbox"
+                                value === "true"
                             ) {
 
-                                value =
-                                    control.checked
-                                        ? "true"
-                                        : "false";
+                                tr.classList.add(
+                                    "selected-row"
+                                );
 
                             } else {
 
-                                value =
-                                    control.value;
+                                tr.classList.remove(
+                                    "selected-row"
+                                );
 
                             }
 
+                            this._updateDeleteButton();
 
-                            this._rows[index][field] =
-                                value;
-
-
-                            this._emitEvent(
-                                "fieldChange|" +
-                                index +
-                                "|" +
-                                field +
-                                "|" +
-                                value
-                            );
+                            this._updateSelectAll();
 
                         }
-                    );
-
-                }
-            );
-
-        }
 
 
-        /* =====================================================
-           EVENTS TO SAC
-        ===================================================== */
+                        /*
+                         * Any field modification
+                         */
 
-        _emitEvent(eventText) {
+                        if (
+                            fieldName !==
+                            "selected"
+                        ) {
 
-            this._lastEvent =
-                eventText;
+                            this._rows[rowIndex].isModified =
+                                true;
+
+                            this._changeStatus =
+                                "CHANGED";
+
+                        }
 
 
-            this.dispatchEvent(
-                new Event("onEvent")
-            );
+                        /*
+                         * Field Change Event
+                         *
+                         * This is the format your
+                         * SAC script expects:
+                         *
+                         * fieldChange|
+                         * rowIndex|
+                         * fieldName|
+                         * fieldValue
+                         */
+
+                        this._emitEvent(
+                            "onFieldChange",
+                            "fieldChange|" +
+                            rowIndex +
+                            "|" +
+                            fieldName +
+                            "|" +
+                            value
+                        );
+
+                    }
+                );
+
+            }
 
         }
 
 
         /* =====================================================
            GET LAST EVENT
-        ===================================================== */
+           ===================================================== */
 
         getLastEvent() {
 
@@ -871,36 +1942,47 @@
 
 
         /* =====================================================
-           GET DATA
-        ===================================================== */
+           GET CREATE DATA
+           ===================================================== */
 
         getData() {
 
-            let result = [];
+            var result = [];
 
 
             for (
-                let i = 0;
+                var i = 0;
                 i < this._rows.length;
                 i++
             ) {
 
-                const row =
+                var row =
                     this._rows[i];
 
 
-                let fields = [];
+                var fields = [];
 
 
                 for (
-                    const key in row
+                    var key in row
                 ) {
 
-                    fields.push(
-                        key +
-                        "::" +
-                        row[key]
-                    );
+                    if (
+                        row.hasOwnProperty(key)
+                    ) {
+
+                        fields.push(
+                            key +
+                            "::" +
+                            (
+                                row[key] === undefined ||
+                                row[key] === null
+                                    ? ""
+                                    : row[key]
+                            )
+                        );
+
+                    }
 
                 }
 
@@ -918,13 +2000,14 @@
 
 
         /* =====================================================
-           SET DATA
-        ===================================================== */
+           SET CREATE DATA
+           ===================================================== */
 
         setData(data) {
 
             if (
-                !data ||
+                data === undefined ||
+                data === null ||
                 data === ""
             ) {
 
@@ -937,68 +2020,91 @@
             }
 
 
-            const rows =
-                data.split("||");
+            var rows =
+                String(data).split("||");
 
 
             this._rows = [];
 
 
-            rows.forEach(
-                rowText => {
+            for (
+                var i = 0;
+                i < rows.length;
+                i++
+            ) {
+
+                var rowText =
+                    rows[i];
+
+
+                if (
+                    rowText === ""
+                ) {
+
+                    continue;
+
+                }
+
+
+                var row = {
+
+                    rowId:
+                        this._rows.length + 1,
+
+                    selected:
+                        false
+
+                };
+
+
+                var fields =
+                    rowText.split("~~");
+
+
+                for (
+                    var j = 0;
+                    j < fields.length;
+                    j++
+                ) {
+
+                    var pair =
+                        fields[j];
+
+
+                    var separator =
+                        pair.indexOf("::");
+
 
                     if (
-                        rowText === ""
+                        separator > -1
                     ) {
 
-                        return;
+                        var key =
+                            pair.substring(
+                                0,
+                                separator
+                            );
+
+
+                        var value =
+                            pair.substring(
+                                separator + 2
+                            );
+
+
+                        row[key] =
+                            value;
 
                     }
 
-
-                    const row = {};
-
-
-                    const fields =
-                        rowText.split("~~");
-
-
-                    fields.forEach(
-                        pair => {
-
-                            const index =
-                                pair.indexOf("::");
-
-
-                            if (
-                                index > -1
-                            ) {
-
-                                const key =
-                                    pair.substring(
-                                        0,
-                                        index
-                                    );
-
-                                const value =
-                                    pair.substring(
-                                        index + 2
-                                    );
-
-
-                                row[key] =
-                                    value;
-
-                            }
-
-                        }
-                    );
-
-
-                    this._rows.push(row);
-
                 }
-            );
+
+
+                this._rows.push(
+                    row
+                );
+
+            }
 
 
             this._render();
@@ -1008,7 +2114,7 @@
 
         /* =====================================================
            SET CELL VALUE
-        ===================================================== */
+           ===================================================== */
 
         setCellValue(
             rowIndex,
@@ -1023,6 +2129,11 @@
                 this._rows[rowIndex][fieldName] =
                     value;
 
+
+                this._rows[rowIndex].isModified =
+                    true;
+
+
                 this._render();
 
             }
@@ -1031,8 +2142,8 @@
 
 
         /* =====================================================
-           SET DROPDOWN OPTIONS
-        ===================================================== */
+           SET ROW OPTIONS
+           ===================================================== */
 
         setRowOptions(
             rowIndex,
@@ -1052,8 +2163,20 @@
 
             try {
 
-                this._rowOptions[rowIndex][fieldName] =
-                    JSON.parse(options);
+                if (
+                    typeof options ===
+                    "string"
+                ) {
+
+                    this._rowOptions[rowIndex][fieldName] =
+                        JSON.parse(options);
+
+                } else {
+
+                    this._rowOptions[rowIndex][fieldName] =
+                        options;
+
+                }
 
             } catch (e) {
 
@@ -1070,7 +2193,7 @@
 
         /* =====================================================
            MANAGE DATA
-        ===================================================== */
+           ===================================================== */
 
         getManageData() {
 
@@ -1081,12 +2204,41 @@
         }
 
 
+        /* =====================================================
+           SET MANAGE DATA
+           ===================================================== */
+
         setManageData(data) {
+
+            if (
+                data === undefined ||
+                data === null ||
+                data === ""
+            ) {
+
+                this._manageRows = [];
+
+                return;
+
+            }
+
 
             try {
 
-                this._manageRows =
-                    JSON.parse(data);
+                if (
+                    typeof data ===
+                    "string"
+                ) {
+
+                    this._manageRows =
+                        JSON.parse(data);
+
+                } else {
+
+                    this._manageRows =
+                        data;
+
+                }
 
             } catch (e) {
 
@@ -1096,6 +2248,10 @@
 
         }
 
+
+        /* =====================================================
+           SET MANAGE CELL VALUE
+           ===================================================== */
 
         setManageCellValue(
             rowIndex,
@@ -1115,6 +2271,10 @@
         }
 
 
+        /* =====================================================
+           SET MANAGE ROW OPTIONS
+           ===================================================== */
+
         setManageRowOptions(
             rowIndex,
             fieldName,
@@ -1133,8 +2293,20 @@
 
             try {
 
-                this._manageRowOptions[rowIndex][fieldName] =
-                    JSON.parse(options);
+                if (
+                    typeof options ===
+                    "string"
+                ) {
+
+                    this._manageRowOptions[rowIndex][fieldName] =
+                        JSON.parse(options);
+
+                } else {
+
+                    this._manageRowOptions[rowIndex][fieldName] =
+                        options;
+
+                }
 
             } catch (e) {
 
@@ -1147,53 +2319,250 @@
 
 
         /* =====================================================
-           TAB UI
-        ===================================================== */
+           UPDATE TABS
+           ===================================================== */
 
         _updateTabs() {
 
-            const createTab =
+            var createTab =
                 this.shadowRoot
-                    .getElementById("createTab");
+                    .getElementById(
+                        "createTab"
+                    );
 
-            const manageTab =
+
+            var manageTab =
                 this.shadowRoot
-                    .getElementById("manageTab");
+                    .getElementById(
+                        "manageTab"
+                    );
 
 
             createTab.classList.toggle(
                 "active",
-                this._activeTab === "create"
+                this._activeTab ===
+                "create"
             );
 
 
             manageTab.classList.toggle(
                 "active",
-                this._activeTab === "manage"
+                this._activeTab ===
+                "manage"
             );
 
         }
 
 
         /* =====================================================
-           STATUS
-        ===================================================== */
+           UPDATE STATUS
+           ===================================================== */
 
         _updateStatus() {
 
+            var totalRows =
+                this._rows.length;
+
+
+            var selectedCount =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true ||
+                    this._rows[i].selected === "true"
+                ) {
+
+                    selectedCount++;
+
+                }
+
+            }
+
+
             this.shadowRoot
-                .getElementById("statusText")
+                .getElementById(
+                    "totalRows"
+                )
                 .textContent =
-                    "Total Rows: " +
-                    this._rows.length +
-                    "    Validation: True    Error Rows: 0";
+                    String(totalRows);
+
+
+            this.shadowRoot
+                .getElementById(
+                    "selectedRows"
+                )
+                .textContent =
+                    String(selectedCount);
+
+
+            var validation =
+                this.shadowRoot
+                    .getElementById(
+                        "validationStatus"
+                    );
+
+
+            validation.textContent =
+                this._validationStatus
+                    ? "true"
+                    : "false";
+
+
+            validation.classList.remove(
+                "status-valid"
+            );
+
+            validation.classList.remove(
+                "status-invalid"
+            );
+
+
+            if (
+                this._validationStatus
+            ) {
+
+                validation.classList.add(
+                    "status-valid"
+                );
+
+            } else {
+
+                validation.classList.add(
+                    "status-invalid"
+                );
+
+            }
+
+
+            this.shadowRoot
+                .getElementById(
+                    "changeStatus"
+                )
+                .textContent =
+                    this._changeStatus;
+
+        }
+
+
+        /* =====================================================
+           UPDATE SELECT ALL
+           ===================================================== */
+
+        _updateSelectAll() {
+
+            var checkbox =
+                this.shadowRoot
+                    .getElementById(
+                        "selectAllCheckbox"
+                    );
+
+
+            if (
+                this._rows.length === 0
+            ) {
+
+                checkbox.checked =
+                    false;
+
+                checkbox.indeterminate =
+                    false;
+
+                return;
+
+            }
+
+
+            var selectedCount =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true ||
+                    this._rows[i].selected === "true"
+                ) {
+
+                    selectedCount++;
+
+                }
+
+            }
+
+
+            checkbox.checked =
+                selectedCount ===
+                this._rows.length;
+
+
+            checkbox.indeterminate =
+                selectedCount > 0 &&
+                selectedCount <
+                this._rows.length;
+
+        }
+
+
+        /* =====================================================
+           UPDATE DELETE BUTTON
+           ===================================================== */
+
+        _updateDeleteButton() {
+
+            var deleteButton =
+                this.shadowRoot
+                    .getElementById(
+                        "deleteButton"
+                    );
+
+
+            var selectedCount =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true ||
+                    this._rows[i].selected === "true"
+                ) {
+
+                    selectedCount++;
+
+                }
+
+            }
+
+
+            /*
+             * Delete button is enabled only when
+             * at least one row is selected.
+             */
+
+            deleteButton.disabled =
+                selectedCount === 0;
 
         }
 
 
         /* =====================================================
            ESCAPE HTML
-        ===================================================== */
+           ===================================================== */
 
         _escape(value) {
 
@@ -1208,20 +2577,47 @@
 
 
             return String(value)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
 
         }
 
     }
 
 
-    customElements.define(
-        "com-madhav-positionentry",
-        PositionEntry
-    );
+    /* =========================================================
+       REGISTER CUSTOM ELEMENT
+       ========================================================= */
+
+    if (
+        !customElements.get(
+            "com-madhav-positionentry"
+        )
+    ) {
+
+        customElements.define(
+            "com-madhav-positionentry",
+            PositionEntry
+        );
+
+    }
 
 })();
