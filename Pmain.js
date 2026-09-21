@@ -745,6 +745,10 @@
             this._rowOptions = {};
 
             this._manageRowOptions = {};
+            this._activeCell = {
+    rowIndex: null,
+    fieldName: null
+};
 
 
             /* =================================================
@@ -906,17 +910,104 @@
                CLEAR
                ================================================= */
 
-           this.shadowRoot
+        this.shadowRoot
     .getElementById("clearButton")
     .addEventListener(
         "click",
         () => {
 
             /*
-             * Check whether any rows are selected
+             * =================================================
+             * CASE 1:
+             * A specific cell is active
+             * =================================================
              */
 
-            var selectedCount = 0;
+            if (
+                this._activeCell.rowIndex !== null &&
+                this._activeCell.fieldName !== null
+            ) {
+
+                var rowIndex =
+                    this._activeCell.rowIndex;
+
+
+                var fieldName =
+                    this._activeCell.fieldName;
+
+
+                /*
+                 * Make sure the row still exists.
+                 */
+
+                if (
+                    this._rows[rowIndex]
+                ) {
+
+                    /*
+                     * Don't clear the selection
+                     * checkbox through Clear.
+                     */
+
+                    if (
+                        fieldName !== "selected"
+                    ) {
+
+                        this._rows[rowIndex][fieldName] =
+                            "";
+
+
+                        this._rows[rowIndex].isModified =
+                            true;
+
+
+                        this._changeStatus =
+                            "CLEARED";
+
+
+                        /*
+                         * Tell SAC exactly which
+                         * field was cleared.
+                         */
+
+                        this._emitEvent(
+                            "onClear",
+                            "clear|cell|" +
+                            rowIndex +
+                            "|" +
+                            fieldName
+                        );
+
+                    }
+
+                }
+
+
+                this._render();
+
+
+                /*
+                 * Keep the active-cell reference.
+                 */
+
+                return;
+
+            }
+
+
+            /*
+             * =================================================
+             * CASE 2:
+             * No active cell.
+             *
+             * Clear selected rows.
+             * Rows themselves remain.
+             * =================================================
+             */
+
+            var selectedCount =
+                0;
+
 
             for (
                 var i = 0;
@@ -936,14 +1027,6 @@
             }
 
 
-            /*
-             * CASE 1:
-             * One or more rows are selected
-             *
-             * Clear data ONLY from selected rows.
-             * Do NOT delete the rows.
-             */
-
             if (
                 selectedCount > 0
             ) {
@@ -954,84 +1037,23 @@
                     j++
                 ) {
 
-                    var row =
-                        this._rows[j];
-
-
                     if (
-                        row.selected === true ||
-                        row.selected === "true"
+                        this._rows[j].selected === true ||
+                        this._rows[j].selected === "true"
                     ) {
 
                         /*
-                         * Clear all editable fields
+                         * Clear row data while
+                         * keeping the row.
                          */
 
-                        row.companyCode =
-                            "";
-
-                        row.division =
-                            "";
-
-                        row.department =
-                            "";
-
-                        row.costCenter =
-                            "";
-
-                        row.jobCode =
-                            "";
-
-                        row.positionTitle =
-                            "";
-
-                        row.employeeId =
-                            "";
-
-                        row.payGradeGroup =
-                            "";
-
-                        row.payGradeLevel =
-                            "";
-
-                        row.hireDate =
-                            "";
-
-                        row.nationality =
-                            "";
-
-                        row.accommodation =
-                            "";
-
-                        row.transport =
-                            "";
-
-                        row.employeeClass =
-                            "";
-
-                        row.overtime =
-                            "";
-
-                        row.specialApproval =
-                            "";
-
-                        row.comment =
-                            "";
+                        this._clearRowData(
+                            this._rows[j]
+                        );
 
 
-                        /*
-                         * Keep the row itself.
-                         */
-
-                        row.isModified =
+                        this._rows[j].isModified =
                             true;
-
-
-                        /*
-                         * Keep it selected so
-                         * the user knows which
-                         * rows were cleared.
-                         */
 
                     }
 
@@ -1048,104 +1070,87 @@
                     selectedCount
                 );
 
+
+                this._render();
+
+                return;
+
             }
 
 
             /*
-             * CASE 2:
-             * Nothing selected
+             * =================================================
+             * CASE 3:
+             * Nothing selected and no active cell.
              *
-             * Clear data from ALL rows.
-             * Do NOT delete rows.
+             * Clear ALL row data but keep rows.
+             * =================================================
              */
 
-            else {
+            for (
+                var k = 0;
+                k < this._rows.length;
+                k++
+            ) {
 
-                for (
-                    var k = 0;
-                    k < this._rows.length;
-                    k++
-                ) {
-
-                    var allRow =
-                        this._rows[k];
-
-
-                    allRow.companyCode =
-                        "";
-
-                    allRow.division =
-                        "";
-
-                    allRow.department =
-                        "";
-
-                    allRow.costCenter =
-                        "";
-
-                    allRow.jobCode =
-                        "";
-
-                    allRow.positionTitle =
-                        "";
-
-                    allRow.employeeId =
-                        "";
-
-                    allRow.payGradeGroup =
-                        "";
-
-                    allRow.payGradeLevel =
-                        "";
-
-                    allRow.hireDate =
-                        "";
-
-                    allRow.nationality =
-                        "";
-
-                    allRow.accommodation =
-                        "";
-
-                    allRow.transport =
-                        "";
-
-                    allRow.employeeClass =
-                        "";
-
-                    allRow.overtime =
-                        "";
-
-                    allRow.specialApproval =
-                        "";
-
-                    allRow.comment =
-                        "";
-
-                    allRow.isModified =
-                        true;
-
-                }
-
-
-                this._changeStatus =
-                    "CLEARED_ALL";
-
-
-                this._emitEvent(
-                    "onClear",
-                    "clear|all"
+                this._clearRowData(
+                    this._rows[k]
                 );
 
+
+                this._rows[k].isModified =
+                    true;
+
             }
 
 
-            /*
-             * Render the table again.
-             *
-             * IMPORTANT:
-             * _rows is NOT emptied here.
-             */
+            this._changeStatus =
+                "CLEARED_ALL";
+
+
+            this._emitEvent(
+                "onClear",
+                "clear|all"
+            );
+_clearRowData(
+    row
+) {
+
+    row.companyCode = "";
+
+    row.division = "";
+
+    row.department = "";
+
+    row.costCenter = "";
+
+    row.jobCode = "";
+
+    row.positionTitle = "";
+
+    row.employeeId = "";
+
+    row.payGradeGroup = "";
+
+    row.payGradeLevel = "";
+
+    row.hireDate = "";
+
+    row.nationality = "";
+
+    row.accommodation = "";
+
+    row.transport = "";
+
+    row.employeeClass = "";
+
+    row.overtime = "";
+
+    row.specialApproval = "";
+
+    row.comment = "";
+
+}
 
             this._render();
 
@@ -2034,86 +2039,192 @@
            ATTACH ROW EVENTS
            ===================================================== */
 
-        _attachRowEvents(
-            tr,
-            rowIndex
-        ) {
+       _attachRowEvents(
+    tr,
+    rowIndex
+) {
 
-            var controls =
-                tr.querySelectorAll(
-                    "[data-field]"
+    var controls =
+        tr.querySelectorAll(
+            "[data-field]"
+        );
+
+
+    for (
+        let i = 0;
+        i < controls.length;
+        i++
+    ) {
+
+        let control =
+            controls[i];
+
+
+        /*
+         * Remember the exact cell that
+         * the user is currently working on.
+         */
+
+        control.addEventListener(
+            "focus",
+            () => {
+
+                this._activeCell = {
+                    rowIndex: rowIndex,
+                    fieldName: control.dataset.field
+                };
+
+            }
+        );
+
+
+        /*
+         * Also capture clicks.
+         * This is especially useful for
+         * dropdowns.
+         */
+
+        control.addEventListener(
+            "click",
+            () => {
+
+                this._activeCell = {
+                    rowIndex: rowIndex,
+                    fieldName: control.dataset.field
+                };
+
+            }
+        );
+
+
+        /*
+         * Normal field change
+         */
+
+        control.addEventListener(
+            "change",
+            () => {
+
+                var fieldName =
+                    control.dataset.field;
+
+
+                /*
+                 * Checkbox
+                 */
+
+                if (
+                    control.type ===
+                    "checkbox"
+                ) {
+
+                    var checked =
+                        control.checked;
+
+
+                    this._rows[rowIndex].selected =
+                        checked;
+
+
+                    if (
+                        checked
+                    ) {
+
+                        tr.classList.add(
+                            "selected-row"
+                        );
+
+                    } else {
+
+                        tr.classList.remove(
+                            "selected-row"
+                        );
+
+                    }
+
+
+                    this._changeStatus =
+                        "CHANGED";
+
+
+                    this._updateSelectAll();
+
+                    this._updateStatus();
+
+                    this._updateDeleteButton();
+
+
+                    this._emitEvent(
+                        "onDataEntry",
+                        "dataEntry|select|" +
+                        rowIndex +
+                        "|" +
+                        (
+                            checked
+                                ? "true"
+                                : "false"
+                        )
+                    );
+
+
+                    return;
+
+                }
+
+
+                /*
+                 * Normal input / select
+                 */
+
+                var value =
+                    control.value;
+
+
+                this._rows[rowIndex][fieldName] =
+                    value;
+
+
+                this._rows[rowIndex].isModified =
+                    true;
+
+
+                /*
+                 * Keep active cell updated.
+                 */
+
+                this._activeCell = {
+                    rowIndex: rowIndex,
+                    fieldName: fieldName
+                };
+
+
+                this._changeStatus =
+                    "CHANGED";
+
+
+                /*
+                 * SAC field-change event
+                 */
+
+                this._emitEvent(
+                    "onFieldChange",
+                    "fieldChange|" +
+                    rowIndex +
+                    "|" +
+                    fieldName +
+                    "|" +
+                    value
                 );
 
 
-            for (
-                let i = 0;
-                i < controls.length;
-                i++
-            ) {
+                this._updateStatus();
 
-                let control =
-                    controls[i];
+            }
+        );
 
+    }
 
-                control.addEventListener(
-                    "change",
-                    () => {
-
-                        var fieldName =
-                            control.dataset.field;
-
-
-                        var value;
-
-
-                        /*
-                         * Checkbox
-                         */
-
-                        if (
-                            control.type ===
-                            "checkbox"
-                        ) {
-
-                            value =
-                                control.checked
-                                    ? "true"
-                                    : "false";
-
-                        } else {
-
-                            value =
-                                control.value;
-
-                        }
-
-
-                        /*
-                         * Update internal row
-                         */
-
-                        if (
-                            this._rows[rowIndex]
-                        ) {
-
-                            if (
-                                fieldName ===
-                                "selected"
-                            ) {
-
-                                this._rows[rowIndex].selected =
-                                    control.checked;
-
-                            } else {
-
-                                this._rows[rowIndex][fieldName] =
-                                    value;
-
-                            }
-
-                        }
-
-
+}
                         /* =====================================
                            ROW SELECTION
                            ===================================== */
