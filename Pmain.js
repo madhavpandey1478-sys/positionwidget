@@ -906,35 +906,251 @@
                CLEAR
                ================================================= */
 
-            this.shadowRoot
-                .getElementById("clearButton")
-                .addEventListener(
-                    "click",
-                    () => {
+           this.shadowRoot
+    .getElementById("clearButton")
+    .addEventListener(
+        "click",
+        () => {
 
-                        this._rows = [];
+            /*
+             * Check whether any rows are selected
+             */
 
-                        this._rowOptions = {};
+            var selectedCount = 0;
 
-                        this._validationStatus =
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true ||
+                    this._rows[i].selected === "true"
+                ) {
+
+                    selectedCount++;
+
+                }
+
+            }
+
+
+            /*
+             * CASE 1:
+             * One or more rows are selected
+             *
+             * Clear data ONLY from selected rows.
+             * Do NOT delete the rows.
+             */
+
+            if (
+                selectedCount > 0
+            ) {
+
+                for (
+                    var j = 0;
+                    j < this._rows.length;
+                    j++
+                ) {
+
+                    var row =
+                        this._rows[j];
+
+
+                    if (
+                        row.selected === true ||
+                        row.selected === "true"
+                    ) {
+
+                        /*
+                         * Clear all editable fields
+                         */
+
+                        row.companyCode =
+                            "";
+
+                        row.division =
+                            "";
+
+                        row.department =
+                            "";
+
+                        row.costCenter =
+                            "";
+
+                        row.jobCode =
+                            "";
+
+                        row.positionTitle =
+                            "";
+
+                        row.employeeId =
+                            "";
+
+                        row.payGradeGroup =
+                            "";
+
+                        row.payGradeLevel =
+                            "";
+
+                        row.hireDate =
+                            "";
+
+                        row.nationality =
+                            "";
+
+                        row.accommodation =
+                            "";
+
+                        row.transport =
+                            "";
+
+                        row.employeeClass =
+                            "";
+
+                        row.overtime =
+                            "";
+
+                        row.specialApproval =
+                            "";
+
+                        row.comment =
+                            "";
+
+
+                        /*
+                         * Keep the row itself.
+                         */
+
+                        row.isModified =
                             true;
 
-                        this._changeStatus =
-                            "CLEARED";
 
-
-                        this._emitEvent(
-                            "onClear",
-                            "clear"
-                        );
-
-
-                        this._render();
+                        /*
+                         * Keep it selected so
+                         * the user knows which
+                         * rows were cleared.
+                         */
 
                     }
+
+                }
+
+
+                this._changeStatus =
+                    "CLEARED_SELECTED";
+
+
+                this._emitEvent(
+                    "onClear",
+                    "clear|selected|" +
+                    selectedCount
                 );
 
+            }
 
+
+            /*
+             * CASE 2:
+             * Nothing selected
+             *
+             * Clear data from ALL rows.
+             * Do NOT delete rows.
+             */
+
+            else {
+
+                for (
+                    var k = 0;
+                    k < this._rows.length;
+                    k++
+                ) {
+
+                    var allRow =
+                        this._rows[k];
+
+
+                    allRow.companyCode =
+                        "";
+
+                    allRow.division =
+                        "";
+
+                    allRow.department =
+                        "";
+
+                    allRow.costCenter =
+                        "";
+
+                    allRow.jobCode =
+                        "";
+
+                    allRow.positionTitle =
+                        "";
+
+                    allRow.employeeId =
+                        "";
+
+                    allRow.payGradeGroup =
+                        "";
+
+                    allRow.payGradeLevel =
+                        "";
+
+                    allRow.hireDate =
+                        "";
+
+                    allRow.nationality =
+                        "";
+
+                    allRow.accommodation =
+                        "";
+
+                    allRow.transport =
+                        "";
+
+                    allRow.employeeClass =
+                        "";
+
+                    allRow.overtime =
+                        "";
+
+                    allRow.specialApproval =
+                        "";
+
+                    allRow.comment =
+                        "";
+
+                    allRow.isModified =
+                        true;
+
+                }
+
+
+                this._changeStatus =
+                    "CLEARED_ALL";
+
+
+                this._emitEvent(
+                    "onClear",
+                    "clear|all"
+                );
+
+            }
+
+
+            /*
+             * Render the table again.
+             *
+             * IMPORTANT:
+             * _rows is NOT emptied here.
+             */
+
+            this._render();
+
+        }
+    );
             /* =================================================
                CREATE TAB
                ================================================= */
