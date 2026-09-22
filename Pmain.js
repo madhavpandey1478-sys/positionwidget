@@ -726,112 +726,201 @@
            CLEAR
            ===================================================== */
 
-       _clear() {
+        _clear() {
 
-    var clearedCount = 0;
+            /*
+             * CASE 1
+             *
+             * A specific cell is active.
+             *
+             * Clear ONLY that cell.
+             */
 
-    /*
-     * Clear ONLY selected rows.
-     * Never delete the rows.
-     */
+            if (
+                this._activeCell !== null
+            ) {
 
-    for (
-        var i = 0;
-        i < this._rows.length;
-        i++
-    ) {
+                var rowIndex =
+                    this._activeCell.rowIndex;
 
-        if (
-            this._rows[i].selected === true
-        ) {
+                var field =
+                    this._activeCell.field;
 
-            this._clearRow(
-                this._rows[i]
+
+                if (
+                    this._rows[rowIndex] &&
+                    field !== "selected"
+                ) {
+
+                    this._rows[rowIndex][field] =
+                        "";
+
+
+                    this._rows[rowIndex].isModified =
+                        true;
+
+
+                    this._status =
+                        "CLEARED";
+
+
+                    this._emit(
+                        "onClear",
+                        "cell|" +
+                        rowIndex +
+                        "|" +
+                        field
+                    );
+
+
+                    this._render();
+
+
+                    return;
+
+                }
+
+            }
+
+
+            /*
+             * CASE 2
+             *
+             * No active cell.
+             *
+             * Clear data from selected rows.
+             * DO NOT delete rows.
+             */
+
+            var selected = [];
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    selected.push(
+                        i
+                    );
+
+                }
+
+            }
+
+
+            if (
+                selected.length > 0
+            ) {
+
+                for (
+                    var j = 0;
+                    j < selected.length;
+                    j++
+                ) {
+
+                    this._clearRow(
+                        this._rows[
+                            selected[j]
+                        ]
+                    );
+
+                }
+
+
+                this._status =
+                    "CLEARED";
+
+
+                this._emit(
+                    "onClear",
+                    "selected|" +
+                    selected.length
+                );
+
+
+                this._render();
+
+
+                return;
+
+            }
+
+
+            /*
+             * CASE 3
+             *
+             * Nothing selected.
+             *
+             * Clear all row data.
+             * KEEP all rows.
+             */
+
+            for (
+                var k = 0;
+                k < this._rows.length;
+                k++
+            ) {
+
+                this._clearRow(
+                    this._rows[k]
+                );
+
+            }
+
+
+            this._status =
+                "CLEARED";
+
+
+            this._emit(
+                "onClear",
+                "all"
             );
 
-            clearedCount++;
+
+            this._render();
 
         }
 
-    }
-
-
-    /*
-     * Nothing selected
-     */
-
-    if (
-        clearedCount === 0
-    ) {
-
-        this._status = "NO ROW SELECTED";
-
-        this._render();
-
-        return;
-
-    }
-
-
-    /*
-     * Update status
-     */
-
-    this._status =
-        "CLEARED";
-
-
-    /*
-     * Send event to SAC
-     */
-
-    this._emit(
-        "onClear",
-        "clear|" +
-        clearedCount
-    );
-
-
-    /*
-     * Re-render table.
-     *
-     * IMPORTANT:
-     * We are NOT removing anything
-     * from this._rows.
-     */
-
-    this._render();
-
-}
 
         /* =====================================================
            CLEAR ROW DATA
            ===================================================== */
 
-       _clearRow(row) {
+        _clearRow(
+            row
+        ) {
 
-    row.companyCode = "";
-    row.division = "";
-    row.department = "";
-    row.costCenter = "";
-    row.jobCode = "";
-    row.positionTitle = "";
-    row.employeeId = "";
-    row.payGradeGroup = "";
-    row.payGradeLevel = "";
-    row.hireDate = "";
-    row.nationality = "";
-    row.accommodation = "";
-    row.transport = "";
-    row.employeeClass = "";
-    row.overtime = "";
-    row.specialApproval = "";
-    row.comment = "";
+            row.companyCode = "";
+            row.division = "";
+            row.department = "";
+            row.costCenter = "";
+            row.jobCode = "";
+            row.positionTitle = "";
+            row.employeeId = "";
+            row.payGradeGroup = "";
+            row.payGradeLevel = "";
+            row.hireDate = "";
+            row.nationality = "";
+            row.accommodation = "";
+            row.transport = "";
+            row.employeeClass = "";
+            row.overtime = "";
+            row.specialApproval = "";
+            row.comment = "";
 
-    row.isModified = true;
+            row.isModified =
+                true;
 
-}
-        
+        }
+
+
         /* =====================================================
            RENDER
            ===================================================== */
