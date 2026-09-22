@@ -2,9 +2,8 @@
 
     "use strict";
 
-
     /* =========================================================
-       POSITION ENTRY WIDGET
+       TEMPLATE
        ========================================================= */
 
     var template = document.createElement("template");
@@ -29,20 +28,24 @@
                 height: 100%;
                 border: 1px solid #d5dfe8;
                 border-radius: 8px;
-                background: white;
+                background: #ffffff;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
             }
+
+            /* ================= TOOLBAR ================= */
 
             .toolbar {
                 height: 52px;
                 min-height: 52px;
                 background: #f6f9fc;
                 border-bottom: 1px solid #d5dfe8;
+
                 display: flex;
                 align-items: center;
                 justify-content: flex-end;
+
                 padding: 8px;
                 gap: 8px;
             }
@@ -50,12 +53,16 @@
             button {
                 height: 34px;
                 padding: 0 14px;
+
                 border: 1px solid #b8c9da;
                 border-radius: 7px;
-                background: white;
+
+                background: #ffffff;
                 color: #1769aa;
+
                 font-size: 12px;
                 font-weight: 600;
+
                 cursor: pointer;
             }
 
@@ -63,39 +70,18 @@
                 background: #eef6fd;
             }
 
-            .delete {
+            button.delete {
                 color: #c62828;
                 border-color: #dfaaaa;
             }
 
-            .primary {
-                color: white;
+            button.primary {
+                color: #ffffff;
                 background: #0878df;
                 border-color: #0878df;
             }
 
-            .tabs {
-                height: 34px;
-                min-height: 34px;
-                display: flex;
-                border-bottom: 1px solid #d5dfe8;
-            }
-
-            .tab {
-                padding: 0 15px;
-                display: flex;
-                align-items: center;
-                font-size: 12px;
-                color: #52677a;
-                cursor: pointer;
-                border-bottom: 2px solid transparent;
-            }
-
-            .tab.active {
-                color: #0878df;
-                font-weight: 600;
-                border-bottom-color: #0878df;
-            }
+            /* ================= TABLE ================= */
 
             .table-area {
                 flex: 1;
@@ -105,85 +91,132 @@
             table {
                 border-collapse: collapse;
                 table-layout: fixed;
+
                 min-width: 1900px;
                 width: 1900px;
             }
 
             th {
                 height: 38px;
+
                 background: #edf4fb;
                 color: #294863;
+
                 border: 1px solid #d2dee8;
+
                 padding: 5px 7px;
+
                 font-size: 11px;
                 text-align: left;
+
                 white-space: nowrap;
+
                 position: sticky;
                 top: 0;
+
                 z-index: 2;
             }
 
             td {
                 height: 46px;
+
                 border: 1px solid #d8e1e9;
+
                 padding: 5px;
-                background: white;
+
+                background: #ffffff;
             }
 
             tr.selected-row td {
                 background: #fff9df;
             }
 
+            /* ================= INPUT ================= */
+
             input.cell,
             select.cell {
+
                 width: 100%;
                 height: 34px;
+
                 border: 1px solid #c5d4e1;
                 border-radius: 6px;
+
                 padding: 0 7px;
+
                 font-size: 11px;
+
                 outline: none;
-                background: white;
+
+                background: #ffffff;
             }
 
             input.cell:focus,
             select.cell:focus {
+
                 border-color: #0878df;
+
             }
 
             input.readonly {
+
                 background: #f4f6f8;
+
             }
 
+            /* ================= CHECKBOX ================= */
+
             .checkbox-cell {
+
                 width: 50px;
+
                 text-align: center;
+
             }
 
             .checkbox {
+
                 width: 17px;
                 height: 17px;
+
                 cursor: pointer;
+
                 accent-color: #0878df;
+
             }
 
+            /* ================= STATUS ================= */
+
             .status {
+
                 height: 32px;
                 min-height: 32px;
+
                 background: #f6f9fc;
+
                 border-top: 1px solid #d5dfe8;
+
                 display: flex;
+
                 align-items: center;
+
                 gap: 20px;
+
                 padding: 0 10px;
+
                 font-size: 11px;
+
                 color: #52677a;
+
             }
 
         </style>
 
 
         <div class="container">
+
+
+            <!-- TOOLBAR -->
 
             <div class="toolbar">
 
@@ -198,7 +231,8 @@
                 <button
                     id="deleteButton"
                     class="delete"
-                    style="display:none;">
+                    style="display:none;"
+                >
                     Delete Selected
                 </button>
 
@@ -208,7 +242,8 @@
 
                 <button
                     id="approvalButton"
-                    class="primary">
+                    class="primary"
+                >
                     Send for Approval
                 </button>
 
@@ -219,22 +254,7 @@
             </div>
 
 
-            <div class="tabs">
-
-                <div
-                    id="createTab"
-                    class="tab active">
-                    Create Position
-                </div>
-
-                <div
-                    id="manageTab"
-                    class="tab">
-                    Manage Position
-                </div>
-
-            </div>
-
+            <!-- CREATE POSITION TABLE -->
 
             <div class="table-area">
 
@@ -245,12 +265,14 @@
                         <tr>
 
                             <th
-                                class="checkbox-cell">
+                                class="checkbox-cell"
+                            >
 
                                 <input
                                     id="selectAll"
                                     class="checkbox"
-                                    type="checkbox">
+                                    type="checkbox"
+                                >
 
                             </th>
 
@@ -326,12 +348,15 @@
 
                     </thead>
 
+
                     <tbody id="tbody"></tbody>
 
                 </table>
 
             </div>
 
+
+            <!-- STATUS -->
 
             <div class="status">
 
@@ -362,22 +387,23 @@
 
     class PositionEntry extends HTMLElement {
 
+
         constructor() {
 
             super();
 
+
             this.attachShadow({
                 mode: "open"
             });
+
 
             this.shadowRoot.appendChild(
                 template.content.cloneNode(true)
             );
 
 
-            /* =================================================
-               DATA
-               ================================================= */
+            /* ================= DATA ================= */
 
             this._rows = [];
 
@@ -385,10 +411,10 @@
 
             this._status = "READY";
 
-            this._activeCell = null;
-
             this._rowOptions = {};
 
+
+            /* ================= INITIALIZE ================= */
 
             this._bindButtons();
 
@@ -404,7 +430,7 @@
         _bindButtons() {
 
 
-            /* ADD ROW */
+            /* ================= ADD ROW ================= */
 
             this.shadowRoot
                 .getElementById("addButton")
@@ -418,7 +444,7 @@
                 );
 
 
-            /* COPY */
+            /* ================= COPY ================= */
 
             this.shadowRoot
                 .getElementById("copyButton")
@@ -432,7 +458,7 @@
                 );
 
 
-            /* DELETE */
+            /* ================= DELETE ================= */
 
             this.shadowRoot
                 .getElementById("deleteButton")
@@ -446,7 +472,7 @@
                 );
 
 
-            /* CLEAR */
+            /* ================= CLEAR ================= */
 
             this.shadowRoot
                 .getElementById("clearButton")
@@ -460,7 +486,7 @@
                 );
 
 
-            /* VALIDATE */
+            /* ================= VALIDATE ================= */
 
             this.shadowRoot
                 .getElementById("validateButton")
@@ -477,7 +503,7 @@
                 );
 
 
-            /* APPROVAL */
+            /* ================= SEND FOR APPROVAL ================= */
 
             this.shadowRoot
                 .getElementById("approvalButton")
@@ -494,7 +520,7 @@
                 );
 
 
-            /* SELECT ALL */
+            /* ================= SELECT ALL ================= */
 
             this.shadowRoot
                 .getElementById("selectAll")
@@ -587,7 +613,7 @@
 
 
         /* =====================================================
-           COPY
+           COPY SELECTED ROWS
            ===================================================== */
 
         _copyRows() {
@@ -616,8 +642,14 @@
                     row.selected =
                         false;
 
+
                     row.employeeId =
                         "";
+
+
+                    row.isModified =
+                        false;
+
 
                     copied.push(
                         row
@@ -648,7 +680,15 @@
                 this._status =
                     "CHANGED";
 
+
                 this._render();
+
+
+                this._emit(
+                    "onDataEntry",
+                    "copy|" +
+                    copied.length
+                );
 
             }
 
@@ -656,7 +696,7 @@
 
 
         /* =====================================================
-           DELETE ROWS
+           DELETE SELECTED ROWS
            ===================================================== */
 
         _deleteRows() {
@@ -702,10 +742,6 @@
                 remaining;
 
 
-            this._activeCell =
-                null;
-
-
             this._status =
                 "CHANGED";
 
@@ -723,139 +759,154 @@
 
 
         /* =====================================================
-           CLEAR
+           CLEAR SELECTED ROW DATA
            ===================================================== */
 
-    _clear() {
+        _clear() {
 
-    var clearedCount = 0;
+            var clearedCount = 0;
 
-    for (
-        var i = 0;
-        i < this._rows.length;
-        i++
-    ) {
-
-        var row = this._rows[i];
-
-        /*
-         * Only process selected rows
-         */
-        if (row.selected === true) {
 
             /*
-             * Clear all position data
+             * Only selected rows are cleared.
              */
-            row.companyCode = "";
-            row.division = "";
-            row.department = "";
-            row.costCenter = "";
-            row.jobCode = "";
-            row.positionTitle = "";
-            row.employeeId = "";
-            row.payGradeGroup = "";
-            row.payGradeLevel = "";
-            row.hireDate = "";
-            row.nationality = "";
-            row.accommodation = "";
-            row.transport = "";
-            row.employeeClass = "";
-            row.overtime = "";
-            row.specialApproval = "";
-            row.comment = "";
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                var row =
+                    this._rows[i];
+
+
+                if (
+                    row.selected === true
+                ) {
+
+                    /*
+                     * Clear data.
+                     */
+
+                    this._clearRow(
+                        row
+                    );
+
+
+                    /*
+                     * IMPORTANT:
+                     * Keep the row,
+                     * but untick its checkbox.
+                     */
+
+                    row.selected =
+                        false;
+
+
+                    clearedCount++;
+
+                }
+
+            }
+
 
             /*
-             * Mark row as modified
+             * Nothing selected.
              */
-            row.isModified = true;
+
+            if (
+                clearedCount === 0
+            ) {
+
+                this._status =
+                    "NO ROW SELECTED";
+
+
+                this._render();
+
+
+                return;
+
+            }
+
+
+            this._status =
+                "CLEARED";
+
 
             /*
-             * IMPORTANT:
-             * Automatically unselect the row
+             * Notify SAC.
              */
-            row.selected = false;
 
-            clearedCount++;
+            this._emit(
+                "onClear",
+                "clear|" +
+                clearedCount
+            );
+
+
+            /*
+             * Re-render.
+             *
+             * Because selected=false,
+             * checkboxes become unticked.
+             */
+
+            this._render();
 
         }
 
-    }
-
-
-    /*
-     * Nothing was selected
-     */
-    if (clearedCount === 0) {
-
-        this._status = "NO ROW SELECTED";
-
-        this._render();
-
-        return;
-
-    }
-
-
-    /*
-     * Clear active cell reference
-     */
-    this._activeCell = null;
-
-
-    /*
-     * Update status
-     */
-    this._status = "CLEARED";
-
-
-    /*
-     * Notify SAC
-     */
-    this._emit(
-        "onClear",
-        "clear|" + clearedCount
-    );
-
-
-    /*
-     * Re-render the table
-     *
-     * Because selected=false,
-     * the checkboxes will now appear unticked.
-     */
-    this._render();
-
-}
-        
 
         /* =====================================================
            CLEAR ROW DATA
            ===================================================== */
 
-       _clearRow(row) {
+        _clearRow(
+            row
+        ) {
 
-    row.companyCode = "";
-    row.division = "";
-    row.department = "";
-    row.costCenter = "";
-    row.jobCode = "";
-    row.positionTitle = "";
-    row.employeeId = "";
-    row.payGradeGroup = "";
-    row.payGradeLevel = "";
-    row.hireDate = "";
-    row.nationality = "";
-    row.accommodation = "";
-    row.transport = "";
-    row.employeeClass = "";
-    row.overtime = "";
-    row.specialApproval = "";
-    row.comment = "";
+            row.companyCode = "";
 
-    row.isModified = true;
+            row.division = "";
 
-}
-        
+            row.department = "";
+
+            row.costCenter = "";
+
+            row.jobCode = "";
+
+            row.positionTitle = "";
+
+            row.employeeId = "";
+
+            row.payGradeGroup = "";
+
+            row.payGradeLevel = "";
+
+            row.hireDate = "";
+
+            row.nationality = "";
+
+            row.accommodation = "";
+
+            row.transport = "";
+
+            row.employeeClass = "";
+
+            row.overtime = "";
+
+            row.specialApproval = "";
+
+            row.comment = "";
+
+
+            row.isModified =
+                true;
+
+        }
+
+
         /* =====================================================
            RENDER
            ===================================================== */
@@ -891,6 +942,8 @@
             this._updateCounts();
 
             this._updateDeleteButton();
+
+            this._updateSelectAll();
 
         }
 
@@ -1059,7 +1112,7 @@
 
 
         /* =====================================================
-           CELL HTML
+           CREATE CELL
            ===================================================== */
 
         _cell(
@@ -1132,57 +1185,6 @@
                     controls[i];
 
 
-                /*
-                 * Remember active cell.
-                 */
-
-                if (
-                    control.dataset.field !==
-                    "selected"
-                ) {
-
-                    control.addEventListener(
-                        "focus",
-                        () => {
-
-                            this._activeCell = {
-
-                                rowIndex:
-                                    rowIndex,
-
-                                field:
-                                    control.dataset.field
-
-                            };
-
-                        }
-                    );
-
-
-                    control.addEventListener(
-                        "click",
-                        () => {
-
-                            this._activeCell = {
-
-                                rowIndex:
-                                    rowIndex,
-
-                                field:
-                                    control.dataset.field
-
-                            };
-
-                        }
-                    );
-
-                }
-
-
-                /*
-                 * Change event.
-                 */
-
                 control.addEventListener(
                     "change",
                     () => {
@@ -1192,7 +1194,7 @@
 
 
                         /*
-                         * Row checkbox.
+                         * Row selection.
                          */
 
                         if (
@@ -1202,6 +1204,32 @@
                             this._rows[rowIndex].selected =
                                 control.checked;
 
+
+                            this._status =
+                                "CHANGED";
+
+
+                            this._updateCounts();
+
+                            this._updateDeleteButton();
+
+                            this._updateSelectAll();
+
+
+                            this._emit(
+                                "onDataEntry",
+                                "select|" +
+                                rowIndex +
+                                "|" +
+                                control.checked
+                            );
+
+
+                            /*
+                             * Update row highlight
+                             * without rebuilding
+                             * the entire table.
+                             */
 
                             if (
                                 control.checked
@@ -1220,31 +1248,13 @@
                             }
 
 
-                            this._status =
-                                "CHANGED";
-
-
-                            this._updateCounts();
-
-                            this._updateDeleteButton();
-
-
-                            this._emit(
-                                "onDataEntry",
-                                "select|" +
-                                rowIndex +
-                                "|" +
-                                control.checked
-                            );
-
-
                             return;
 
                         }
 
 
                         /*
-                         * Normal field.
+                         * Normal field change.
                          */
 
                         this._rows[rowIndex][field] =
@@ -1255,17 +1265,6 @@
                             true;
 
 
-                        this._activeCell = {
-
-                            rowIndex:
-                                rowIndex,
-
-                            field:
-                                field
-
-                        };
-
-
                         this._status =
                             "CHANGED";
 
@@ -1273,6 +1272,17 @@
                         this._emit(
                             "onFieldChange",
                             "fieldChange|" +
+                            rowIndex +
+                            "|" +
+                            field +
+                            "|" +
+                            control.value
+                        );
+
+
+                        this._emit(
+                            "onDataEntry",
+                            "dataEntry|" +
                             rowIndex +
                             "|" +
                             field +
@@ -1292,12 +1302,13 @@
 
 
         /* =====================================================
-           UPDATE DELETE BUTTON
+           DELETE BUTTON VISIBILITY
            ===================================================== */
 
         _updateDeleteButton() {
 
-            var count = 0;
+            var selectedCount =
+                0;
 
 
             for (
@@ -1310,7 +1321,7 @@
                     this._rows[i].selected === true
                 ) {
 
-                    count++;
+                    selectedCount++;
 
                 }
 
@@ -1325,7 +1336,7 @@
 
 
             if (
-                count > 0
+                selectedCount > 0
             ) {
 
                 button.style.display =
@@ -1337,6 +1348,68 @@
                     "none";
 
             }
+
+        }
+
+
+        /* =====================================================
+           UPDATE SELECT ALL
+           ===================================================== */
+
+        _updateSelectAll() {
+
+            var checkbox =
+                this.shadowRoot
+                    .getElementById(
+                        "selectAll"
+                    );
+
+
+            if (
+                this._rows.length === 0
+            ) {
+
+                checkbox.checked =
+                    false;
+
+                checkbox.indeterminate =
+                    false;
+
+                return;
+
+            }
+
+
+            var selectedCount =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    selectedCount++;
+
+                }
+
+            }
+
+
+            checkbox.checked =
+                selectedCount ===
+                this._rows.length;
+
+
+            checkbox.indeterminate =
+                selectedCount > 0 &&
+                selectedCount <
+                this._rows.length;
 
         }
 
@@ -1453,7 +1526,9 @@
                 ) {
 
                     this._rows =
-                        JSON.parse(data);
+                        JSON.parse(
+                            data
+                        );
 
                 } else {
 
@@ -1462,15 +1537,12 @@
 
                 }
 
-            } catch (e) {
+            } catch (error) {
 
-                this._rows = [];
+                this._rows =
+                    [];
 
             }
-
-
-            this._activeCell =
-                null;
 
 
             this._render();
@@ -1494,6 +1566,11 @@
 
                 this._rows[rowIndex][fieldName] =
                     value;
+
+
+                this._rows[rowIndex].isModified =
+                    true;
+
 
                 this._render();
 
@@ -1529,7 +1606,7 @@
                         ? JSON.parse(options)
                         : options;
 
-            } catch (e) {
+            } catch (error) {
 
                 this._rowOptions[rowIndex][fieldName] =
                     [];
@@ -1540,55 +1617,7 @@
 
 
         /* =====================================================
-           MANAGE DATA
-           ===================================================== */
-
-        getManageData() {
-
-            return JSON.stringify([]);
-
-        }
-
-
-        setManageData(
-            data
-        ) {
-
-            /*
-             * Reserved for Manage Position tab.
-             */
-
-        }
-
-
-        setManageCellValue(
-            rowIndex,
-            fieldName,
-            value
-        ) {
-
-            /*
-             * Reserved for Manage Position tab.
-             */
-
-        }
-
-
-        setManageRowOptions(
-            rowIndex,
-            fieldName,
-            options
-        ) {
-
-            /*
-             * Reserved for Manage Position tab.
-             */
-
-        }
-
-
-        /* =====================================================
-           ESCAPE
+           ESCAPE HTML
            ===================================================== */
 
         _escape(
@@ -1606,22 +1635,27 @@
 
 
             return String(value)
+
                 .replace(
                     /&/g,
                     "&amp;"
                 )
+
                 .replace(
                     /</g,
                     "&lt;"
                 )
+
                 .replace(
                     />/g,
                     "&gt;"
                 )
+
                 .replace(
                     /"/g,
                     "&quot;"
                 )
+
                 .replace(
                     /'/g,
                     "&#039;"
@@ -1633,7 +1667,7 @@
 
 
     /* =========================================================
-       REGISTER COMPONENT
+       REGISTER WEB COMPONENT
        ========================================================= */
 
     if (
