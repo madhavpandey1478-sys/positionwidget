@@ -726,9 +726,14 @@
            CLEAR
            ===================================================== */
 
-    _clear() {
+       _clear() {
 
     var clearedCount = 0;
+
+    /*
+     * Clear ONLY selected rows.
+     * Never delete the rows.
+     */
 
     for (
         var i = 0;
@@ -736,44 +741,13 @@
         i++
     ) {
 
-        var row = this._rows[i];
+        if (
+            this._rows[i].selected === true
+        ) {
 
-        /*
-         * Only process selected rows
-         */
-        if (row.selected === true) {
-
-            /*
-             * Clear all position data
-             */
-            row.companyCode = "";
-            row.division = "";
-            row.department = "";
-            row.costCenter = "";
-            row.jobCode = "";
-            row.positionTitle = "";
-            row.employeeId = "";
-            row.payGradeGroup = "";
-            row.payGradeLevel = "";
-            row.hireDate = "";
-            row.nationality = "";
-            row.accommodation = "";
-            row.transport = "";
-            row.employeeClass = "";
-            row.overtime = "";
-            row.specialApproval = "";
-            row.comment = "";
-
-            /*
-             * Mark row as modified
-             */
-            row.isModified = true;
-
-            /*
-             * IMPORTANT:
-             * Automatically unselect the row
-             */
-            row.selected = false;
+            this._clearRow(
+                this._rows[i]
+            );
 
             clearedCount++;
 
@@ -783,9 +757,12 @@
 
 
     /*
-     * Nothing was selected
+     * Nothing selected
      */
-    if (clearedCount === 0) {
+
+    if (
+        clearedCount === 0
+    ) {
 
         this._status = "NO ROW SELECTED";
 
@@ -797,36 +774,35 @@
 
 
     /*
-     * Clear active cell reference
-     */
-    this._activeCell = null;
-
-
-    /*
      * Update status
      */
-    this._status = "CLEARED";
+
+    this._status =
+        "CLEARED";
 
 
     /*
-     * Notify SAC
+     * Send event to SAC
      */
+
     this._emit(
         "onClear",
-        "clear|" + clearedCount
+        "clear|" +
+        clearedCount
     );
 
 
     /*
-     * Re-render the table
+     * Re-render table.
      *
-     * Because selected=false,
-     * the checkboxes will now appear unticked.
+     * IMPORTANT:
+     * We are NOT removing anything
+     * from this._rows.
      */
+
     this._render();
 
 }
-        
 
         /* =====================================================
            CLEAR ROW DATA
