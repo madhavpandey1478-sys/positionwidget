@@ -20,8 +20,8 @@
             :host {
                 display: block;
                 width: 100%;
-                height: 100%;
-                min-height: 300px;
+                height: auto;
+                min-height: 160px;
 
                 font-family:
                     "72",
@@ -32,9 +32,9 @@
 
                 color: #1d2d3e;
 
-                --blue: #0a6ed1;
-                --blue-dark: #0854a0;
-                --blue-light: #eaf3fc;
+                --blue: #0070f2;
+                --blue-dark: #0040c1;
+                --blue-light: #e5f1ff;
 
                 --border: #d7e0e8;
                 --border-dark: #c4d0db;
@@ -61,8 +61,8 @@
 
             .container {
                 width: 100%;
-                height: 100%;
-                min-height: 300px;
+                height: auto;
+                min-height: 160px;
                 display: flex;
                 flex-direction: column;
                 background: var(--surface);
@@ -81,9 +81,11 @@
             .toolbar {
                 min-height: 58px;
                 display: flex;
+                flex-wrap: wrap;
                 align-items: center;
                 justify-content: flex-end;
                 gap: 8px;
+                row-gap: 8px;
                 padding: 10px 14px;
                 background: linear-gradient(to bottom, #fbfcfd, #f7f9fb);
                 border-bottom: 1px solid var(--border);
@@ -163,8 +165,10 @@
                ================================================= */
 
             .table-area {
-                flex: 1;
+                flex: 0 1 auto;
+                min-width: 0;
                 min-height: 0;
+                max-height: 520px;
                 overflow: auto;
                 background: #ffffff;
                 scrollbar-width: thin;
@@ -210,11 +214,10 @@
                 position: sticky;
                 top: 0;
                 z-index: 6;
-                height: 42px;
+                height: 40px;
                 padding: 0 9px;
                 background: var(--header);
                 color: #29465f;
-                border-right: 1px solid #d4dfe8;
                 border-bottom: 1px solid #cbd8e3;
                 font-size: 11px;
                 font-weight: 700;
@@ -223,20 +226,15 @@
                 vertical-align: middle;
             }
 
-            th:first-child {
-                border-left: 0;
-            }
-
             /* =================================================
                BODY CELLS
                ================================================= */
 
             td {
-                height: 54px;
-                padding: 7px 8px;
+                height: 46px;
+                padding: 6px 8px;
                 background: #ffffff;
-                border-right: 1px solid #dbe3ea;
-                border-bottom: 1px solid #dbe3ea;
+                border-bottom: 1px solid #e9edf1;
                 vertical-align: middle;
                 position: relative;
             }
