@@ -87,7 +87,7 @@
                 gap: 8px;
                 row-gap: 8px;
                 padding: 10px 14px;
-                background: linear-gradient(to bottom, #fbfcfd, #f7f9fb);
+                background: #ffffff;
                 border-bottom: 1px solid var(--border);
             }
 
@@ -96,10 +96,10 @@
                ================================================= */
 
             button {
-                height: 36px;
-                padding: 0 15px;
-                border: 1px solid #b8c8d8;
-                border-radius: 7px;
+                height: 34px;
+                padding: 0 14px;
+                border: 1px solid #c2c9d1;
+                border-radius: 8px;
                 background: #ffffff;
                 color: var(--blue);
                 font-family: inherit;
@@ -119,9 +119,9 @@
             }
 
             button:hover {
-                background: #f0f7fd;
-                border-color: #8eb9df;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+                background: var(--blue-light);
+                border-color: #9fc2f2;
+                box-shadow: none;
             }
 
             button:active {
@@ -129,7 +129,7 @@
             }
 
             button:focus-visible {
-                outline: 2px solid rgba(10, 110, 209, 0.25);
+                outline: 2px solid var(--blue);
                 outline-offset: 1px;
             }
 
@@ -137,7 +137,7 @@
                 color: #ffffff;
                 background: var(--blue);
                 border-color: var(--blue);
-                box-shadow: 0 1px 3px rgba(10, 110, 209, 0.22);
+                box-shadow: none;
             }
 
             button.primary:hover {
@@ -152,7 +152,7 @@
             }
 
             button.delete:hover {
-                background: #fff0f0;
+                background: #fdeaea;
                 border-color: #d98c8c;
             }
 
@@ -243,11 +243,11 @@
             }
 
             tr.selected-row td {
-                background: var(--warning);
+                background: var(--blue-light);
             }
 
             tr.selected-row:hover td {
-                background: #fff6d1;
+                background: #d7e9ff;
             }
 
             /* =================================================
@@ -511,6 +511,15 @@
                 color: #bb0000;
             }
 
+            .status-icon {
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .status-icon svg {
+                display: block;
+            }
+
             /* =================================================
                EMPTY STATE
                ================================================= */
@@ -596,7 +605,7 @@
             <div class="status">
                 <span class="status-item">Total Rows: <span id="rowCount" class="status-value">1</span></span>
                 <span class="status-item">Selected Rows: <span id="selectedCount" class="status-value">0</span></span>
-                <span class="status-item">Validation: <span id="validationStatus" class="status-value">-</span></span>
+                <span class="status-item">Validation: <span id="validationIcon" class="status-icon"></span><span id="validationStatus" class="status-value">-</span></span>
                 <span class="status-item">Error Rows: <span id="errorCount" class="status-value">0</span></span>
             </div>
 
@@ -1540,6 +1549,7 @@
 
             var validation = this.shadowRoot.getElementById("validationStatus");
             var errorCount = this.shadowRoot.getElementById("errorCount");
+            var validationIcon = this.shadowRoot.getElementById("validationIcon");
 
             validation.classList.remove("valid", "invalid");
 
@@ -1550,6 +1560,9 @@
 
                 errorCount.textContent = "0";
 
+                validationIcon.innerHTML =
+                    '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#107e3e" stroke-width="1.6"/><path d="M6 10.3l2.6 2.6L14 7.5" stroke="#107e3e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
             } else if (this._validation === false) {
 
                 validation.textContent = "false";
@@ -1557,10 +1570,15 @@
 
                 errorCount.textContent = this._getValidationErrorCount();
 
+                validationIcon.innerHTML =
+                    '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#bb0000" stroke-width="1.6"/><path d="M10 6v5" stroke="#bb0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.6" r="1" fill="#bb0000"/></svg>';
+
             } else {
 
                 validation.textContent = "-";
                 errorCount.textContent = "0";
+
+                validationIcon.innerHTML = "";
             }
 
             this.shadowRoot.getElementById("rowCount").textContent = this._rows.length;
