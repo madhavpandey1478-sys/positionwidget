@@ -10,130 +10,62 @@
 
             this.rows = [];
             this.lastEvent = "";
-            this.dropdown = null;
-            this.dropdownRow = null;
-            this.dropdownField = null;
+            this.rowOptions = {};
 
             this.fields = [
                 {
                     key: "companyCode",
                     label: "Company Code",
-                    type: "select",
-                    width: 155,
-                    options: [
-                        "ALL_SBU",
-                        "1000 - Corporate",
-                        "1001 - HR Services",
-                        "1002 - Finance",
-                        "1003 - Procurement",
-                        "1004 - IT Operations",
-                        "1005 - Facilities"
-                    ]
+                    type: "dropdown",
+                    width: 170
                 },
                 {
                     key: "division",
                     label: "Division",
-                    type: "select",
-                    width: 145,
-                    options: [
-                        "Select",
-                        "Corporate",
-                        "Operations",
-                        "Finance",
-                        "HR",
-                        "Technology",
-                        "Sales"
-                    ]
+                    type: "dropdown",
+                    width: 165
                 },
                 {
                     key: "department",
                     label: "Department",
-                    type: "select",
-                    width: 170,
-                    options: [
-                        "Select",
-                        "Human Resources",
-                        "Finance",
-                        "Procurement",
-                        "Information Technology",
-                        "Operations",
-                        "Sales",
-                        "Marketing"
-                    ]
+                    type: "dropdown",
+                    width: 190
                 },
                 {
                     key: "costCenter",
                     label: "Cost Center",
-                    type: "select",
-                    width: 165,
-                    options: [
-                        "Select",
-                        "1000 - Corporate",
-                        "1001 - HR Services",
-                        "1002 - Finance",
-                        "1003 - Procurement",
-                        "1004 - IT Operations",
-                        "1005 - Facilities"
-                    ]
+                    type: "dropdown",
+                    width: 180
                 },
                 {
                     key: "jobCode",
                     label: "Job Code",
-                    type: "select",
-                    width: 150,
-                    options: [
-                        "Select",
-                        "JC1001",
-                        "JC1002",
-                        "JC1003",
-                        "JC1004",
-                        "JC1005",
-                        "JC1006"
-                    ]
+                    type: "dropdown",
+                    width: 165
                 },
                 {
                     key: "positionTitle",
                     label: "Position Title",
                     type: "text",
-                    width: 190
+                    width: 230
                 },
                 {
                     key: "positionId",
                     label: "Position ID",
                     type: "readonly",
-                    width: 135
+                    width: 175
                 },
                 {
                     key: "payGrade",
                     label: "Pay Grade",
-                    type: "select",
-                    width: 125,
-                    options: [
-                        "Select",
-                        "P1",
-                        "P2",
-                        "P3",
-                        "P4",
-                        "P5",
-                        "P6",
-                        "P7"
-                    ]
+                    type: "dropdown",
+                    width: 145
                 },
                 {
                     key: "level",
                     label: "Level",
-                    type: "select",
-                    width: 110,
-                    options: [
-                        "Select",
-                        "L1",
-                        "L2",
-                        "L3",
-                        "L4",
-                        "L5",
-                        "L6",
-                        "L7"
-                    ]
+                    type: "dropdown",
+                    width: 125
                 },
                 {
                     key: "hireDate",
@@ -144,132 +76,204 @@
                 {
                     key: "nationality",
                     label: "Nationality",
-                    type: "select",
-                    width: 145,
-                    options: [
-                        "Select",
-                        "Indian",
-                        "Saudi",
-                        "Emirati",
-                        "Qatari",
-                        "Omani",
-                        "Bahraini",
-                        "Kuwaiti",
-                        "Other"
-                    ]
+                    type: "dropdown",
+                    width: 175
                 },
                 {
                     key: "accommodation",
                     label: "Accommodation",
-                    type: "select",
-                    width: 160,
-                    options: [
-                        "Select",
-                        "Provided",
-                        "Not Provided"
-                    ]
+                    type: "dropdown",
+                    width: 175
                 },
                 {
                     key: "transport",
                     label: "Transport",
-                    type: "select",
-                    width: 140,
-                    options: [
-                        "Select",
-                        "Provided",
-                        "Not Provided"
-                    ]
+                    type: "dropdown",
+                    width: 160
                 },
                 {
                     key: "employeeClass",
                     label: "Employee Class",
-                    type: "select",
-                    width: 155,
-                    options: [
-                        "Select",
-                        "Permanent",
-                        "Contract",
-                        "Temporary",
-                        "Intern"
-                    ]
+                    type: "dropdown",
+                    width: 175
                 },
                 {
                     key: "overtime",
                     label: "Overtime",
-                    type: "select",
-                    width: 125,
-                    options: [
-                        "Select",
-                        "Eligible",
-                        "Not Eligible"
-                    ]
+                    type: "dropdown",
+                    width: 150
                 },
                 {
                     key: "specialApproval",
                     label: "Special Approval",
-                    type: "select",
-                    width: 155,
-                    options: [
-                        "Select",
-                        "Required",
-                        "Not Required"
-                    ]
+                    type: "dropdown",
+                    width: 180
                 },
                 {
                     key: "comment",
                     label: "Comment",
                     type: "text",
-                    width: 230
+                    width: 240
                 }
             ];
 
-            this.createInitialRow();
+            /*
+             * Default dropdown values.
+             *
+             * These are only sample/default values.
+             * SAC can replace them using setRowOptions().
+             */
+            this.defaultOptions = {
+                companyCode: [
+                    "ALL_SBU",
+                    "SBU_001",
+                    "SBU_002",
+                    "SBU_003"
+                ],
+
+                division: [
+                    "Division 01",
+                    "Division 02",
+                    "Division 03"
+                ],
+
+                department: [
+                    "Finance",
+                    "HR",
+                    "IT",
+                    "Sales",
+                    "Operations"
+                ],
+
+                costCenter: [
+                    "CC1000",
+                    "CC2000",
+                    "CC3000",
+                    "CC4000"
+                ],
+
+                jobCode: [
+                    "JC001",
+                    "JC002",
+                    "JC003",
+                    "JC004"
+                ],
+
+                payGrade: [
+                    "Grade 01",
+                    "Grade 02",
+                    "Grade 03",
+                    "Grade 04"
+                ],
+
+                level: [
+                    "L1",
+                    "L2",
+                    "L3",
+                    "L4",
+                    "L5"
+                ],
+
+                nationality: [
+                    "Saudi",
+                    "Indian",
+                    "Emirati",
+                    "Other"
+                ],
+
+                accommodation: [
+                    "Provided",
+                    "Not Provided"
+                ],
+
+                transport: [
+                    "Provided",
+                    "Not Provided"
+                ],
+
+                employeeClass: [
+                    "Permanent",
+                    "Contract",
+                    "Temporary"
+                ],
+
+                overtime: [
+                    "Eligible",
+                    "Not Eligible"
+                ],
+
+                specialApproval: [
+                    "Required",
+                    "Not Required"
+                ]
+            };
+
+            this.requiredFields = [
+                "companyCode",
+                "division",
+                "department",
+                "costCenter",
+                "jobCode",
+                "positionTitle",
+                "payGrade",
+                "level",
+                "hireDate"
+            ];
         }
 
+
         connectedCallback() {
+
+            /*
+             * Always start with one row.
+             */
+            if (!this.rows.length) {
+                this.addRow(false);
+            }
+
             this.render();
         }
 
-        /* ============================================================
-           DATA
-        ============================================================ */
+
+        /* =========================================================
+           DATA STRUCTURE
+        ========================================================= */
 
         createEmptyRow() {
 
             const row = {
-                selected: false,
-                valid: null,
-                error: false
+                _selected: false,
+                _valid: true
             };
 
             this.fields.forEach(field => {
                 row[field.key] = "";
             });
 
-            // Default company code as shown in the reference design
-            row.companyCode = "ALL_SBU";
-
             return row;
         }
 
-        createInitialRow() {
-            this.rows = [this.createEmptyRow()];
-        }
 
-        /* ============================================================
-           STYLES
-        ============================================================ */
+        /* =========================================================
+           RENDER
+        ========================================================= */
 
-        getStyles() {
+        render() {
 
-            return `
+            this.shadowRoot.innerHTML = "";
+
+            const style = document.createElement("style");
+
+            style.textContent = `
+                * {
+                    box-sizing: border-box;
+                }
+
                 :host {
                     display: block;
                     width: 100%;
                     height: 100%;
-                    min-height: 420px;
-                    box-sizing: border-box;
-
+                    min-height: 300px;
                     font-family:
                         "72",
                         "72full",
@@ -281,27 +285,28 @@
                     background: #ffffff;
                 }
 
-                * {
-                    box-sizing: border-box;
-                }
-
                 .widget {
                     width: 100%;
                     height: 100%;
-                    min-height: 420px;
+                    min-height: 300px;
+
                     display: flex;
                     flex-direction: column;
+
                     background: #ffffff;
+                    border: 1px solid #d6e0ea;
+                    border-radius: 6px;
+
                     overflow: hidden;
                 }
 
-                /* ====================================================
+
+                /* =====================================================
                    TOOLBAR
-                ==================================================== */
+                ===================================================== */
 
                 .toolbar {
-                    height: 68px;
-                    min-height: 68px;
+                    min-height: 62px;
 
                     display: flex;
                     align-items: center;
@@ -309,32 +314,35 @@
 
                     gap: 10px;
 
-                    padding: 12px 16px;
+                    padding: 10px 14px;
 
-                    background: #ffffff;
+                    background:
+                        linear-gradient(
+                            to bottom,
+                            #ffffff,
+                            #f8fafc
+                        );
 
                     border-bottom: 1px solid #d9e2ec;
                 }
 
-                .toolbar-spacer {
-                    flex: 1;
-                }
 
                 button {
                     font-family: inherit;
                 }
 
                 .action-btn {
-                    height: 40px;
+                    height: 38px;
+
                     padding: 0 18px;
 
-                    border-radius: 8px;
+                    border-radius: 7px;
 
-                    border: 1px solid #b9cce0;
+                    border: 1px solid #b9cfe5;
 
                     background: #ffffff;
 
-                    color: #0064d9;
+                    color: #0064b4;
 
                     font-size: 14px;
                     font-weight: 600;
@@ -342,97 +350,101 @@
                     cursor: pointer;
 
                     transition:
-                        background .15s ease,
-                        border-color .15s ease,
-                        box-shadow .15s ease;
+                        background 0.15s ease,
+                        border-color 0.15s ease,
+                        box-shadow 0.15s ease;
+
+                    white-space: nowrap;
                 }
 
                 .action-btn:hover {
-                    background: #f1f7fd;
-                    border-color: #0070e0;
+                    background: #f0f7ff;
+                    border-color: #7faed6;
                 }
 
                 .action-btn:active {
-                    background: #e5f1fc;
+                    background: #e6f2fc;
                 }
 
                 .action-btn.primary {
+                    background: #0878d1;
                     color: #ffffff;
-                    background: #0879d9;
-                    border-color: #0879d9;
+                    border-color: #0878d1;
                 }
 
                 .action-btn.primary:hover {
-                    background: #0068c9;
-                    border-color: #0068c9;
+                    background: #006bbd;
                 }
 
-                .action-btn.delete {
-                    color: #d92d20;
-                    border-color: #f2b8b5;
+                .action-btn.danger {
+                    color: #bb0000;
+                    border-color: #e4aaaa;
                 }
 
-                .action-btn.delete:hover {
-                    background: #fff4f3;
-                    border-color: #d92d20;
+                .action-btn.danger:hover {
+                    background: #fff4f4;
+                    border-color: #d87979;
                 }
 
                 .action-btn.hidden {
                     display: none;
                 }
 
-                /* ====================================================
-                   TABLE AREA
-                ==================================================== */
 
-                .table-container {
+                /* =====================================================
+                   TABLE AREA
+                ===================================================== */
+
+                .table-wrapper {
                     flex: 1;
 
-                    min-height: 0;
+                    width: 100%;
 
-                    overflow-x: auto;
-                    overflow-y: auto;
+                    overflow: auto;
 
                     position: relative;
 
                     background: #ffffff;
                 }
 
-                .table {
-                    min-width: 2550px;
-                    width: max-content;
 
+                table {
                     border-collapse: separate;
                     border-spacing: 0;
 
                     table-layout: fixed;
+
+                    min-width: 2850px;
+
+                    width: max-content;
                 }
 
-                /* ====================================================
+
+                /* =====================================================
                    HEADER
-                ==================================================== */
+                ===================================================== */
 
                 thead th {
                     position: sticky;
                     top: 0;
-                    z-index: 5;
 
-                    height: 52px;
+                    z-index: 20;
 
-                    padding: 0 14px;
+                    height: 48px;
 
-                    text-align: left;
-                    vertical-align: middle;
+                    padding: 0 12px;
 
                     background: #edf4fb;
 
-                    border-right: 1px solid #d7e1eb;
-                    border-bottom: 1px solid #d0dce8;
+                    border-right: 1px solid #d2deea;
+                    border-bottom: 1px solid #c7d6e5;
 
-                    color: #17324d;
+                    color: #123f67;
 
                     font-size: 14px;
                     font-weight: 700;
+
+                    text-align: left;
 
                     white-space: nowrap;
                 }
@@ -441,808 +453,663 @@
                     text-align: center;
                 }
 
-                /* ====================================================
+
+                /* =====================================================
                    BODY
-                ==================================================== */
+                ===================================================== */
 
                 tbody td {
-                    height: 64px;
+                    height: 60px;
 
-                    padding: 0 14px;
+                    padding: 5px 10px;
+
+                    background: #ffffff;
+
+                    border-right: 1px solid #d6e0e9;
+                    border-bottom: 1px solid #d6e0e9;
 
                     vertical-align: middle;
 
-                    background: #ffffff;
-
-                    border-right: 1px solid #e1e8ef;
-                    border-bottom: 1px solid #e1e8ef;
-
-                    color: #334e68;
-
-                    font-size: 14px;
+                    position: relative;
                 }
 
                 tbody tr:hover td {
-                    background: #f8fbfe;
+                    background: #f9fcff;
                 }
 
                 tbody tr.selected td {
-                    background: #fff9df;
+                    background: #fff8dc;
                 }
 
-                tbody tr.error td {
-                    background: #fff2f1;
+                tbody tr.invalid td {
+                    background: #fff2f2;
                 }
 
-                tbody tr.valid td {
-                    background: #f5fbf7;
+
+                /* =====================================================
+                   SELECTION
+                ===================================================== */
+
+                .selection-cell {
+                    width: 54px;
+
+                    text-align: center;
+
+                    padding: 0 !important;
                 }
 
-                /* ====================================================
-                   CHECKBOX
-                ==================================================== */
+                input[type="checkbox"] {
+                    width: 19px;
+                    height: 19px;
 
-                .check-wrap {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                }
-
-                .check {
-                    width: 21px;
-                    height: 21px;
-
-                    appearance: none;
-
-                    border: 1.5px solid #7b8fa3;
-                    border-radius: 3px;
-
-                    background: #ffffff;
+                    accent-color: #0878d1;
 
                     cursor: pointer;
-
-                    position: relative;
                 }
 
-                .check:hover {
-                    border-color: #0070e0;
-                }
 
-                .check:checked {
-                    background: #0879d9;
-                    border-color: #0879d9;
-                }
-
-                .check:checked::after {
-                    content: "";
-
-                    position: absolute;
-
-                    left: 6px;
-                    top: 2px;
-
-                    width: 6px;
-                    height: 11px;
-
-                    border:
-                        solid #ffffff;
-
-                    border-width:
-                        0 2px 2px 0;
-
-                    transform: rotate(45deg);
-                }
-
-                /* ====================================================
-                   CELL CONTENT
-                ==================================================== */
-
-                .cell {
-                    width: 100%;
-                    height: 42px;
-
-                    display: flex;
-                    align-items: center;
-
-                    position: relative;
-                }
+                /* =====================================================
+                   INPUTS
+                ===================================================== */
 
                 .cell-input {
                     width: 100%;
-                    height: 42px;
+                    height: 40px;
 
-                    border: none;
-                    outline: none;
+                    padding: 0 10px;
 
-                    background: transparent;
+                    border: 1px solid #bfd0e0;
 
-                    color: #243b53;
+                    border-radius: 5px;
+
+                    background: #ffffff;
+
+                    color: #1d2d3e;
 
                     font-family: inherit;
                     font-size: 14px;
 
-                    padding: 0 4px;
-
-                    border-bottom: 1px solid #c9d6e3;
-
-                    transition:
-                        border-color .15s ease,
-                        background .15s ease;
-                }
-
-                .cell-input:hover {
-                    border-bottom-color: #7c9ab6;
+                    outline: none;
                 }
 
                 .cell-input:focus {
-                    border-bottom: 2px solid #0070e0;
-                    background: #f8fbff;
+                    border-color: #0878d1;
+
+                    box-shadow:
+                        0 0 0 1px #0878d1;
                 }
 
-                .cell-input::placeholder {
-                    color: #8a9bab;
+                .readonly-input {
+                    background: #f3f6f9;
+
+                    color: #617487;
+
+                    cursor: default;
                 }
 
-                .readonly {
-                    color: #6b7c8f;
 
-                    background:
-                        linear-gradient(
-                            90deg,
-                            #edf2f7,
-                            #f4f7fa
-                        );
+                /* =====================================================
+                   CUSTOM DROPDOWN
+                ===================================================== */
 
-                    border-bottom: none;
-
-                    border-radius: 5px;
-
-                    padding-left: 12px;
-                }
-
-                /* ====================================================
-                   SELECT CELL
-                ==================================================== */
-
-                .select-cell {
+                .dropdown {
                     width: 100%;
-                    height: 42px;
 
-                    display: flex;
-                    align-items: center;
-
-                    padding: 0 4px;
-
-                    border-bottom: 1px solid #c9d6e3;
-
-                    cursor: pointer;
+                    height: 40px;
 
                     position: relative;
                 }
 
-                .select-cell:hover {
-                    border-bottom-color: #7c9ab6;
-                    background: #f8fbff;
-                }
+                .dropdown-trigger {
+                    width: 100%;
+                    height: 40px;
 
-                .select-cell.active {
-                    border-bottom: 2px solid #0070e0;
-                    background: #f8fbff;
-                }
+                    border: 0;
 
-                .select-value {
-                    flex: 1;
+                    background: transparent;
+
+                    padding: 0 30px 0 8px;
+
+                    text-align: left;
+
+                    font-family: inherit;
+                    font-size: 14px;
+
+                    color: #1d2d3e;
+
+                    cursor: pointer;
+
+                    position: relative;
 
                     overflow: hidden;
                     text-overflow: ellipsis;
                     white-space: nowrap;
-
-                    color: #334e68;
                 }
 
-                .select-value.placeholder {
-                    color: #7b8fa3;
+                .dropdown-trigger::after {
+                    content: "";
+
+                    position: absolute;
+
+                    right: 8px;
+                    top: 50%;
+
+                    width: 7px;
+                    height: 7px;
+
+                    border-right: 2px solid #617d98;
+                    border-bottom: 2px solid #617d98;
+
+                    transform:
+                        translateY(-65%)
+                        rotate(45deg);
                 }
 
-                .select-arrow {
-                    width: 18px;
-                    min-width: 18px;
-
-                    text-align: center;
-
-                    color: #58728a;
-
-                    font-size: 15px;
+                .dropdown-trigger:hover {
+                    background: #f5f9fd;
                 }
 
-                /* ====================================================
-                   DATE
-                ==================================================== */
+                .dropdown.open .dropdown-trigger {
+                    background: #eef7ff;
 
-                .date-input {
-                    width: 100%;
-                    height: 42px;
-
-                    border: none;
-                    border-bottom: 1px solid #c9d6e3;
-
-                    background: transparent;
-
-                    outline: none;
-
-                    color: #334e68;
-
-                    font-family: inherit;
-                    font-size: 14px;
-
-                    padding: 0 4px;
+                    color: #005fa8;
                 }
 
-                .date-input:focus {
-                    border-bottom: 2px solid #0070e0;
-                    background: #f8fbff;
-                }
-
-                /* ====================================================
-                   DROPDOWN
-                ==================================================== */
-
-                .dropdown {
+                .dropdown-menu {
                     position: fixed;
 
-                    z-index: 10000;
+                    min-width: 270px;
 
-                    width: 310px;
+                    max-width: 360px;
 
                     background: #ffffff;
 
-                    border: 1px solid #c9d7e5;
+                    border: 1px solid #c6d5e3;
 
-                    border-radius: 9px;
+                    border-radius: 7px;
 
                     box-shadow:
-                        0 8px 24px rgba(0, 50, 100, .16),
-                        0 2px 6px rgba(0, 50, 100, .08);
+                        0 8px 25px rgba(0, 0, 0, 0.16);
+
+                    z-index: 100000;
+
+                    display: none;
 
                     overflow: hidden;
                 }
 
-                .dropdown-search {
+                .dropdown-menu.open {
+                    display: block;
+                }
+
+                .dropdown-search-container {
                     padding: 10px;
 
                     background: #ffffff;
 
-                    border-bottom: 1px solid #e0e7ef;
+                    border-bottom: 1px solid #e0e7ee;
                 }
 
-                .search-wrap {
-                    height: 40px;
-
-                    display: flex;
-                    align-items: center;
-
-                    border: 1px solid #b7c9dc;
-
-                    border-radius: 7px;
+                .dropdown-search {
+                    width: 100%;
+                    height: 36px;
 
                     padding: 0 10px;
 
-                    background: #ffffff;
-                }
+                    border: 1px solid #b9ccdf;
 
-                .search-icon {
-                    width: 20px;
+                    border-radius: 5px;
 
-                    color: #57718b;
-
-                    font-size: 17px;
-                }
-
-                .search-input {
-                    flex: 1;
-
-                    height: 100%;
-
-                    border: none;
                     outline: none;
 
                     font-family: inherit;
                     font-size: 14px;
-
-                    color: #243b53;
-
-                    background: transparent;
-
-                    padding: 0 7px;
                 }
 
-                .search-clear {
-                    width: 20px;
+                .dropdown-search:focus {
+                    border-color: #0878d1;
 
-                    border: none;
-                    background: transparent;
-
-                    color: #607d95;
-
-                    cursor: pointer;
-
-                    font-size: 17px;
+                    box-shadow:
+                        0 0 0 1px #0878d1;
                 }
 
-                .options {
-                    max-height: 270px;
+                .dropdown-options {
+                    max-height: 230px;
 
                     overflow-y: auto;
-
-                    padding: 5px 0;
                 }
 
-                .option {
-                    min-height: 40px;
+                .dropdown-option {
+                    min-height: 38px;
 
                     display: flex;
                     align-items: center;
 
-                    padding: 0 14px;
-
-                    cursor: pointer;
-
-                    color: #304b65;
+                    padding: 8px 12px;
 
                     font-size: 14px;
+
+                    color: #1d2d3e;
+
+                    cursor: pointer;
                 }
 
-                .option:hover {
-                    background: #edf5fc;
+                .dropdown-option:hover {
+                    background: #eaf4ff;
                 }
 
-                .option.selected {
-                    background: #e7f2fc;
+                .dropdown-option.selected {
+                    background: #e5f2ff;
 
-                    color: #0064d9;
+                    color: #0064b4;
 
                     font-weight: 600;
                 }
 
                 .no-results {
-                    padding: 20px;
+                    padding: 18px 12px;
 
                     text-align: center;
 
-                    color: #8091a5;
+                    color: #7b8b9a;
 
                     font-size: 13px;
                 }
 
-                /* ====================================================
+
+                /* =====================================================
                    FOOTER
-                ==================================================== */
+                ===================================================== */
 
                 .footer {
-                    min-height: 45px;
-
-                    height: 45px;
+                    min-height: 42px;
 
                     display: flex;
                     align-items: center;
-
-                    padding: 0 18px;
 
                     gap: 22px;
 
-                    background: #f7f9fb;
+                    padding: 0 14px;
 
-                    border-top: 1px solid #d9e2ec;
+                    background: #f8fafc;
 
-                    color: #536b82;
+                    border-top: 1px solid #d5e0ea;
 
                     font-size: 13px;
+
+                    color: #41566b;
                 }
 
-                .footer-item {
-                    display: flex;
-                    align-items: center;
-                    gap: 6px;
-                }
-
-                .footer-value {
-                    font-weight: 700;
-                    color: #243b53;
-                }
-
-                .footer-separator {
-                    width: 1px;
-                    height: 20px;
-
-                    background: #ccd7e2;
+                .footer strong {
+                    color: #173f61;
                 }
 
                 .status-valid {
-                    color: #18794e;
+                    color: #107e3e;
+                    font-weight: 600;
                 }
 
                 .status-invalid {
-                    color: #c62828;
+                    color: #bb0000;
+                    font-weight: 600;
                 }
 
-                /* ====================================================
+
+                /* =====================================================
                    SCROLLBAR
-                ==================================================== */
+                ===================================================== */
 
-                .table-container::-webkit-scrollbar {
-                    height: 13px;
-                    width: 13px;
+                .table-wrapper::-webkit-scrollbar {
+                    width: 10px;
+                    height: 10px;
                 }
 
-                .table-container::-webkit-scrollbar-track {
-                    background: #eef2f6;
+                .table-wrapper::-webkit-scrollbar-track {
+                    background: #f1f4f7;
                 }
 
-                .table-container::-webkit-scrollbar-thumb {
-                    background: #a9b8c7;
+                .table-wrapper::-webkit-scrollbar-thumb {
+                    background: #aebdca;
 
-                    border-radius: 8px;
-
-                    border: 3px solid #eef2f6;
+                    border-radius: 6px;
                 }
 
-                .table-container::-webkit-scrollbar-thumb:hover {
-                    background: #8498aa;
+                .table-wrapper::-webkit-scrollbar-thumb:hover {
+                    background: #879aaa;
+                }
+
+
+                /* =====================================================
+                   ERROR
+                ===================================================== */
+
+                .field-error {
+                    border-color: #d04343 !important;
+
+                    box-shadow:
+                        0 0 0 1px #d04343 !important;
                 }
             `;
-        }
 
-        /* ============================================================
-           RENDER
-        ============================================================ */
+            this.shadowRoot.appendChild(style);
 
-        render() {
 
-            this.shadowRoot.innerHTML = `
-                <style>
-                    ${this.getStyles()}
-                </style>
+            const widget = document.createElement("div");
+            widget.className = "widget";
 
-                <div class="widget">
 
-                    <div class="toolbar">
+            /* =====================================================
+               TOOLBAR
+            ===================================================== */
 
-                        <div class="toolbar-spacer"></div>
+            const toolbar = document.createElement("div");
+            toolbar.className = "toolbar";
 
-                        <button
-                            class="action-btn"
-                            id="addBtn">
-                            Add Row
-                        </button>
-
-                        <button
-                            class="action-btn"
-                            id="copyBtn">
-                            Copy
-                        </button>
-
-                        <button
-                            class="action-btn delete hidden"
-                            id="deleteBtn">
-                            Delete Selected
-                        </button>
-
-                        <button
-                            class="action-btn"
-                            id="validateBtn">
-                            Validate
-                        </button>
-
-                        <button
-                            class="action-btn primary"
-                            id="approvalBtn">
-                            Send for Approval
-                        </button>
-
-                        <button
-                            class="action-btn"
-                            id="clearBtn">
-                            Clear
-                        </button>
-
-                    </div>
-
-                    <div class="table-container" id="tableContainer">
-                        <table class="table">
-
-                            <colgroup>
-                                <col style="width:70px">
-                                ${this.fields.map(
-                                    field =>
-                                        `<col style="width:${field.width}px">`
-                                ).join("")}
-                            </colgroup>
-
-                            <thead>
-                                <tr>
-
-                                    <th>
-                                        <div class="check-wrap">
-                                            <input
-                                                type="checkbox"
-                                                class="check"
-                                                id="selectAll">
-                                        </div>
-                                    </th>
-
-                                    ${this.fields.map(
-                                        field =>
-                                            `<th>${field.label}</th>`
-                                    ).join("")}
-
-                                </tr>
-                            </thead>
-
-                            <tbody id="tbody"></tbody>
-
-                        </table>
-                    </div>
-
-                    <div class="footer">
-
-                        <div class="footer-item">
-                            Total Rows:
-                            <span
-                                class="footer-value"
-                                id="totalRows">
-                                0
-                            </span>
-                        </div>
-
-                        <div class="footer-separator"></div>
-
-                        <div class="footer-item">
-                            Selected Rows:
-                            <span
-                                class="footer-value"
-                                id="selectedRows">
-                                0
-                            </span>
-                        </div>
-
-                        <div class="footer-separator"></div>
-
-                        <div class="footer-item">
-                            Validation:
-                            <span
-                                class="footer-value"
-                                id="validationStatus">
-                                -
-                            </span>
-                        </div>
-
-                        <div class="footer-separator"></div>
-
-                        <div class="footer-item">
-                            Error Rows:
-                            <span
-                                class="footer-value"
-                                id="errorRows">
-                                0
-                            </span>
-                        </div>
-
-                    </div>
-
-                </div>
-            `;
-
-            this.cacheElements();
-            this.renderRows();
-            this.bindToolbar();
-            this.updateStatus();
-        }
-
-        cacheElements() {
-
-            this.tbody =
-                this.shadowRoot.querySelector("#tbody");
-
-            this.selectAll =
-                this.shadowRoot.querySelector("#selectAll");
-
-            this.deleteBtn =
-                this.shadowRoot.querySelector("#deleteBtn");
-
-            this.totalRows =
-                this.shadowRoot.querySelector("#totalRows");
-
-            this.selectedRows =
-                this.shadowRoot.querySelector("#selectedRows");
-
-            this.validationStatus =
-                this.shadowRoot.querySelector("#validationStatus");
-
-            this.errorRows =
-                this.shadowRoot.querySelector("#errorRows");
-        }
-
-        /* ============================================================
-           ROW RENDERING
-        ============================================================ */
-
-        renderRows() {
-
-            this.tbody.innerHTML = "";
-
-            this.rows.forEach(
-                (row, rowIndex) => {
-
-                    const tr =
-                        document.createElement("tr");
-
-                    if (row.selected) {
-                        tr.classList.add("selected");
-                    }
-
-                    if (row.error) {
-                        tr.classList.add("error");
-                    }
-
-                    if (
-                        row.valid === true &&
-                        !row.error
-                    ) {
-                        tr.classList.add("valid");
-                    }
-
-                    /* Selection cell */
-
-                    const selectTd =
-                        document.createElement("td");
-
-                    selectTd.innerHTML = `
-                        <div class="check-wrap">
-                            <input
-                                type="checkbox"
-                                class="check row-check"
-                                ${row.selected ? "checked" : ""}
-                            >
-                        </div>
-                    `;
-
-                    const rowCheck =
-                        selectTd.querySelector(".row-check");
-
-                    rowCheck.addEventListener(
-                        "change",
-                        () => {
-
-                            row.selected =
-                                rowCheck.checked;
-
-                            this.updateRowSelectionClass(
-                                tr,
-                                row
-                            );
-
-                            this.updateStatus();
-
-                            this.fireEvent(
-                                "onSelectionChange",
-                                {
-                                    rowIndex: rowIndex,
-                                    selected: row.selected
-                                }
-                            );
-                        }
-                    );
-
-                    tr.appendChild(selectTd);
-
-                    /* Data cells */
-
-                    this.fields.forEach(
-                        field => {
-
-                            const td =
-                                document.createElement("td");
-
-                            this.renderField(
-                                td,
-                                row,
-                                rowIndex,
-                                field
-                            );
-
-                            tr.appendChild(td);
-                        }
-                    );
-
-                    this.tbody.appendChild(tr);
-                }
+            const addButton = this.createButton(
+                "Add Row",
+                "action-btn",
+                () => this.addRow()
             );
 
-            this.updateSelectAllState();
-            this.updateStatus();
-        }
-
-        updateRowSelectionClass(tr, row) {
-
-            tr.classList.toggle(
-                "selected",
-                row.selected
+            const deleteButton = this.createButton(
+                "Delete Selected",
+                "action-btn danger hidden",
+                () => this.deleteSelected()
             );
-        }
 
-        /* ============================================================
-           FIELD RENDERING
-        ============================================================ */
+            deleteButton.id = "deleteButton";
 
-        renderField(
-            td,
-            row,
-            rowIndex,
-            field
-        ) {
+            const validateButton = this.createButton(
+                "Validate",
+                "action-btn",
+                () => this.validate()
+            );
 
-            const value =
-                row[field.key] || "";
+            const clearButton = this.createButton(
+                "Clear",
+                "action-btn",
+                () => this.clearSelected()
+            );
 
-            /* SELECT */
+            toolbar.appendChild(addButton);
+            toolbar.appendChild(deleteButton);
+            toolbar.appendChild(validateButton);
+            toolbar.appendChild(clearButton);
 
-            if (field.type === "select") {
 
-                const cell =
-                    document.createElement("div");
+            /* =====================================================
+               TABLE
+            ===================================================== */
 
-                cell.className =
-                    "select-cell";
+            const tableWrapper = document.createElement("div");
+            tableWrapper.className = "table-wrapper";
 
-                const valueElement =
-                    document.createElement("span");
+            const table = document.createElement("table");
 
-                valueElement.className =
-                    "select-value";
+            const colgroup = document.createElement("colgroup");
 
-                if (
-                    !value ||
-                    value === "Select"
-                ) {
-                    valueElement.classList.add(
-                        "placeholder"
-                    );
-                }
+            const selectCol = document.createElement("col");
+            selectCol.style.width = "54px";
+            colgroup.appendChild(selectCol);
 
-                valueElement.textContent =
-                    value || "Select";
+            this.fields.forEach(field => {
+                const col = document.createElement("col");
+                col.style.width = field.width + "px";
+                colgroup.appendChild(col);
+            });
 
-                const arrow =
-                    document.createElement("span");
+            table.appendChild(colgroup);
 
-                arrow.className =
-                    "select-arrow";
 
-                arrow.textContent = "⌄";
+            /* =====================================================
+               HEADER
+            ===================================================== */
 
-                cell.appendChild(valueElement);
-                cell.appendChild(arrow);
+            const thead = document.createElement("thead");
 
-                cell.addEventListener(
-                    "click",
-                    event => {
+            const headerRow = document.createElement("tr");
 
-                        event.stopPropagation();
+            const selectionHeader = document.createElement("th");
+            selectionHeader.className = "selection-cell";
 
-                        this.openDropdown(
-                            cell,
-                            rowIndex,
-                            field
-                        );
-                    }
+            const selectAll = document.createElement("input");
+            selectAll.type = "checkbox";
+            selectAll.id = "selectAll";
+
+            selectAll.addEventListener("change", () => {
+
+                this.rows.forEach(row => {
+                    row._selected = selectAll.checked;
+                });
+
+                this.lastEvent = "selectAll";
+
+                this.dispatchEvent(
+                    new CustomEvent("onSelectionChange", {
+                        detail: {
+                            selectedRows: this.getSelectedIndexes()
+                        }
+                    })
                 );
 
-                td.appendChild(cell);
+                this.render();
+            });
 
-                return;
+            selectionHeader.appendChild(selectAll);
+            headerRow.appendChild(selectionHeader);
+
+
+            this.fields.forEach(field => {
+
+                const th = document.createElement("th");
+
+                th.textContent = field.label;
+
+                headerRow.appendChild(th);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+
+            /* =====================================================
+               BODY
+            ===================================================== */
+
+            const tbody = document.createElement("tbody");
+
+            this.rows.forEach((row, rowIndex) => {
+
+                row.__index = rowIndex;
+
+                const tr = document.createElement("tr");
+
+                if (row._selected) {
+                    tr.classList.add("selected");
+                }
+
+                if (row._valid === false) {
+                    tr.classList.add("invalid");
+                }
+
+
+                /* Row checkbox */
+
+                const selectionCell = document.createElement("td");
+                selectionCell.className = "selection-cell";
+
+                const checkbox = document.createElement("input");
+
+                checkbox.type = "checkbox";
+                checkbox.checked = !!row._selected;
+
+                checkbox.addEventListener("change", () => {
+
+                    row._selected = checkbox.checked;
+
+                    this.lastEvent = "selectionChange";
+
+                    this.dispatchEvent(
+                        new CustomEvent("onSelectionChange", {
+                            detail: {
+                                rowIndex: rowIndex,
+                                selected: row._selected,
+                                selectedRows: this.getSelectedIndexes()
+                            }
+                        })
+                    );
+
+                    this.render();
+                });
+
+                selectionCell.appendChild(checkbox);
+                tr.appendChild(selectionCell);
+
+
+                /* Data cells */
+
+                this.fields.forEach(field => {
+
+                    const td = document.createElement("td");
+
+                    const element = this.createField(
+                        row,
+                        rowIndex,
+                        field
+                    );
+
+                    td.appendChild(element);
+
+                    tr.appendChild(td);
+                });
+
+                tbody.appendChild(tr);
+            });
+
+            table.appendChild(tbody);
+
+            tableWrapper.appendChild(table);
+
+
+            /* =====================================================
+               FOOTER
+            ===================================================== */
+
+            const footer = document.createElement("div");
+            footer.className = "footer";
+
+            const total = document.createElement("span");
+
+            total.innerHTML =
+                "Total Rows: <strong>" +
+                this.rows.length +
+                "</strong>";
+
+            const selected = document.createElement("span");
+
+            selected.innerHTML =
+                "Selected Rows: <strong>" +
+                this.getSelectedIndexes().length +
+                "</strong>";
+
+            const validation = document.createElement("span");
+
+            const errorRows = this.rows.filter(
+                row => row._valid === false
+            ).length;
+
+            if (errorRows > 0) {
+
+                validation.className = "status-invalid";
+
+                validation.innerHTML =
+                    "Validation: Error";
+
+            } else {
+
+                validation.className = "status-valid";
+
+                validation.innerHTML =
+                    "Validation: true";
             }
 
-            /* DATE */
+            const errors = document.createElement("span");
+
+            errors.innerHTML =
+                "Error Rows: <strong>" +
+                errorRows +
+                "</strong>";
+
+            footer.appendChild(total);
+            footer.appendChild(selected);
+            footer.appendChild(validation);
+            footer.appendChild(errors);
+
+
+            widget.appendChild(toolbar);
+            widget.appendChild(tableWrapper);
+            widget.appendChild(footer);
+
+            this.shadowRoot.appendChild(widget);
+
+
+            /*
+             * Update delete button visibility.
+             */
+            this.updateDeleteButton();
+
+
+            /*
+             * Recalculate select-all state.
+             */
+            const selectedCount =
+                this.getSelectedIndexes().length;
+
+            selectAll.checked =
+                this.rows.length > 0 &&
+                selectedCount === this.rows.length;
+
+            selectAll.indeterminate =
+                selectedCount > 0 &&
+                selectedCount < this.rows.length;
+        }
+
+
+        /* =========================================================
+           BUTTON CREATOR
+        ========================================================= */
+
+        createButton(text, className, handler) {
+
+            const button = document.createElement("button");
+
+            button.type = "button";
+
+            button.className = className;
+
+            button.textContent = text;
+
+            button.addEventListener("click", handler);
+
+            return button;
+        }
+
+
+        /* =========================================================
+           FIELD CREATOR
+        ========================================================= */
+
+        createField(row, rowIndex, field) {
+
+            if (field.type === "dropdown") {
+
+                return this.createDropdown(
+                    row,
+                    rowIndex,
+                    field
+                );
+            }
+
 
             if (field.type === "date") {
 
@@ -1251,1021 +1118,785 @@
 
                 input.type = "date";
 
-                input.className =
-                    "date-input";
+                input.className = "cell-input";
 
                 input.value =
-                    value;
+                    row[field.key] || "";
 
-                input.addEventListener(
-                    "change",
-                    () => {
+                input.addEventListener("change", () => {
 
-                        row[field.key] =
-                            input.value;
+                    row[field.key] = input.value;
 
-                        row.valid = null;
-                        row.error = false;
+                    this.handleDataChange(
+                        rowIndex,
+                        field.key,
+                        input.value
+                    );
+                });
 
-                        this.dataChanged(
-                            rowIndex,
-                            field.key,
-                            input.value
-                        );
-                    }
-                );
-
-                td.appendChild(input);
-
-                return;
+                return input;
             }
 
-            /* TEXT / READONLY */
+
+            if (field.type === "readonly") {
+
+                const input =
+                    document.createElement("input");
+
+                input.type = "text";
+
+                input.className =
+                    "cell-input readonly-input";
+
+                input.value =
+                    row[field.key] || "";
+
+                input.readOnly = true;
+
+                return input;
+            }
+
 
             const input =
                 document.createElement("input");
 
             input.type = "text";
 
-            input.className =
-                "cell-input";
-
-            if (field.type === "readonly") {
-
-                input.classList.add(
-                    "readonly"
-                );
-
-                input.readOnly = true;
-            }
+            input.className = "cell-input";
 
             input.value =
-                value;
+                row[field.key] || "";
 
-            if (field.key === "positionTitle") {
+            input.placeholder = "";
 
-                input.placeholder =
-                    "Enter position title";
-            }
+            input.addEventListener("input", () => {
 
-            if (field.key === "comment") {
+                row[field.key] =
+                    input.value;
 
-                input.placeholder =
-                    "Enter comment";
-            }
+                this.handleDataChange(
+                    rowIndex,
+                    field.key,
+                    input.value
+                );
+            });
 
-            input.addEventListener(
-                "input",
-                () => {
-
-                    row[field.key] =
-                        input.value;
-
-                    row.valid = null;
-                    row.error = false;
-
-                    this.dataChanged(
-                        rowIndex,
-                        field.key,
-                        input.value
-                    );
-                }
-            );
-
-            td.appendChild(input);
+            return input;
         }
 
-        /* ============================================================
-           DROPDOWN
-        ============================================================ */
 
-        openDropdown(
-            cell,
-            rowIndex,
-            field
-        ) {
+        /* =========================================================
+           SEARCHABLE DROPDOWN
+        ========================================================= */
 
-            this.closeDropdown();
+        createDropdown(row, rowIndex, field) {
 
-            this.dropdownRow =
-                rowIndex;
-
-            this.dropdownField =
-                field.key;
-
-            cell.classList.add("active");
-
-            const dropdown =
+            const wrapper =
                 document.createElement("div");
 
-            dropdown.className =
-                "dropdown";
+            wrapper.className = "dropdown";
 
-            const searchArea =
+
+            const trigger =
+                document.createElement("button");
+
+            trigger.type = "button";
+
+            trigger.className =
+                "dropdown-trigger";
+
+            trigger.textContent =
+                row[field.key] || "Select";
+
+
+            const menu =
                 document.createElement("div");
 
-            searchArea.className =
+            menu.className =
+                "dropdown-menu";
+
+
+            const searchContainer =
+                document.createElement("div");
+
+            searchContainer.className =
+                "dropdown-search-container";
+
+
+            const search =
+                document.createElement("input");
+
+            search.type = "text";
+
+            search.className =
                 "dropdown-search";
 
-            searchArea.innerHTML = `
-                <div class="search-wrap">
+            search.placeholder =
+                "Search...";
 
-                    <span class="search-icon">
-                        ⌕
-                    </span>
 
-                    <input
-                        class="search-input"
-                        type="text"
-                        placeholder="Search..."
-                    >
+            searchContainer.appendChild(search);
 
-                    <button
-                        class="search-clear"
-                        type="button">
-                        ×
-                    </button>
-
-                </div>
-            `;
-
-            dropdown.appendChild(searchArea);
 
             const optionsContainer =
                 document.createElement("div");
 
             optionsContainer.className =
-                "options";
+                "dropdown-options";
 
-            dropdown.appendChild(
-                optionsContainer
-            );
 
-            document.body.appendChild(
-                dropdown
-            );
-
-            this.dropdown =
-                dropdown;
-
-            this.positionDropdown(
-                cell,
-                dropdown
-            );
-
-            const searchInput =
-                dropdown.querySelector(
-                    ".search-input"
+            const options =
+                this.getOptions(
+                    rowIndex,
+                    field.key
                 );
 
-            const clearSearch =
-                dropdown.querySelector(
-                    ".search-clear"
-                );
 
             const renderOptions =
-                () => {
-
-                    const query =
-                        searchInput.value
-                            .trim()
-                            .toLowerCase();
+                (filter = "") => {
 
                     optionsContainer.innerHTML = "";
 
-                    const options =
-                        field.options.filter(
-                            option => {
+                    const searchText =
+                        filter.toLowerCase().trim();
 
-                                if (
-                                    !query
-                                ) {
-                                    return true;
-                                }
+                    const filtered =
+                        options.filter(option => {
 
-                                return option
-                                    .toLowerCase()
-                                    .includes(query);
-                            }
-                        );
+                            return String(option)
+                                .toLowerCase()
+                                .includes(searchText);
+                        });
 
-                    if (!options.length) {
 
-                        optionsContainer.innerHTML = `
-                            <div class="no-results">
-                                No results found
-                            </div>
-                        `;
+                    if (!filtered.length) {
+
+                        const empty =
+                            document.createElement("div");
+
+                        empty.className =
+                            "no-results";
+
+                        empty.textContent =
+                            "No results found";
+
+                        optionsContainer.appendChild(empty);
 
                         return;
                     }
 
-                    options.forEach(
-                        option => {
 
-                            const item =
-                                document.createElement(
-                                    "div"
-                                );
+                    filtered.forEach(option => {
 
-                            item.className =
-                                "option";
+                        const item =
+                            document.createElement("div");
 
-                            if (
-                                option ===
-                                this.rows[rowIndex][field.key]
-                            ) {
-                                item.classList.add(
-                                    "selected"
-                                );
-                            }
+                        item.className =
+                            "dropdown-option";
 
-                            item.textContent =
-                                option;
 
-                            item.addEventListener(
-                                "click",
-                                event => {
-
-                                    event.stopPropagation();
-
-                                    this.rows[rowIndex][
-                                        field.key
-                                    ] =
-                                        option === "Select"
-                                            ? ""
-                                            : option;
-
-                                    this.rows[rowIndex]
-                                        .valid = null;
-
-                                    this.rows[rowIndex]
-                                        .error = false;
-
-                                    this.closeDropdown();
-
-                                    this.renderRows();
-
-                                    this.dataChanged(
-                                        rowIndex,
-                                        field.key,
-                                        this.rows[rowIndex][
-                                            field.key
-                                        ]
-                                    );
-                                }
-                            );
-
-                            optionsContainer.appendChild(
-                                item
-                            );
+                        if (
+                            String(row[field.key]) ===
+                            String(option)
+                        ) {
+                            item.classList.add("selected");
                         }
-                    );
+
+
+                        item.textContent =
+                            option;
+
+
+                        item.addEventListener(
+                            "mousedown",
+                            event => {
+
+                                event.preventDefault();
+
+                                row[field.key] =
+                                    option;
+
+                                this.handleDataChange(
+                                    rowIndex,
+                                    field.key,
+                                    option
+                                );
+
+                                closeDropdown();
+                            }
+                        );
+
+
+                        optionsContainer.appendChild(item);
+                    });
                 };
 
-            searchInput.addEventListener(
-                "input",
-                renderOptions
-            );
 
-            clearSearch.addEventListener(
-                "click",
-                () => {
+            const closeDropdown = () => {
 
-                    searchInput.value = "";
+                menu.classList.remove("open");
 
-                    searchInput.focus();
+                wrapper.classList.remove("open");
 
-                    renderOptions();
-                }
-            );
-
-            renderOptions();
-
-            setTimeout(
-                () => searchInput.focus(),
-                0
-            );
-
-            this.dropdownOutsideHandler =
-                event => {
-
-                    if (
-                        !dropdown.contains(
-                            event.target
-                        ) &&
-                        !cell.contains(
-                            event.target
-                        )
-                    ) {
-                        this.closeDropdown();
-                    }
-                };
-
-            document.addEventListener(
-                "mousedown",
-                this.dropdownOutsideHandler
-            );
-        }
-
-        positionDropdown(
-            cell,
-            dropdown
-        ) {
-
-            const rect =
-                cell.getBoundingClientRect();
-
-            const dropdownWidth =
-                310;
-
-            let left =
-                rect.left;
-
-            let top =
-                rect.bottom + 4;
-
-            if (
-                left + dropdownWidth >
-                window.innerWidth - 10
-            ) {
-
-                left =
-                    window.innerWidth -
-                    dropdownWidth -
-                    10;
-            }
-
-            const estimatedHeight =
-                360;
-
-            if (
-                top + estimatedHeight >
-                window.innerHeight - 10
-            ) {
-
-                top =
-                    rect.top -
-                    estimatedHeight -
-                    4;
-            }
-
-            if (left < 10) {
-                left = 10;
-            }
-
-            if (top < 10) {
-                top = 10;
-            }
-
-            dropdown.style.left =
-                `${left}px`;
-
-            dropdown.style.top =
-                `${top}px`;
-        }
-
-        closeDropdown() {
-
-            if (!this.dropdown) {
-                return;
-            }
-
-            this.dropdown.remove();
-
-            this.dropdown =
-                null;
-
-            if (
-                this.dropdownOutsideHandler
-            ) {
+                menu.remove();
 
                 document.removeEventListener(
                     "mousedown",
-                    this.dropdownOutsideHandler
+                    outsideClick
                 );
+            };
 
-                this.dropdownOutsideHandler =
-                    null;
-            }
 
-            this.renderRows();
-        }
+            const outsideClick = event => {
 
-        /* ============================================================
-           TOOLBAR
-        ============================================================ */
-
-        bindToolbar() {
-
-            this.shadowRoot
-                .querySelector("#addBtn")
-                .addEventListener(
-                    "click",
-                    () => this.addRow()
-                );
-
-            this.shadowRoot
-                .querySelector("#copyBtn")
-                .addEventListener(
-                    "click",
-                    () => this.copySelected()
-                );
-
-            this.shadowRoot
-                .querySelector("#deleteBtn")
-                .addEventListener(
-                    "click",
-                    () => this.deleteSelected()
-                );
-
-            this.shadowRoot
-                .querySelector("#validateBtn")
-                .addEventListener(
-                    "click",
-                    () => this.validate()
-                );
-
-            this.shadowRoot
-                .querySelector("#approvalBtn")
-                .addEventListener(
-                    "click",
-                    () => this.sendForApproval()
-                );
-
-            this.shadowRoot
-                .querySelector("#clearBtn")
-                .addEventListener(
-                    "click",
-                    () => this.clearSelected()
-                );
-
-            this.selectAll.addEventListener(
-                "change",
-                () => {
-
-                    const checked =
-                        this.selectAll.checked;
-
-                    this.rows.forEach(
-                        row => {
-                            row.selected =
-                                checked;
-                        }
-                    );
-
-                    this.renderRows();
-
-                    this.fireEvent(
-                        "onSelectionChange",
-                        {
-                            allSelected:
-                                checked
-                        }
-                    );
+                if (
+                    !wrapper.contains(event.target) &&
+                    !menu.contains(event.target)
+                ) {
+                    closeDropdown();
                 }
-            );
-        }
+            };
 
-        /* ============================================================
-           ADD ROW
-        ============================================================ */
 
-        addRow() {
+            const positionMenu = () => {
 
-            this.closeDropdown();
+                const rect =
+                    trigger.getBoundingClientRect();
 
-            this.rows.push(
-                this.createEmptyRow()
-            );
+                menu.style.left =
+                    rect.left + "px";
 
-            this.renderRows();
+                menu.style.top =
+                    (rect.bottom + 4) + "px";
 
-            this.fireEvent(
-                "onRowAdd",
-                {
-                    rowIndex:
-                        this.rows.length - 1
-                }
-            );
+                menu.style.width =
+                    Math.max(
+                        rect.width,
+                        270
+                    ) + "px";
+            };
 
-            this.fireEvent(
-                "onDataChange",
-                {
-                    action: "addRow",
-                    data: this.getDataObject()
-                }
-            );
-        }
 
-        /* ============================================================
-           COPY
-        ============================================================ */
+            trigger.addEventListener(
+                "click",
+                event => {
 
-        copySelected() {
+                    event.stopPropagation();
 
-            const selected =
-                this.rows.filter(
-                    row => row.selected
-                );
 
-            if (!selected.length) {
-                return;
-            }
+                    /*
+                     * Close all dropdowns currently
+                     * open in the widget.
+                     */
+                    this.shadowRoot
+                        .querySelectorAll(
+                            ".dropdown-menu.open"
+                        )
+                        .forEach(existing => {
 
-            selected.forEach(
-                row => {
+                            existing.classList.remove(
+                                "open"
+                            );
 
-                    const copy =
-                        JSON.parse(
-                            JSON.stringify(row)
-                        );
+                            existing.remove();
+                        });
 
-                    copy.selected = false;
-                    copy.valid = null;
-                    copy.error = false;
 
-                    this.rows.push(copy);
-                }
-            );
+                    if (menu.classList.contains("open")) {
 
-            this.rows.forEach(
-                row => {
-                    row.selected = false;
-                }
-            );
+                        closeDropdown();
 
-            this.renderRows();
-
-            this.fireEvent(
-                "onDataChange",
-                {
-                    action: "copy",
-                    data: this.getDataObject()
-                }
-            );
-        }
-
-        /* ============================================================
-           DELETE
-        ============================================================ */
-
-        deleteSelected() {
-
-            const selectedIndexes = [];
-
-            this.rows.forEach(
-                (row, index) => {
-
-                    if (row.selected) {
-                        selectedIndexes.push(index);
-                    }
-                }
-            );
-
-            if (!selectedIndexes.length) {
-                return;
-            }
-
-            /*
-             * Keep at least one row in the widget.
-             */
-            this.rows =
-                this.rows.filter(
-                    row => !row.selected
-                );
-
-            if (!this.rows.length) {
-
-                this.rows.push(
-                    this.createEmptyRow()
-                );
-            }
-
-            this.renderRows();
-
-            this.fireEvent(
-                "onRowDelete",
-                {
-                    rowIndexes:
-                        selectedIndexes
-                }
-            );
-
-            this.fireEvent(
-                "onDataChange",
-                {
-                    action: "delete",
-                    data: this.getDataObject()
-                }
-            );
-        }
-
-        /* ============================================================
-           CLEAR
-        ============================================================ */
-
-        clearSelected() {
-
-            let cleared = [];
-
-            this.rows.forEach(
-                (row, index) => {
-
-                    if (!row.selected) {
                         return;
                     }
 
-                    const newRow =
-                        this.createEmptyRow();
 
-                    /*
-                     * Clear all business fields.
-                     *
-                     * The row itself remains.
-                     */
+                    document.body.appendChild(menu);
 
-                    Object.keys(newRow).forEach(
-                        key => {
+                    menu.classList.add("open");
 
-                            if (
-                                key === "selected" ||
-                                key === "valid" ||
-                                key === "error"
-                            ) {
-                                return;
-                            }
+                    wrapper.classList.add("open");
 
-                            row[key] =
-                                newRow[key];
-                        }
+                    positionMenu();
+
+                    renderOptions();
+
+                    search.value = "";
+
+                    setTimeout(() => {
+                        search.focus();
+                    }, 0);
+
+
+                    document.addEventListener(
+                        "mousedown",
+                        outsideClick
                     );
-
-                    /*
-                     * IMPORTANT:
-                     * Automatically untick
-                     * after clearing.
-                     */
-
-                    row.selected = false;
-                    row.valid = null;
-                    row.error = false;
-
-                    cleared.push(index);
                 }
             );
 
-            if (!cleared.length) {
-                return;
+
+            search.addEventListener(
+                "input",
+                () => {
+
+                    renderOptions(
+                        search.value
+                    );
+                }
+            );
+
+
+            /*
+             * Reposition while scrolling/resizing.
+             */
+            const reposition = () => {
+
+                if (menu.classList.contains("open")) {
+                    positionMenu();
+                }
+            };
+
+            window.addEventListener(
+                "resize",
+                reposition
+            );
+
+            this.shadowRoot
+                .querySelector(".table-wrapper")
+                ?.addEventListener(
+                    "scroll",
+                    reposition
+                );
+
+
+            /*
+             * The menu is temporarily appended to
+             * document.body when opened.
+             */
+            menu.appendChild(searchContainer);
+
+            menu.appendChild(optionsContainer);
+
+
+            wrapper.appendChild(trigger);
+
+            return wrapper;
+        }
+
+
+        /* =========================================================
+           DROPDOWN OPTIONS
+        ========================================================= */
+
+        getOptions(rowIndex, fieldName) {
+
+            if (
+                this.rowOptions[rowIndex] &&
+                Array.isArray(
+                    this.rowOptions[rowIndex][fieldName]
+                )
+            ) {
+                return this.rowOptions[rowIndex][fieldName];
             }
 
-            this.renderRows();
 
-            this.fireEvent(
-                "onClear",
-                {
-                    rowIndexes:
-                        cleared
-                }
-            );
-
-            this.fireEvent(
-                "onDataChange",
-                {
-                    action: "clear",
-                    rowIndexes:
-                        cleared,
-                    data:
-                        this.getDataObject()
-                }
-            );
-        }
-
-        /* ============================================================
-           VALIDATION
-        ============================================================ */
-
-        validate() {
-
-            let errorCount = 0;
-
-            this.rows.forEach(
-                row => {
-
-                    row.error = false;
-                    row.valid = true;
-
-                    /*
-                     * Position Title is mandatory.
-                     */
-
-                    if (
-                        !row.positionTitle ||
-                        !row.positionTitle.trim()
-                    ) {
-
-                        row.error = true;
-                        row.valid = false;
-                    }
-
-                    /*
-                     * Company Code is mandatory.
-                     */
-
-                    if (
-                        !row.companyCode
-                    ) {
-
-                        row.error = true;
-                        row.valid = false;
-                    }
-
-                    if (row.error) {
-                        errorCount++;
-                    }
-                }
-            );
-
-            this.renderRows();
-
-            this.fireEvent(
-                "onValidate",
-                {
-                    valid:
-                        errorCount === 0,
-                    errorRows:
-                        errorCount,
-                    data:
-                        this.getDataObject()
-                }
-            );
-
-            this.fireEvent(
-                "onDataChange",
-                {
-                    action: "validate",
-                    valid:
-                        errorCount === 0,
-                    data:
-                        this.getDataObject()
-                }
-            );
-
-            return errorCount === 0;
-        }
-
-        /* ============================================================
-           SEND FOR APPROVAL
-        ============================================================ */
-
-        sendForApproval() {
-
-            const isValid =
-                this.validate();
-
-            if (!isValid) {
-                return;
+            if (
+                Array.isArray(
+                    this.rowOptions[fieldName]
+                )
+            ) {
+                return this.rowOptions[fieldName];
             }
 
-            this.fireEvent(
-                "onSendForApproval",
-                {
-                    data:
-                        this.getDataObject()
-                }
+
+            return (
+                this.defaultOptions[fieldName] ||
+                []
             );
         }
 
-        /* ============================================================
+
+        /* =========================================================
            DATA CHANGE
-        ============================================================ */
+        ========================================================= */
 
-        dataChanged(
+        handleDataChange(
             rowIndex,
             fieldName,
             value
         ) {
 
-            this.lastEvent =
-                "onFieldChange";
+            this.rows[rowIndex][fieldName] =
+                value;
 
-            this.fireEvent(
-                "onFieldChange",
-                {
-                    rowIndex:
-                        rowIndex,
-                    fieldName:
-                        fieldName,
-                    value:
-                        value
-                }
-            );
-
-            this.fireEvent(
-                "onDataChange",
-                {
-                    rowIndex:
-                        rowIndex,
-                    fieldName:
-                        fieldName,
-                    value:
-                        value,
-                    data:
-                        this.getDataObject()
-                }
-            );
-
-            this.updateStatus();
-        }
-
-        /* ============================================================
-           STATUS
-        ============================================================ */
-
-        updateStatus() {
-
-            const selected =
-                this.rows.filter(
-                    row => row.selected
-                ).length;
-
-            const errors =
-                this.rows.filter(
-                    row => row.error
-                ).length;
-
-            this.totalRows.textContent =
-                this.rows.length;
-
-            this.selectedRows.textContent =
-                selected;
-
-            this.errorRows.textContent =
-                errors;
-
-            if (errors > 0) {
-
-                this.validationStatus.textContent =
-                    "false";
-
-                this.validationStatus.className =
-                    "footer-value status-invalid";
-
-            } else {
-
-                const hasValidated =
-                    this.rows.some(
-                        row =>
-                            row.valid !== null
-                    );
-
-                if (hasValidated) {
-
-                    this.validationStatus.textContent =
-                        "true";
-
-                    this.validationStatus.className =
-                        "footer-value status-valid";
-
-                } else {
-
-                    this.validationStatus.textContent =
-                        "-";
-
-                    this.validationStatus.className =
-                        "footer-value";
-                }
-            }
-
-            /*
-             * Delete button only appears
-             * when something is selected.
-             */
-
-            if (selected > 0) {
-
-                this.deleteBtn.classList.remove(
-                    "hidden"
-                );
-
-            } else {
-
-                this.deleteBtn.classList.add(
-                    "hidden"
-                );
-            }
-
-            this.updateSelectAllState();
-        }
-
-        updateSelectAllState() {
-
-            if (!this.rows.length) {
-
-                this.selectAll.checked =
-                    false;
-
-                this.selectAll.indeterminate =
-                    false;
-
-                return;
-            }
-
-            const selected =
-                this.rows.filter(
-                    row => row.selected
-                ).length;
-
-            this.selectAll.checked =
-                selected === this.rows.length;
-
-            this.selectAll.indeterminate =
-                selected > 0 &&
-                selected < this.rows.length;
-        }
-
-        /* ============================================================
-           EVENTS
-        ============================================================ */
-
-        fireEvent(
-            eventName,
-            detail
-        ) {
+            this.rows[rowIndex]._valid =
+                true;
 
             this.lastEvent =
-                eventName;
+                "dataChange";
+
 
             this.dispatchEvent(
                 new CustomEvent(
-                    eventName,
+                    "onDataChange",
                     {
-                        bubbles: true,
-                        composed: true,
-                        detail: detail
+                        detail: {
+                            rowIndex: rowIndex,
+                            fieldName: fieldName,
+                            value: value,
+                            data: this.getData()
+                        }
                     }
                 )
             );
 
+
             /*
-             * Generic event.
-             *
-             * Useful when SAC script
-             * is listening to onEvent.
+             * Also expose a generic event
+             * for SAC scripting.
              */
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onEvent",
+                    {
+                        detail: {
+                            type: "dataChange",
+                            rowIndex: rowIndex,
+                            fieldName: fieldName,
+                            value: value
+                        }
+                    }
+                )
+            );
+
+
+            this.render();
+        }
+
+
+        /* =========================================================
+           ADD ROW
+        ========================================================= */
+
+        addRow(triggerEvent = true) {
+
+            const row =
+                this.createEmptyRow();
+
+            this.rows.push(row);
+
+            this.lastEvent =
+                "addRow";
+
+
+            if (triggerEvent) {
+
+                this.dispatchEvent(
+                    new CustomEvent(
+                        "onEvent",
+                        {
+                            detail: {
+                                type: "addRow",
+                                rowIndex:
+                                    this.rows.length - 1
+                            }
+                        }
+                    )
+                );
+            }
+
+            this.render();
+        }
+
+
+        /* =========================================================
+           DELETE SELECTED
+        ========================================================= */
+
+        deleteSelected() {
+
+            const selectedIndexes =
+                this.getSelectedIndexes();
+
+            if (!selectedIndexes.length) {
+                return;
+            }
+
+
+            /*
+             * Delete only selected rows.
+             */
+            this.rows =
+                this.rows.filter(
+                    row => !row._selected
+                );
+
+
+            /*
+             * Never allow a completely empty widget.
+             */
+            if (!this.rows.length) {
+                this.addRow(false);
+            }
+
+
+            this.lastEvent =
+                "deleteSelected";
+
 
             this.dispatchEvent(
                 new CustomEvent(
                     "onEvent",
                     {
-                        bubbles: true,
-                        composed: true,
                         detail: {
-                            event:
-                                eventName,
-                            data:
-                                detail
+                            type: "deleteSelected",
+                            rows: selectedIndexes
                         }
                     }
                 )
             );
+
+
+            this.render();
         }
 
-        /* ============================================================
-           PUBLIC SAC METHODS
-        ============================================================ */
 
-        getLastEvent() {
+        /* =========================================================
+           CLEAR SELECTED ROW DATA
+        ========================================================= */
 
-            return this.lastEvent || "";
-        }
+        clearSelected() {
 
-        getDataObject() {
+            const selectedIndexes =
+                this.getSelectedIndexes();
 
-            return this.rows.map(
-                row => {
+            if (!selectedIndexes.length) {
+                return;
+            }
 
-                    const output = {};
 
-                    this.fields.forEach(
-                        field => {
+            selectedIndexes.forEach(index => {
 
-                            output[field.key] =
-                                row[field.key] || "";
+                const row =
+                    this.rows[index];
+
+                this.fields.forEach(field => {
+
+                    /*
+                     * Clear all actual data.
+                     */
+                    row[field.key] = "";
+                });
+
+
+                /*
+                 * IMPORTANT:
+                 * Keep the row.
+                 * Only clear its data.
+                 */
+                row._selected = false;
+
+                row._valid = true;
+            });
+
+
+            this.lastEvent =
+                "clearSelected";
+
+
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onClear",
+                    {
+                        detail: {
+                            rows: selectedIndexes,
+                            data: this.getData()
                         }
-                    );
+                    }
+                )
+            );
 
-                    return output;
+
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onEvent",
+                    {
+                        detail: {
+                            type: "clearSelected",
+                            rows: selectedIndexes
+                        }
+                    }
+                )
+            );
+
+
+            this.render();
+        }
+
+
+        /* =========================================================
+           VALIDATION
+        ========================================================= */
+
+        validate() {
+
+            let errorCount = 0;
+
+            this.rows.forEach(row => {
+
+                let valid = true;
+
+                this.requiredFields.forEach(
+                    fieldName => {
+
+                        if (
+                            !row[fieldName] ||
+                            String(
+                                row[fieldName]
+                            ).trim() === ""
+                        ) {
+                            valid = false;
+                        }
+                    }
+                );
+
+
+                row._valid = valid;
+
+                if (!valid) {
+                    errorCount++;
+                }
+            });
+
+
+            const isValid =
+                errorCount === 0;
+
+
+            this.lastEvent =
+                "validate";
+
+
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onValidate",
+                    {
+                        detail: {
+                            valid: isValid,
+                            errorRows: errorCount,
+                            data: this.getData()
+                        }
+                    }
+                )
+            );
+
+
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onEvent",
+                    {
+                        detail: {
+                            type: "validate",
+                            valid: isValid,
+                            errorRows: errorCount
+                        }
+                    }
+                )
+            );
+
+
+            this.render();
+
+            return isValid;
+        }
+
+
+        /* =========================================================
+           SELECTED ROWS
+        ========================================================= */
+
+        getSelectedIndexes() {
+
+            const indexes = [];
+
+            this.rows.forEach(
+                (row, index) => {
+
+                    if (row._selected) {
+                        indexes.push(index);
+                    }
                 }
             );
+
+            return indexes;
         }
+
+
+        /* =========================================================
+           DELETE BUTTON VISIBILITY
+        ========================================================= */
+
+        updateDeleteButton() {
+
+            const button =
+                this.shadowRoot.getElementById(
+                    "deleteButton"
+                );
+
+            if (!button) {
+                return;
+            }
+
+
+            const selected =
+                this.getSelectedIndexes();
+
+
+            if (selected.length > 0) {
+
+                button.classList.remove(
+                    "hidden"
+                );
+
+            } else {
+
+                button.classList.add(
+                    "hidden"
+                );
+            }
+        }
+
+
+        /* =========================================================
+           PUBLIC METHOD:
+           GET DATA
+        ========================================================= */
 
         getData() {
 
             return JSON.stringify(
-                this.getDataObject()
+                this.rows.map(row => {
+
+                    const cleanRow = {};
+
+                    this.fields.forEach(
+                        field => {
+
+                            cleanRow[field.key] =
+                                row[field.key];
+                        }
+                    );
+
+                    return cleanRow;
+                })
             );
         }
+
+
+        /* =========================================================
+           PUBLIC METHOD:
+           SET DATA
+        ========================================================= */
 
         setData(data) {
 
@@ -2276,58 +1907,45 @@
                         ? JSON.parse(data)
                         : data;
 
-                if (
-                    !Array.isArray(parsed)
-                ) {
+
+                if (!Array.isArray(parsed)) {
                     return;
                 }
 
+
                 this.rows =
-                    parsed.map(
-                        item => {
+                    parsed.map(item => {
 
-                            const row =
-                                this.createEmptyRow();
+                        const row =
+                            this.createEmptyRow();
 
-                            this.fields.forEach(
-                                field => {
+                        this.fields.forEach(
+                            field => {
 
-                                    if (
-                                        Object.prototype
-                                            .hasOwnProperty
-                                            .call(
-                                                item,
-                                                field.key
-                                            )
-                                    ) {
-
-                                        row[field.key] =
-                                            item[field.key];
-                                    }
+                                if (
+                                    item.hasOwnProperty(
+                                        field.key
+                                    )
+                                ) {
+                                    row[field.key] =
+                                        item[field.key];
                                 }
-                            );
+                            }
+                        );
 
-                            return row;
-                        }
-                    );
+                        return row;
+                    });
+
 
                 if (!this.rows.length) {
-
-                    this.rows.push(
-                        this.createEmptyRow()
-                    );
+                    this.addRow(false);
                 }
 
-                this.renderRows();
 
-                this.fireEvent(
-                    "onDataChange",
-                    {
-                        action: "setData",
-                        data:
-                            this.getDataObject()
-                    }
-                );
+                this.lastEvent =
+                    "setData";
+
+                this.render();
 
             } catch (error) {
 
@@ -2337,6 +1955,12 @@
                 );
             }
         }
+
+
+        /* =========================================================
+           PUBLIC METHOD:
+           SET CELL VALUE
+        ========================================================= */
 
         setCellValue(
             rowIndex,
@@ -2351,46 +1975,51 @@
                 return;
             }
 
+
             if (
                 !this.rows[rowIndex]
+                    .hasOwnProperty(fieldName)
             ) {
                 return;
             }
 
-            this.rows[rowIndex][
-                fieldName
-            ] = value;
 
-            this.rows[rowIndex].valid =
-                null;
+            this.rows[rowIndex][fieldName] =
+                value;
 
-            this.rows[rowIndex].error =
-                false;
 
-            this.renderRows();
+            this.lastEvent =
+                "setCellValue";
 
-            this.dataChanged(
-                rowIndex,
-                fieldName,
-                value
+
+            this.dispatchEvent(
+                new CustomEvent(
+                    "onDataChange",
+                    {
+                        detail: {
+                            rowIndex: rowIndex,
+                            fieldName: fieldName,
+                            value: value
+                        }
+                    }
+                )
             );
+
+
+            this.render();
         }
+
+
+        /* =========================================================
+           PUBLIC METHOD:
+           SET DROPDOWN OPTIONS
+        ========================================================= */
 
         setRowOptions(
             rowIndex,
             fieldName,
             options
         ) {
-
-            const field =
-                this.fields.find(
-                    item =>
-                        item.key === fieldName
-                );
-
-            if (!field) {
-                return;
-            }
 
             try {
 
@@ -2399,15 +2028,28 @@
                         ? JSON.parse(options)
                         : options;
 
-                if (
-                    Array.isArray(parsed)
-                ) {
 
-                    field.options =
-                        parsed;
-
-                    this.renderRows();
+                if (!Array.isArray(parsed)) {
+                    return;
                 }
+
+
+                if (
+                    !this.rowOptions[rowIndex]
+                ) {
+                    this.rowOptions[rowIndex] = {};
+                }
+
+
+                this.rowOptions[rowIndex][fieldName] =
+                    parsed;
+
+
+                this.lastEvent =
+                    "setRowOptions";
+
+
+                this.render();
 
             } catch (error) {
 
@@ -2418,19 +2060,33 @@
             }
         }
 
-        /* ============================================================
-           WINDOW RESIZE
-        ============================================================ */
 
-        disconnectedCallback() {
+        /* =========================================================
+           PUBLIC METHOD:
+           LAST EVENT
+        ========================================================= */
 
-            this.closeDropdown();
+        getLastEvent() {
+
+            return this.lastEvent;
         }
     }
 
-    customElements.define(
-        "com-madhav-positionentry",
-        PositionEntry
-    );
+
+    /* =============================================================
+       REGISTER WEB COMPONENT
+    ============================================================= */
+
+    if (
+        !customElements.get(
+            "com-madhav-positionentry"
+        )
+    ) {
+
+        customElements.define(
+            "com-madhav-positionentry",
+            PositionEntry
+        );
+    }
 
 })();
