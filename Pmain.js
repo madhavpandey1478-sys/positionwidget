@@ -199,11 +199,10 @@
                ================================================= */
 
             table {
-                border-collapse: separate;
-                border-spacing: 0;
+                border-collapse: collapse;
                 table-layout: fixed;
-                min-width: 2050px;
-                width: 2050px;
+                min-width: 2330px;
+                width: 2330px;
             }
 
             /* =================================================
