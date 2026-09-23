@@ -1,1966 +1,2722 @@
 (function () {
+
     "use strict";
+
+    /* =========================================================
+       POSITION ENTRY - SAC CUSTOM WIDGET
+       Create Position only
+       ========================================================= */
+
+    var template = document.createElement("template");
+
+    template.innerHTML = `
+
+        <style>
+
+            /* =================================================
+               HOST
+               ================================================= */
+
+            :host {
+                display: block;
+                width: 100%;
+                height: 100%;
+                min-height: 300px;
+
+                font-family:
+                    "72",
+                    "72full",
+                    Arial,
+                    Helvetica,
+                    sans-serif;
+
+                color: #1d2d3e;
+
+                --blue: #0a6ed1;
+                --blue-dark: #0854a0;
+                --blue-light: #eaf3fc;
+
+                --border: #d7e0e8;
+                --border-dark: #c4d0db;
+
+                --header: #eef4fa;
+                --surface: #ffffff;
+                --surface-soft: #f7f9fb;
+
+                --text: #1d2d3e;
+                --muted: #687b8d;
+
+                --warning: #fff8df;
+
+                box-sizing: border-box;
+            }
+
+
+            * {
+                box-sizing: border-box;
+            }
+
+
+            /* =================================================
+               MAIN CONTAINER
+               ================================================= */
+
+            .container {
+
+                width: 100%;
+                height: 100%;
+
+                min-height: 300px;
+
+                display: flex;
+                flex-direction: column;
+
+                background: var(--surface);
+
+                border: 1px solid var(--border);
+
+                border-radius: 10px;
+
+                overflow: hidden;
+
+                box-shadow:
+                    0 1px 3px rgba(0, 0, 0, 0.06),
+                    0 4px 12px rgba(0, 0, 0, 0.04);
+
+            }
+
+
+            /* =================================================
+               TOOLBAR
+               ================================================= */
+
+            .toolbar {
+
+                min-height: 58px;
+
+                display: flex;
+
+                align-items: center;
+
+                justify-content: flex-end;
+
+                gap: 8px;
+
+                padding:
+                    10px 14px;
+
+                background:
+                    linear-gradient(
+                        to bottom,
+                        #fbfcfd,
+                        #f7f9fb
+                    );
+
+                border-bottom:
+                    1px solid var(--border);
+
+            }
+
+
+            /* =================================================
+               BUTTONS
+               ================================================= */
+
+            button {
+
+                height: 36px;
+
+                padding:
+                    0 15px;
+
+                border:
+                    1px solid #b8c8d8;
+
+                border-radius: 7px;
+
+                background: #ffffff;
+
+                color: var(--blue);
+
+                font-family: inherit;
+
+                font-size: 12px;
+
+                font-weight: 600;
+
+                letter-spacing: 0.1px;
+
+                cursor: pointer;
+
+                transition:
+                    background 0.15s ease,
+                    border-color 0.15s ease,
+                    box-shadow 0.15s ease,
+                    transform 0.05s ease;
+
+                white-space: nowrap;
+
+            }
+
+
+            button:hover {
+
+                background:
+                    #f0f7fd;
+
+                border-color:
+                    #8eb9df;
+
+                box-shadow:
+                    0 1px 3px rgba(
+                        0,
+                        0,
+                        0,
+                        0.08
+                    );
+
+            }
+
+
+            button:active {
+
+                transform:
+                    translateY(1px);
+
+            }
+
+
+            button:focus-visible {
+
+                outline:
+                    2px solid rgba(
+                        10,
+                        110,
+                        209,
+                        0.25
+                    );
+
+                outline-offset: 1px;
+
+            }
+
+
+            button.primary {
+
+                color: #ffffff;
+
+                background:
+                    var(--blue);
+
+                border-color:
+                    var(--blue);
+
+                box-shadow:
+                    0 1px 3px rgba(
+                        10,
+                        110,
+                        209,
+                        0.22
+                    );
+
+            }
+
+
+            button.primary:hover {
+
+                background:
+                    var(--blue-dark);
+
+                border-color:
+                    var(--blue-dark);
+
+            }
+
+
+            button.delete {
+
+                color: #bb0000;
+
+                border-color:
+                    #e4b2b2;
+
+                background:
+                    #fffafa;
+
+            }
+
+
+            button.delete:hover {
+
+                background:
+                    #fff0f0;
+
+                border-color:
+                    #d98c8c;
+
+            }
+
+
+            /* =================================================
+               TABLE AREA
+               ================================================= */
+
+            .table-area {
+
+                flex: 1;
+
+                min-height: 0;
+
+                overflow: auto;
+
+                background:
+                    #ffffff;
+
+                scrollbar-width:
+                    thin;
+
+                scrollbar-color:
+                    #aebdca #f2f5f7;
+
+            }
+
+
+            .table-area::-webkit-scrollbar {
+
+                width: 10px;
+                height: 10px;
+
+            }
+
+
+            .table-area::-webkit-scrollbar-track {
+
+                background:
+                    #f3f6f8;
+
+            }
+
+
+            .table-area::-webkit-scrollbar-thumb {
+
+                background:
+                    #b5c2cd;
+
+                border-radius:
+                    8px;
+
+                border:
+                    2px solid #f3f6f8;
+
+            }
+
+
+            .table-area::-webkit-scrollbar-thumb:hover {
+
+                background:
+                    #9eafbd;
+
+            }
+
+
+            /* =================================================
+               TABLE
+               ================================================= */
+
+            table {
+
+                border-collapse:
+                    separate;
+
+                border-spacing:
+                    0;
+
+                table-layout:
+                    fixed;
+
+                min-width:
+                    2050px;
+
+                width:
+                    2050px;
+
+            }
+
+
+            /* =================================================
+               HEADER
+               ================================================= */
+
+            th {
+
+                position:
+                    sticky;
+
+                top:
+                    0;
+
+                z-index:
+                    5;
+
+                height:
+                    42px;
+
+                padding:
+                    0 9px;
+
+                background:
+                    var(--header);
+
+                color:
+                    #29465f;
+
+                border-right:
+                    1px solid #d4dfe8;
+
+                border-bottom:
+                    1px solid #cbd8e3;
+
+                font-size:
+                    11px;
+
+                font-weight:
+                    700;
+
+                text-align:
+                    left;
+
+                white-space:
+                    nowrap;
+
+                vertical-align:
+                    middle;
+
+            }
+
+
+            th:first-child {
+
+                border-left:
+                    0;
+
+            }
+
+
+            /* =================================================
+               BODY CELLS
+               ================================================= */
+
+            td {
+
+                height:
+                    54px;
+
+                padding:
+                    7px 8px;
+
+                background:
+                    #ffffff;
+
+                border-right:
+                    1px solid #dbe3ea;
+
+                border-bottom:
+                    1px solid #dbe3ea;
+
+                vertical-align:
+                    middle;
+
+            }
+
+
+            tr:hover td {
+
+                background:
+                    #f9fbfd;
+
+            }
+
+
+            tr.selected-row td {
+
+                background:
+                    var(--warning);
+
+            }
+
+
+            tr.selected-row:hover td {
+
+                background:
+                    #fff6d1;
+
+            }
+
+
+            /* =================================================
+               INPUTS
+               ================================================= */
+
+            input.cell,
+            select.cell {
+
+                width:
+                    100%;
+
+                height:
+                    34px;
+
+                padding:
+                    0 9px;
+
+                border:
+                    1px solid #bfd0df;
+
+                border-radius:
+                    6px;
+
+                background:
+                    #ffffff;
+
+                color:
+                    #253746;
+
+                font-family:
+                    inherit;
+
+                font-size:
+                    12px;
+
+                outline:
+                    none;
+
+                transition:
+                    border-color 0.15s ease,
+                    box-shadow 0.15s ease,
+                    background 0.15s ease;
+
+            }
+
+
+            input.cell::placeholder {
+
+                color:
+                    #8797a6;
+
+                opacity:
+                    1;
+
+            }
+
+
+            input.cell:hover,
+            select.cell:hover {
+
+                border-color:
+                    #9fb5c8;
+
+            }
+
+
+            input.cell:focus,
+            select.cell:focus {
+
+                border-color:
+                    var(--blue);
+
+                box-shadow:
+                    0 0 0 2px rgba(
+                        10,
+                        110,
+                        209,
+                        0.10
+                    );
+
+            }
+
+
+            input.cell.readonly {
+
+                background:
+                    #f1f4f7;
+
+                color:
+                    #607487;
+
+                cursor:
+                    not-allowed;
+
+            }
+
+
+            input.cell[type="date"] {
+
+                padding-right:
+                    7px;
+
+            }
+
+
+            /* =================================================
+               SELECT
+               ================================================= */
+
+            select.cell {
+
+                appearance:
+                    auto;
+
+                cursor:
+                    pointer;
+
+            }
+
+
+            select.cell option {
+
+                color:
+                    #253746;
+
+                background:
+                    #ffffff;
+
+            }
+
+
+            /* =================================================
+               CHECKBOX
+               ================================================= */
+
+            .checkbox-cell {
+
+                width:
+                    50px;
+
+                min-width:
+                    50px;
+
+                max-width:
+                    50px;
+
+                padding:
+                    0;
+
+                text-align:
+                    center;
+
+            }
+
+
+            .checkbox {
+
+                width:
+                    18px;
+
+                height:
+                    18px;
+
+                margin:
+                    0;
+
+                cursor:
+                    pointer;
+
+                accent-color:
+                    var(--blue);
+
+                vertical-align:
+                    middle;
+
+            }
+
+
+            /* =================================================
+               STATUS BAR
+               ================================================= */
+
+            .status {
+
+                min-height:
+                    36px;
+
+                height:
+                    36px;
+
+                display:
+                    flex;
+
+                align-items:
+                    center;
+
+                gap:
+                    22px;
+
+                padding:
+                    0 12px;
+
+                background:
+                    #f7f9fb;
+
+                border-top:
+                    1px solid var(--border);
+
+                color:
+                    #5f7284;
+
+                font-size:
+                    11px;
+
+                white-space:
+                    nowrap;
+
+            }
+
+
+            .status-item {
+
+                display:
+                    inline-flex;
+
+                align-items:
+                    center;
+
+                gap:
+                    4px;
+
+            }
+
+
+            .status-value {
+
+                color:
+                    #314a60;
+
+                font-weight:
+                    700;
+
+            }
+
+
+            /* =================================================
+               VALIDATION STATUS
+               ================================================= */
+
+            .status-value.valid {
+
+                color:
+                    #107e3e;
+
+            }
+
+
+            .status-value.invalid {
+
+                color:
+                    #bb0000;
+
+            }
+
+
+            /* =================================================
+               EMPTY STATE
+               ================================================= */
+
+            .empty-message {
+
+                padding:
+                    30px;
+
+                text-align:
+                    center;
+
+                color:
+                    #728495;
+
+                font-size:
+                    12px;
+
+            }
+
+        </style>
+
+
+        <div class="container">
+
+            <!-- =================================================
+                 TOOLBAR
+                 ================================================= -->
+
+            <div class="toolbar">
+
+                <button
+                    id="addButton"
+                    type="button"
+                >
+                    Add Row
+                </button>
+
+
+                <button
+                    id="copyButton"
+                    type="button"
+                >
+                    Copy
+                </button>
+
+
+                <button
+                    id="deleteButton"
+                    class="delete"
+                    type="button"
+                    style="display:none;"
+                >
+                    Delete Selected
+                </button>
+
+
+                <button
+                    id="validateButton"
+                    type="button"
+                >
+                    Validate
+                </button>
+
+
+                <button
+                    id="approvalButton"
+                    class="primary"
+                    type="button"
+                >
+                    Send for Approval
+                </button>
+
+
+                <button
+                    id="clearButton"
+                    type="button"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 TABLE
+                 ================================================= -->
+
+            <div class="table-area">
+
+                <table>
+
+                    <thead>
+
+                        <tr>
+
+                            <th
+                                class="checkbox-cell"
+                                title="Select all"
+                            >
+
+                                <input
+                                    id="selectAll"
+                                    class="checkbox"
+                                    type="checkbox"
+                                >
+
+                            </th>
+
+
+                            <th style="width:120px;">
+                                Company Code
+                            </th>
+
+
+                            <th style="width:125px;">
+                                Division
+                            </th>
+
+
+                            <th style="width:145px;">
+                                Department
+                            </th>
+
+
+                            <th style="width:135px;">
+                                Cost Center
+                            </th>
+
+
+                            <th style="width:125px;">
+                                Job Code
+                            </th>
+
+
+                            <th style="width:190px;">
+                                Position Title
+                            </th>
+
+
+                            <th style="width:135px;">
+                                Position ID
+                            </th>
+
+
+                            <th style="width:110px;">
+                                Pay Grade
+                            </th>
+
+
+                            <th style="width:90px;">
+                                Level
+                            </th>
+
+
+                            <th style="width:125px;">
+                                Hire Date
+                            </th>
+
+
+                            <th style="width:125px;">
+                                Nationality
+                            </th>
+
+
+                            <th style="width:140px;">
+                                Accommodation
+                            </th>
+
+
+                            <th style="width:115px;">
+                                Transport
+                            </th>
+
+
+                            <th style="width:135px;">
+                                Employee Class
+                            </th>
+
+
+                            <th style="width:105px;">
+                                Overtime
+                            </th>
+
+
+                            <th style="width:140px;">
+                                Special Approval
+                            </th>
+
+
+                            <th style="width:220px;">
+                                Comment
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody id="tbody"></tbody>
+
+                </table>
+
+            </div>
+
+
+            <!-- =================================================
+                 STATUS
+                 ================================================= -->
+
+            <div class="status">
+
+                <span class="status-item">
+
+                    Total Rows:
+
+                    <span
+                        id="rowCount"
+                        class="status-value"
+                    >
+                        1
+                    </span>
+
+                </span>
+
+
+                <span class="status-item">
+
+                    Selected Rows:
+
+                    <span
+                        id="selectedCount"
+                        class="status-value"
+                    >
+                        0
+                    </span>
+
+                </span>
+
+
+                <span class="status-item">
+
+                    Validation:
+
+                    <span
+                        id="validationStatus"
+                        class="status-value"
+                    >
+                        -
+                    </span>
+
+                </span>
+
+
+                <span class="status-item">
+
+                    Error Rows:
+
+                    <span
+                        id="errorCount"
+                        class="status-value"
+                    >
+                        0
+                    </span>
+
+                </span>
+
+            </div>
+
+        </div>
+    `;
+
+
+    /* =========================================================
+       WEB COMPONENT
+       ========================================================= */
 
     class PositionEntry extends HTMLElement {
 
+
         constructor() {
+
             super();
 
-            this.attachShadow({ mode: "open" });
 
-            this.rows = [];
-            this.lastEvent = "";
-            this.rowOptions = {};
+            this.attachShadow({
+                mode: "open"
+            });
 
-            this.fields = [
-                {
-                    key: "companyCode",
-                    label: "Company Code",
-                    type: "dropdown",
-                    width: 170
-                },
-                {
-                    key: "division",
-                    label: "Division",
-                    type: "dropdown",
-                    width: 165
-                },
-                {
-                    key: "department",
-                    label: "Department",
-                    type: "dropdown",
-                    width: 190
-                },
-                {
-                    key: "costCenter",
-                    label: "Cost Center",
-                    type: "dropdown",
-                    width: 180
-                },
-                {
-                    key: "jobCode",
-                    label: "Job Code",
-                    type: "dropdown",
-                    width: 165
-                },
-                {
-                    key: "positionTitle",
-                    label: "Position Title",
-                    type: "text",
-                    width: 230
-                },
-                {
-                    key: "positionId",
-                    label: "Position ID",
-                    type: "readonly",
-                    width: 175
-                },
-                {
-                    key: "payGrade",
-                    label: "Pay Grade",
-                    type: "dropdown",
-                    width: 145
-                },
-                {
-                    key: "level",
-                    label: "Level",
-                    type: "dropdown",
-                    width: 125
-                },
-                {
-                    key: "hireDate",
-                    label: "Hire Date",
-                    type: "date",
-                    width: 165
-                },
-                {
-                    key: "nationality",
-                    label: "Nationality",
-                    type: "dropdown",
-                    width: 175
-                },
-                {
-                    key: "accommodation",
-                    label: "Accommodation",
-                    type: "dropdown",
-                    width: 175
-                },
-                {
-                    key: "transport",
-                    label: "Transport",
-                    type: "dropdown",
-                    width: 160
-                },
-                {
-                    key: "employeeClass",
-                    label: "Employee Class",
-                    type: "dropdown",
-                    width: 175
-                },
-                {
-                    key: "overtime",
-                    label: "Overtime",
-                    type: "dropdown",
-                    width: 150
-                },
-                {
-                    key: "specialApproval",
-                    label: "Special Approval",
-                    type: "dropdown",
-                    width: 180
-                },
-                {
-                    key: "comment",
-                    label: "Comment",
-                    type: "text",
-                    width: 240
-                }
-            ];
 
-            /*
-             * Default dropdown values.
-             *
-             * These are only sample/default values.
-             * SAC can replace them using setRowOptions().
-             */
-            this.defaultOptions = {
-                companyCode: [
-                    "ALL_SBU",
-                    "SBU_001",
-                    "SBU_002",
-                    "SBU_003"
-                ],
+            this.shadowRoot.appendChild(
+                template.content.cloneNode(true)
+            );
 
-                division: [
-                    "Division 01",
-                    "Division 02",
-                    "Division 03"
-                ],
 
-                department: [
-                    "Finance",
-                    "HR",
-                    "IT",
-                    "Sales",
-                    "Operations"
-                ],
+            /* =================================================
+               INTERNAL DATA
+               ================================================= */
 
-                costCenter: [
-                    "CC1000",
-                    "CC2000",
-                    "CC3000",
-                    "CC4000"
-                ],
+            this._rows = [];
 
-                jobCode: [
-                    "JC001",
-                    "JC002",
-                    "JC003",
-                    "JC004"
-                ],
+            this._rowOptions = {};
 
-                payGrade: [
-                    "Grade 01",
-                    "Grade 02",
-                    "Grade 03",
-                    "Grade 04"
-                ],
+            this._lastEvent = "";
 
-                level: [
-                    "L1",
-                    "L2",
-                    "L3",
-                    "L4",
-                    "L5"
-                ],
+            this._status = "READY";
 
-                nationality: [
-                    "Saudi",
-                    "Indian",
-                    "Emirati",
-                    "Other"
-                ],
+            this._validation = null;
 
-                accommodation: [
-                    "Provided",
-                    "Not Provided"
-                ],
 
-                transport: [
-                    "Provided",
-                    "Not Provided"
-                ],
+            /* =================================================
+               IMPORTANT:
+               START WITH ONE ROW
+               ================================================= */
 
-                employeeClass: [
-                    "Permanent",
-                    "Contract",
-                    "Temporary"
-                ],
+            this._rows.push(
+                this._createEmptyRow()
+            );
 
-                overtime: [
-                    "Eligible",
-                    "Not Eligible"
-                ],
 
-                specialApproval: [
-                    "Required",
-                    "Not Required"
-                ]
+            /* =================================================
+               BIND UI
+               ================================================= */
+
+            this._bindButtons();
+
+            this._render();
+
+        }
+
+
+        /* =====================================================
+           CREATE EMPTY ROW
+           ===================================================== */
+
+        _createEmptyRow() {
+
+            return {
+
+                selected: false,
+
+                companyCode: "",
+                division: "",
+                department: "",
+                costCenter: "",
+                jobCode: "",
+
+                positionTitle: "",
+
+                employeeId: "",
+
+                payGradeGroup: "",
+                payGradeLevel: "",
+
+                hireDate: "",
+
+                nationality: "",
+                accommodation: "",
+                transport: "",
+                employeeClass: "",
+                overtime: "",
+                specialApproval: "",
+
+                comment: "",
+
+                isModified: false
+
             };
 
-            this.requiredFields = [
+        }
+
+
+        /* =====================================================
+           BUTTON BINDINGS
+           ===================================================== */
+
+        _bindButtons() {
+
+
+            /* ADD ROW */
+
+            this.shadowRoot
+                .getElementById("addButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._addRow();
+
+                    }
+                );
+
+
+            /* COPY */
+
+            this.shadowRoot
+                .getElementById("copyButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._copyRows();
+
+                    }
+                );
+
+
+            /* DELETE */
+
+            this.shadowRoot
+                .getElementById("deleteButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._deleteRows();
+
+                    }
+                );
+
+
+            /* CLEAR */
+
+            this.shadowRoot
+                .getElementById("clearButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._clear();
+
+                    }
+                );
+
+
+            /* VALIDATE */
+
+            this.shadowRoot
+                .getElementById("validateButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._validate();
+
+                    }
+                );
+
+
+            /* SEND FOR APPROVAL */
+
+            this.shadowRoot
+                .getElementById("approvalButton")
+                .addEventListener(
+                    "click",
+                    () => {
+
+                        this._sendForApproval();
+
+                    }
+                );
+
+
+            /* SELECT ALL */
+
+            this.shadowRoot
+                .getElementById("selectAll")
+                .addEventListener(
+                    "change",
+                    (event) => {
+
+                        var checked =
+                            event.target.checked;
+
+
+                        for (
+                            var i = 0;
+                            i < this._rows.length;
+                            i++
+                        ) {
+
+                            this._rows[i].selected =
+                                checked;
+
+                        }
+
+
+                        this._status =
+                            "CHANGED";
+
+
+                        this._render();
+
+
+                        this._emit(
+                            "onDataEntry",
+                            "selectAll|" +
+                            checked
+                        );
+
+                    }
+                );
+
+        }
+
+
+        /* =====================================================
+           ADD ROW
+           ===================================================== */
+
+        _addRow() {
+
+            this._rows.push(
+                this._createEmptyRow()
+            );
+
+
+            this._status =
+                "CHANGED";
+
+
+            this._validation =
+                null;
+
+
+            this._render();
+
+
+            this._emit(
+                "onDataEntry",
+                "addRow|" +
+                (this._rows.length - 1)
+            );
+
+        }
+
+
+        /* =====================================================
+           COPY SELECTED ROWS
+           ===================================================== */
+
+        _copyRows() {
+
+            var copied = [];
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    var newRow =
+                        JSON.parse(
+                            JSON.stringify(
+                                this._rows[i]
+                            )
+                        );
+
+
+                    newRow.selected =
+                        false;
+
+
+                    /*
+                     * Position ID should not be
+                     * copied as a final ID.
+                     */
+
+                    newRow.employeeId =
+                        "";
+
+
+                    newRow.isModified =
+                        false;
+
+
+                    copied.push(
+                        newRow
+                    );
+
+                }
+
+            }
+
+
+            if (
+                copied.length === 0
+            ) {
+
+                return;
+
+            }
+
+
+            for (
+                var j = 0;
+                j < copied.length;
+                j++
+            ) {
+
+                this._rows.push(
+                    copied[j]
+                );
+
+            }
+
+
+            this._status =
+                "CHANGED";
+
+
+            this._validation =
+                null;
+
+
+            this._render();
+
+
+            this._emit(
+                "onDataEntry",
+                "copy|" +
+                copied.length
+            );
+
+        }
+
+
+        /* =====================================================
+           DELETE SELECTED ROWS
+           ===================================================== */
+
+        _deleteRows() {
+
+            var remaining = [];
+
+            var deleted = 0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    deleted++;
+
+                } else {
+
+                    remaining.push(
+                        this._rows[i]
+                    );
+
+                }
+
+            }
+
+
+            if (
+                deleted === 0
+            ) {
+
+                return;
+
+            }
+
+
+            this._rows =
+                remaining;
+
+
+            /*
+             * Always leave one empty row
+             * in the widget.
+             */
+
+            if (
+                this._rows.length === 0
+            ) {
+
+                this._rows.push(
+                    this._createEmptyRow()
+                );
+
+            }
+
+
+            this._status =
+                "CHANGED";
+
+
+            this._validation =
+                null;
+
+
+            this._render();
+
+
+            this._emit(
+                "onDataEntry",
+                "delete|" +
+                deleted
+            );
+
+        }
+
+
+        /* =====================================================
+           CLEAR SELECTED ROW DATA
+           ===================================================== */
+
+        _clear() {
+
+            var cleared =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                var row =
+                    this._rows[i];
+
+
+                if (
+                    row.selected === true
+                ) {
+
+                    this._clearRow(
+                        row
+                    );
+
+
+                    /*
+                     * IMPORTANT:
+                     * Keep row.
+                     * Untick checkbox.
+                     */
+
+                    row.selected =
+                        false;
+
+
+                    cleared++;
+
+                }
+
+            }
+
+
+            if (
+                cleared === 0
+            ) {
+
+                return;
+
+            }
+
+
+            this._status =
+                "CLEARED";
+
+
+            this._validation =
+                null;
+
+
+            this._render();
+
+
+            this._emit(
+                "onClear",
+                "clear|" +
+                cleared
+            );
+
+        }
+
+
+        /* =====================================================
+           CLEAR ROW DATA
+           ===================================================== */
+
+        _clearRow(row) {
+
+            row.companyCode = "";
+            row.division = "";
+            row.department = "";
+            row.costCenter = "";
+            row.jobCode = "";
+
+            row.positionTitle = "";
+
+            row.employeeId = "";
+
+            row.payGradeGroup = "";
+            row.payGradeLevel = "";
+
+            row.hireDate = "";
+
+            row.nationality = "";
+            row.accommodation = "";
+            row.transport = "";
+            row.employeeClass = "";
+            row.overtime = "";
+            row.specialApproval = "";
+
+            row.comment = "";
+
+            row.isModified =
+                true;
+
+        }
+
+
+        /* =====================================================
+           VALIDATE
+           ===================================================== */
+
+        _validate() {
+
+            /*
+             * Business validation rules will be
+             * added once the mandatory fields are
+             * confirmed.
+             *
+             * For now this performs a basic
+             * populated-row check.
+             */
+
+            var errorRows = 0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                var row =
+                    this._rows[i];
+
+
+                var hasData =
+                    this._rowHasData(
+                        row
+                    );
+
+
+                if (
+                    hasData === false
+                ) {
+
+                    continue;
+
+                }
+
+
+                /*
+                 * Basic mandatory fields.
+                 */
+
+                if (
+                    !row.companyCode ||
+                    !row.division ||
+                    !row.department ||
+                    !row.costCenter ||
+                    !row.jobCode ||
+                    !row.positionTitle
+                ) {
+
+                    errorRows++;
+
+                }
+
+            }
+
+
+            if (
+                errorRows === 0
+            ) {
+
+                this._validation =
+                    true;
+
+                this._status =
+                    "VALID";
+
+                this._emit(
+                    "onValidate",
+                    "VALID|0"
+                );
+
+            } else {
+
+                this._validation =
+                    false;
+
+                this._status =
+                    "INVALID";
+
+                this._emit(
+                    "onValidate",
+                    "INVALID|" +
+                    errorRows
+                );
+
+            }
+
+
+            this._updateStatus();
+
+        }
+
+
+        /* =====================================================
+           CHECK IF ROW CONTAINS DATA
+           ===================================================== */
+
+        _rowHasData(row) {
+
+            var fields = [
+
                 "companyCode",
                 "division",
                 "department",
                 "costCenter",
                 "jobCode",
                 "positionTitle",
-                "payGrade",
-                "level",
-                "hireDate"
+                "employeeId",
+                "payGradeGroup",
+                "payGradeLevel",
+                "hireDate",
+                "nationality",
+                "accommodation",
+                "transport",
+                "employeeClass",
+                "overtime",
+                "specialApproval",
+                "comment"
+
             ];
-        }
 
 
-        connectedCallback() {
-
-            /*
-             * Always start with one row.
-             */
-            if (!this.rows.length) {
-                this.addRow(false);
-            }
-
-            this.render();
-        }
-
-
-        /* =========================================================
-           DATA STRUCTURE
-        ========================================================= */
-
-        createEmptyRow() {
-
-            const row = {
-                _selected: false,
-                _valid: true
-            };
-
-            this.fields.forEach(field => {
-                row[field.key] = "";
-            });
-
-            return row;
-        }
-
-
-        /* =========================================================
-           RENDER
-        ========================================================= */
-
-        render() {
-
-            this.shadowRoot.innerHTML = "";
-
-            const style = document.createElement("style");
-
-            style.textContent = `
-                * {
-                    box-sizing: border-box;
-                }
-
-                :host {
-                    display: block;
-                    width: 100%;
-                    height: 100%;
-                    min-height: 300px;
-                    font-family:
-                        "72",
-                        "72full",
-                        Arial,
-                        Helvetica,
-                        sans-serif;
-
-                    color: #1d2d3e;
-                    background: #ffffff;
-                }
-
-                .widget {
-                    width: 100%;
-                    height: 100%;
-                    min-height: 300px;
-
-                    display: flex;
-                    flex-direction: column;
-
-                    background: #ffffff;
-                    border: 1px solid #d6e0ea;
-                    border-radius: 6px;
-
-                    overflow: hidden;
-                }
-
-
-                /* =====================================================
-                   TOOLBAR
-                ===================================================== */
-
-                .toolbar {
-                    min-height: 62px;
-
-                    display: flex;
-                    align-items: center;
-                    justify-content: flex-end;
-
-                    gap: 10px;
-
-                    padding: 10px 14px;
-
-                    background:
-                        linear-gradient(
-                            to bottom,
-                            #ffffff,
-                            #f8fafc
-                        );
-
-                    border-bottom: 1px solid #d9e2ec;
-                }
-
-
-                button {
-                    font-family: inherit;
-                }
-
-                .action-btn {
-                    height: 38px;
-
-                    padding: 0 18px;
-
-                    border-radius: 7px;
-
-                    border: 1px solid #b9cfe5;
-
-                    background: #ffffff;
-
-                    color: #0064b4;
-
-                    font-size: 14px;
-                    font-weight: 600;
-
-                    cursor: pointer;
-
-                    transition:
-                        background 0.15s ease,
-                        border-color 0.15s ease,
-                        box-shadow 0.15s ease;
-
-                    white-space: nowrap;
-                }
-
-                .action-btn:hover {
-                    background: #f0f7ff;
-                    border-color: #7faed6;
-                }
-
-                .action-btn:active {
-                    background: #e6f2fc;
-                }
-
-                .action-btn.primary {
-                    background: #0878d1;
-                    color: #ffffff;
-                    border-color: #0878d1;
-                }
-
-                .action-btn.primary:hover {
-                    background: #006bbd;
-                }
-
-                .action-btn.danger {
-                    color: #bb0000;
-                    border-color: #e4aaaa;
-                }
-
-                .action-btn.danger:hover {
-                    background: #fff4f4;
-                    border-color: #d87979;
-                }
-
-                .action-btn.hidden {
-                    display: none;
-                }
-
-
-                /* =====================================================
-                   TABLE AREA
-                ===================================================== */
-
-                .table-wrapper {
-                    flex: 1;
-
-                    width: 100%;
-
-                    overflow: auto;
-
-                    position: relative;
-
-                    background: #ffffff;
-                }
-
-
-                table {
-                    border-collapse: separate;
-                    border-spacing: 0;
-
-                    table-layout: fixed;
-
-                    min-width: 2850px;
-
-                    width: max-content;
-                }
-
-
-                /* =====================================================
-                   HEADER
-                ===================================================== */
-
-                thead th {
-                    position: sticky;
-                    top: 0;
-
-                    z-index: 20;
-
-                    height: 48px;
-
-                    padding: 0 12px;
-
-                    background: #edf4fb;
-
-                    border-right: 1px solid #d2deea;
-                    border-bottom: 1px solid #c7d6e5;
-
-                    color: #123f67;
-
-                    font-size: 14px;
-                    font-weight: 700;
-
-                    text-align: left;
-
-                    white-space: nowrap;
-                }
-
-                thead th:first-child {
-                    text-align: center;
-                }
-
-
-                /* =====================================================
-                   BODY
-                ===================================================== */
-
-                tbody td {
-                    height: 60px;
-
-                    padding: 5px 10px;
-
-                    background: #ffffff;
-
-                    border-right: 1px solid #d6e0e9;
-                    border-bottom: 1px solid #d6e0e9;
-
-                    vertical-align: middle;
-
-                    position: relative;
-                }
-
-                tbody tr:hover td {
-                    background: #f9fcff;
-                }
-
-                tbody tr.selected td {
-                    background: #fff8dc;
-                }
-
-                tbody tr.invalid td {
-                    background: #fff2f2;
-                }
-
-
-                /* =====================================================
-                   SELECTION
-                ===================================================== */
-
-                .selection-cell {
-                    width: 54px;
-
-                    text-align: center;
-
-                    padding: 0 !important;
-                }
-
-                input[type="checkbox"] {
-                    width: 19px;
-                    height: 19px;
-
-                    accent-color: #0878d1;
-
-                    cursor: pointer;
-                }
-
-
-                /* =====================================================
-                   INPUTS
-                ===================================================== */
-
-                .cell-input {
-                    width: 100%;
-                    height: 40px;
-
-                    padding: 0 10px;
-
-                    border: 1px solid #bfd0e0;
-
-                    border-radius: 5px;
-
-                    background: #ffffff;
-
-                    color: #1d2d3e;
-
-                    font-family: inherit;
-                    font-size: 14px;
-
-                    outline: none;
-                }
-
-                .cell-input:focus {
-                    border-color: #0878d1;
-
-                    box-shadow:
-                        0 0 0 1px #0878d1;
-                }
-
-                .readonly-input {
-                    background: #f3f6f9;
-
-                    color: #617487;
-
-                    cursor: default;
-                }
-
-
-                /* =====================================================
-                   CUSTOM DROPDOWN
-                ===================================================== */
-
-                .dropdown {
-                    width: 100%;
-
-                    height: 40px;
-
-                    position: relative;
-                }
-
-                .dropdown-trigger {
-                    width: 100%;
-                    height: 40px;
-
-                    border: 0;
-
-                    background: transparent;
-
-                    padding: 0 30px 0 8px;
-
-                    text-align: left;
-
-                    font-family: inherit;
-                    font-size: 14px;
-
-                    color: #1d2d3e;
-
-                    cursor: pointer;
-
-                    position: relative;
-
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
-                }
-
-                .dropdown-trigger::after {
-                    content: "";
-
-                    position: absolute;
-
-                    right: 8px;
-                    top: 50%;
-
-                    width: 7px;
-                    height: 7px;
-
-                    border-right: 2px solid #617d98;
-                    border-bottom: 2px solid #617d98;
-
-                    transform:
-                        translateY(-65%)
-                        rotate(45deg);
-                }
-
-                .dropdown-trigger:hover {
-                    background: #f5f9fd;
-                }
-
-                .dropdown.open .dropdown-trigger {
-                    background: #eef7ff;
-
-                    color: #005fa8;
-                }
-
-                .dropdown-menu {
-                    position: fixed;
-
-                    min-width: 270px;
-
-                    max-width: 360px;
-
-                    background: #ffffff;
-
-                    border: 1px solid #c6d5e3;
-
-                    border-radius: 7px;
-
-                    box-shadow:
-                        0 8px 25px rgba(0, 0, 0, 0.16);
-
-                    z-index: 100000;
-
-                    display: none;
-
-                    overflow: hidden;
-                }
-
-                .dropdown-menu.open {
-                    display: block;
-                }
-
-                .dropdown-search-container {
-                    padding: 10px;
-
-                    background: #ffffff;
-
-                    border-bottom: 1px solid #e0e7ee;
-                }
-
-                .dropdown-search {
-                    width: 100%;
-                    height: 36px;
-
-                    padding: 0 10px;
-
-                    border: 1px solid #b9ccdf;
-
-                    border-radius: 5px;
-
-                    outline: none;
-
-                    font-family: inherit;
-                    font-size: 14px;
-                }
-
-                .dropdown-search:focus {
-                    border-color: #0878d1;
-
-                    box-shadow:
-                        0 0 0 1px #0878d1;
-                }
-
-                .dropdown-options {
-                    max-height: 230px;
-
-                    overflow-y: auto;
-                }
-
-                .dropdown-option {
-                    min-height: 38px;
-
-                    display: flex;
-                    align-items: center;
-
-                    padding: 8px 12px;
-
-                    font-size: 14px;
-
-                    color: #1d2d3e;
-
-                    cursor: pointer;
-                }
-
-                .dropdown-option:hover {
-                    background: #eaf4ff;
-                }
-
-                .dropdown-option.selected {
-                    background: #e5f2ff;
-
-                    color: #0064b4;
-
-                    font-weight: 600;
-                }
-
-                .no-results {
-                    padding: 18px 12px;
-
-                    text-align: center;
-
-                    color: #7b8b9a;
-
-                    font-size: 13px;
-                }
-
-
-                /* =====================================================
-                   FOOTER
-                ===================================================== */
-
-                .footer {
-                    min-height: 42px;
-
-                    display: flex;
-                    align-items: center;
-
-                    gap: 22px;
-
-                    padding: 0 14px;
-
-                    background: #f8fafc;
-
-                    border-top: 1px solid #d5e0ea;
-
-                    font-size: 13px;
-
-                    color: #41566b;
-                }
-
-                .footer strong {
-                    color: #173f61;
-                }
-
-                .status-valid {
-                    color: #107e3e;
-                    font-weight: 600;
-                }
-
-                .status-invalid {
-                    color: #bb0000;
-                    font-weight: 600;
-                }
-
-
-                /* =====================================================
-                   SCROLLBAR
-                ===================================================== */
-
-                .table-wrapper::-webkit-scrollbar {
-                    width: 10px;
-                    height: 10px;
-                }
-
-                .table-wrapper::-webkit-scrollbar-track {
-                    background: #f1f4f7;
-                }
-
-                .table-wrapper::-webkit-scrollbar-thumb {
-                    background: #aebdca;
-
-                    border-radius: 6px;
-                }
-
-                .table-wrapper::-webkit-scrollbar-thumb:hover {
-                    background: #879aaa;
-                }
-
-
-                /* =====================================================
-                   ERROR
-                ===================================================== */
-
-                .field-error {
-                    border-color: #d04343 !important;
-
-                    box-shadow:
-                        0 0 0 1px #d04343 !important;
-                }
-            `;
-
-            this.shadowRoot.appendChild(style);
-
-
-            const widget = document.createElement("div");
-            widget.className = "widget";
-
-
-            /* =====================================================
-               TOOLBAR
-            ===================================================== */
-
-            const toolbar = document.createElement("div");
-            toolbar.className = "toolbar";
-
-            const addButton = this.createButton(
-                "Add Row",
-                "action-btn",
-                () => this.addRow()
-            );
-
-            const deleteButton = this.createButton(
-                "Delete Selected",
-                "action-btn danger hidden",
-                () => this.deleteSelected()
-            );
-
-            deleteButton.id = "deleteButton";
-
-            const validateButton = this.createButton(
-                "Validate",
-                "action-btn",
-                () => this.validate()
-            );
-
-            const clearButton = this.createButton(
-                "Clear",
-                "action-btn",
-                () => this.clearSelected()
-            );
-
-            toolbar.appendChild(addButton);
-            toolbar.appendChild(deleteButton);
-            toolbar.appendChild(validateButton);
-            toolbar.appendChild(clearButton);
-
-
-            /* =====================================================
-               TABLE
-            ===================================================== */
-
-            const tableWrapper = document.createElement("div");
-            tableWrapper.className = "table-wrapper";
-
-            const table = document.createElement("table");
-
-            const colgroup = document.createElement("colgroup");
-
-            const selectCol = document.createElement("col");
-            selectCol.style.width = "54px";
-            colgroup.appendChild(selectCol);
-
-            this.fields.forEach(field => {
-                const col = document.createElement("col");
-                col.style.width = field.width + "px";
-                colgroup.appendChild(col);
-            });
-
-            table.appendChild(colgroup);
-
-
-            /* =====================================================
-               HEADER
-            ===================================================== */
-
-            const thead = document.createElement("thead");
-
-            const headerRow = document.createElement("tr");
-
-            const selectionHeader = document.createElement("th");
-            selectionHeader.className = "selection-cell";
-
-            const selectAll = document.createElement("input");
-            selectAll.type = "checkbox";
-            selectAll.id = "selectAll";
-
-            selectAll.addEventListener("change", () => {
-
-                this.rows.forEach(row => {
-                    row._selected = selectAll.checked;
-                });
-
-                this.lastEvent = "selectAll";
-
-                this.dispatchEvent(
-                    new CustomEvent("onSelectionChange", {
-                        detail: {
-                            selectedRows: this.getSelectedIndexes()
-                        }
-                    })
-                );
-
-                this.render();
-            });
-
-            selectionHeader.appendChild(selectAll);
-            headerRow.appendChild(selectionHeader);
-
-
-            this.fields.forEach(field => {
-
-                const th = document.createElement("th");
-
-                th.textContent = field.label;
-
-                headerRow.appendChild(th);
-            });
-
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-
-            /* =====================================================
-               BODY
-            ===================================================== */
-
-            const tbody = document.createElement("tbody");
-
-            this.rows.forEach((row, rowIndex) => {
-
-                row.__index = rowIndex;
-
-                const tr = document.createElement("tr");
-
-                if (row._selected) {
-                    tr.classList.add("selected");
-                }
-
-                if (row._valid === false) {
-                    tr.classList.add("invalid");
-                }
-
-
-                /* Row checkbox */
-
-                const selectionCell = document.createElement("td");
-                selectionCell.className = "selection-cell";
-
-                const checkbox = document.createElement("input");
-
-                checkbox.type = "checkbox";
-                checkbox.checked = !!row._selected;
-
-                checkbox.addEventListener("change", () => {
-
-                    row._selected = checkbox.checked;
-
-                    this.lastEvent = "selectionChange";
-
-                    this.dispatchEvent(
-                        new CustomEvent("onSelectionChange", {
-                            detail: {
-                                rowIndex: rowIndex,
-                                selected: row._selected,
-                                selectedRows: this.getSelectedIndexes()
-                            }
-                        })
-                    );
-
-                    this.render();
-                });
-
-                selectionCell.appendChild(checkbox);
-                tr.appendChild(selectionCell);
-
-
-                /* Data cells */
-
-                this.fields.forEach(field => {
-
-                    const td = document.createElement("td");
-
-                    const element = this.createField(
-                        row,
-                        rowIndex,
-                        field
-                    );
-
-                    td.appendChild(element);
-
-                    tr.appendChild(td);
-                });
-
-                tbody.appendChild(tr);
-            });
-
-            table.appendChild(tbody);
-
-            tableWrapper.appendChild(table);
-
-
-            /* =====================================================
-               FOOTER
-            ===================================================== */
-
-            const footer = document.createElement("div");
-            footer.className = "footer";
-
-            const total = document.createElement("span");
-
-            total.innerHTML =
-                "Total Rows: <strong>" +
-                this.rows.length +
-                "</strong>";
-
-            const selected = document.createElement("span");
-
-            selected.innerHTML =
-                "Selected Rows: <strong>" +
-                this.getSelectedIndexes().length +
-                "</strong>";
-
-            const validation = document.createElement("span");
-
-            const errorRows = this.rows.filter(
-                row => row._valid === false
-            ).length;
-
-            if (errorRows > 0) {
-
-                validation.className = "status-invalid";
-
-                validation.innerHTML =
-                    "Validation: Error";
-
-            } else {
-
-                validation.className = "status-valid";
-
-                validation.innerHTML =
-                    "Validation: true";
-            }
-
-            const errors = document.createElement("span");
-
-            errors.innerHTML =
-                "Error Rows: <strong>" +
-                errorRows +
-                "</strong>";
-
-            footer.appendChild(total);
-            footer.appendChild(selected);
-            footer.appendChild(validation);
-            footer.appendChild(errors);
-
-
-            widget.appendChild(toolbar);
-            widget.appendChild(tableWrapper);
-            widget.appendChild(footer);
-
-            this.shadowRoot.appendChild(widget);
-
-
-            /*
-             * Update delete button visibility.
-             */
-            this.updateDeleteButton();
-
-
-            /*
-             * Recalculate select-all state.
-             */
-            const selectedCount =
-                this.getSelectedIndexes().length;
-
-            selectAll.checked =
-                this.rows.length > 0 &&
-                selectedCount === this.rows.length;
-
-            selectAll.indeterminate =
-                selectedCount > 0 &&
-                selectedCount < this.rows.length;
-        }
-
-
-        /* =========================================================
-           BUTTON CREATOR
-        ========================================================= */
-
-        createButton(text, className, handler) {
-
-            const button = document.createElement("button");
-
-            button.type = "button";
-
-            button.className = className;
-
-            button.textContent = text;
-
-            button.addEventListener("click", handler);
-
-            return button;
-        }
-
-
-        /* =========================================================
-           FIELD CREATOR
-        ========================================================= */
-
-        createField(row, rowIndex, field) {
-
-            if (field.type === "dropdown") {
-
-                return this.createDropdown(
-                    row,
-                    rowIndex,
-                    field
-                );
-            }
-
-
-            if (field.type === "date") {
-
-                const input =
-                    document.createElement("input");
-
-                input.type = "date";
-
-                input.className = "cell-input";
-
-                input.value =
-                    row[field.key] || "";
-
-                input.addEventListener("change", () => {
-
-                    row[field.key] = input.value;
-
-                    this.handleDataChange(
-                        rowIndex,
-                        field.key,
-                        input.value
-                    );
-                });
-
-                return input;
-            }
-
-
-            if (field.type === "readonly") {
-
-                const input =
-                    document.createElement("input");
-
-                input.type = "text";
-
-                input.className =
-                    "cell-input readonly-input";
-
-                input.value =
-                    row[field.key] || "";
-
-                input.readOnly = true;
-
-                return input;
-            }
-
-
-            const input =
-                document.createElement("input");
-
-            input.type = "text";
-
-            input.className = "cell-input";
-
-            input.value =
-                row[field.key] || "";
-
-            input.placeholder = "";
-
-            input.addEventListener("input", () => {
-
-                row[field.key] =
-                    input.value;
-
-                this.handleDataChange(
-                    rowIndex,
-                    field.key,
-                    input.value
-                );
-            });
-
-            return input;
-        }
-
-
-        /* =========================================================
-           SEARCHABLE DROPDOWN
-        ========================================================= */
-
-        createDropdown(row, rowIndex, field) {
-
-            const wrapper =
-                document.createElement("div");
-
-            wrapper.className = "dropdown";
-
-
-            const trigger =
-                document.createElement("button");
-
-            trigger.type = "button";
-
-            trigger.className =
-                "dropdown-trigger";
-
-            trigger.textContent =
-                row[field.key] || "Select";
-
-
-            const menu =
-                document.createElement("div");
-
-            menu.className =
-                "dropdown-menu";
-
-
-            const searchContainer =
-                document.createElement("div");
-
-            searchContainer.className =
-                "dropdown-search-container";
-
-
-            const search =
-                document.createElement("input");
-
-            search.type = "text";
-
-            search.className =
-                "dropdown-search";
-
-            search.placeholder =
-                "Search...";
-
-
-            searchContainer.appendChild(search);
-
-
-            const optionsContainer =
-                document.createElement("div");
-
-            optionsContainer.className =
-                "dropdown-options";
-
-
-            const options =
-                this.getOptions(
-                    rowIndex,
-                    field.key
-                );
-
-
-            const renderOptions =
-                (filter = "") => {
-
-                    optionsContainer.innerHTML = "";
-
-                    const searchText =
-                        filter.toLowerCase().trim();
-
-                    const filtered =
-                        options.filter(option => {
-
-                            return String(option)
-                                .toLowerCase()
-                                .includes(searchText);
-                        });
-
-
-                    if (!filtered.length) {
-
-                        const empty =
-                            document.createElement("div");
-
-                        empty.className =
-                            "no-results";
-
-                        empty.textContent =
-                            "No results found";
-
-                        optionsContainer.appendChild(empty);
-
-                        return;
-                    }
-
-
-                    filtered.forEach(option => {
-
-                        const item =
-                            document.createElement("div");
-
-                        item.className =
-                            "dropdown-option";
-
-
-                        if (
-                            String(row[field.key]) ===
-                            String(option)
-                        ) {
-                            item.classList.add("selected");
-                        }
-
-
-                        item.textContent =
-                            option;
-
-
-                        item.addEventListener(
-                            "mousedown",
-                            event => {
-
-                                event.preventDefault();
-
-                                row[field.key] =
-                                    option;
-
-                                this.handleDataChange(
-                                    rowIndex,
-                                    field.key,
-                                    option
-                                );
-
-                                closeDropdown();
-                            }
-                        );
-
-
-                        optionsContainer.appendChild(item);
-                    });
-                };
-
-
-            const closeDropdown = () => {
-
-                menu.classList.remove("open");
-
-                wrapper.classList.remove("open");
-
-                menu.remove();
-
-                document.removeEventListener(
-                    "mousedown",
-                    outsideClick
-                );
-            };
-
-
-            const outsideClick = event => {
+            for (
+                var i = 0;
+                i < fields.length;
+                i++
+            ) {
 
                 if (
-                    !wrapper.contains(event.target) &&
-                    !menu.contains(event.target)
+                    row[fields[i]] !== "" &&
+                    row[fields[i]] !== null &&
+                    row[fields[i]] !== undefined
                 ) {
-                    closeDropdown();
+
+                    return true;
+
                 }
-            };
 
-
-            const positionMenu = () => {
-
-                const rect =
-                    trigger.getBoundingClientRect();
-
-                menu.style.left =
-                    rect.left + "px";
-
-                menu.style.top =
-                    (rect.bottom + 4) + "px";
-
-                menu.style.width =
-                    Math.max(
-                        rect.width,
-                        270
-                    ) + "px";
-            };
-
-
-            trigger.addEventListener(
-                "click",
-                event => {
-
-                    event.stopPropagation();
-
-
-                    /*
-                     * Close all dropdowns currently
-                     * open in the widget.
-                     */
-                    this.shadowRoot
-                        .querySelectorAll(
-                            ".dropdown-menu.open"
-                        )
-                        .forEach(existing => {
-
-                            existing.classList.remove(
-                                "open"
-                            );
-
-                            existing.remove();
-                        });
-
-
-                    if (menu.classList.contains("open")) {
-
-                        closeDropdown();
-
-                        return;
-                    }
-
-
-                    document.body.appendChild(menu);
-
-                    menu.classList.add("open");
-
-                    wrapper.classList.add("open");
-
-                    positionMenu();
-
-                    renderOptions();
-
-                    search.value = "";
-
-                    setTimeout(() => {
-                        search.focus();
-                    }, 0);
-
-
-                    document.addEventListener(
-                        "mousedown",
-                        outsideClick
-                    );
-                }
-            );
-
-
-            search.addEventListener(
-                "input",
-                () => {
-
-                    renderOptions(
-                        search.value
-                    );
-                }
-            );
-
-
-            /*
-             * Reposition while scrolling/resizing.
-             */
-            const reposition = () => {
-
-                if (menu.classList.contains("open")) {
-                    positionMenu();
-                }
-            };
-
-            window.addEventListener(
-                "resize",
-                reposition
-            );
-
-            this.shadowRoot
-                .querySelector(".table-wrapper")
-                ?.addEventListener(
-                    "scroll",
-                    reposition
-                );
-
-
-            /*
-             * The menu is temporarily appended to
-             * document.body when opened.
-             */
-            menu.appendChild(searchContainer);
-
-            menu.appendChild(optionsContainer);
-
-
-            wrapper.appendChild(trigger);
-
-            return wrapper;
-        }
-
-
-        /* =========================================================
-           DROPDOWN OPTIONS
-        ========================================================= */
-
-        getOptions(rowIndex, fieldName) {
-
-            if (
-                this.rowOptions[rowIndex] &&
-                Array.isArray(
-                    this.rowOptions[rowIndex][fieldName]
-                )
-            ) {
-                return this.rowOptions[rowIndex][fieldName];
             }
 
 
-            if (
-                Array.isArray(
-                    this.rowOptions[fieldName]
-                )
+            return false;
+
+        }
+
+
+        /* =====================================================
+           SEND FOR APPROVAL
+           ===================================================== */
+
+        _sendForApproval() {
+
+            this._emit(
+                "onSendForApproval",
+                "sendForApproval"
+            );
+
+        }
+
+
+        /* =====================================================
+           RENDER
+           ===================================================== */
+
+        _render() {
+
+            var tbody =
+                this.shadowRoot
+                    .getElementById(
+                        "tbody"
+                    );
+
+
+            tbody.innerHTML =
+                "";
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
             ) {
-                return this.rowOptions[fieldName];
-            }
 
-
-            return (
-                this.defaultOptions[fieldName] ||
-                []
-            );
-        }
-
-
-        /* =========================================================
-           DATA CHANGE
-        ========================================================= */
-
-        handleDataChange(
-            rowIndex,
-            fieldName,
-            value
-        ) {
-
-            this.rows[rowIndex][fieldName] =
-                value;
-
-            this.rows[rowIndex]._valid =
-                true;
-
-            this.lastEvent =
-                "dataChange";
-
-
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onDataChange",
-                    {
-                        detail: {
-                            rowIndex: rowIndex,
-                            fieldName: fieldName,
-                            value: value,
-                            data: this.getData()
-                        }
-                    }
-                )
-            );
-
-
-            /*
-             * Also expose a generic event
-             * for SAC scripting.
-             */
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onEvent",
-                    {
-                        detail: {
-                            type: "dataChange",
-                            rowIndex: rowIndex,
-                            fieldName: fieldName,
-                            value: value
-                        }
-                    }
-                )
-            );
-
-
-            this.render();
-        }
-
-
-        /* =========================================================
-           ADD ROW
-        ========================================================= */
-
-        addRow(triggerEvent = true) {
-
-            const row =
-                this.createEmptyRow();
-
-            this.rows.push(row);
-
-            this.lastEvent =
-                "addRow";
-
-
-            if (triggerEvent) {
-
-                this.dispatchEvent(
-                    new CustomEvent(
-                        "onEvent",
-                        {
-                            detail: {
-                                type: "addRow",
-                                rowIndex:
-                                    this.rows.length - 1
-                            }
-                        }
+                tbody.appendChild(
+                    this._createRow(
+                        this._rows[i],
+                        i
                     )
                 );
+
             }
 
-            this.render();
+
+            this._updateCounts();
+
+            this._updateDeleteButton();
+
+            this._updateSelectAll();
+
+            this._updateStatus();
+
         }
 
 
-        /* =========================================================
-           DELETE SELECTED
-        ========================================================= */
+        /* =====================================================
+           CREATE TABLE ROW
+           ===================================================== */
 
-        deleteSelected() {
+        _createRow(
+            row,
+            rowIndex
+        ) {
 
-            const selectedIndexes =
-                this.getSelectedIndexes();
-
-            if (!selectedIndexes.length) {
-                return;
-            }
-
-
-            /*
-             * Delete only selected rows.
-             */
-            this.rows =
-                this.rows.filter(
-                    row => !row._selected
+            var tr =
+                document.createElement(
+                    "tr"
                 );
 
 
-            /*
-             * Never allow a completely empty widget.
-             */
-            if (!this.rows.length) {
-                this.addRow(false);
+            if (
+                row.selected === true
+            ) {
+
+                tr.classList.add(
+                    "selected-row"
+                );
+
             }
 
 
-            this.lastEvent =
-                "deleteSelected";
+            tr.innerHTML = `
 
+                <td class="checkbox-cell">
 
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onEvent",
-                    {
-                        detail: {
-                            type: "deleteSelected",
-                            rows: selectedIndexes
+                    <input
+                        class="checkbox"
+                        type="checkbox"
+                        data-field="selected"
+                        ${
+                            row.selected
+                                ? "checked"
+                                : ""
                         }
-                    }
-                )
+                    >
+
+                </td>
+
+
+                ${this._cell(
+                    "companyCode",
+                    row.companyCode,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "division",
+                    row.division,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "department",
+                    row.department,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "costCenter",
+                    row.costCenter,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "jobCode",
+                    row.jobCode,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "positionTitle",
+                    row.positionTitle,
+                    rowIndex,
+                    false,
+                    "text"
+                )}
+
+
+                ${this._cell(
+                    "employeeId",
+                    row.employeeId,
+                    rowIndex,
+                    true,
+                    "text"
+                )}
+
+
+                ${this._cell(
+                    "payGradeGroup",
+                    row.payGradeGroup,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "payGradeLevel",
+                    row.payGradeLevel,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "hireDate",
+                    row.hireDate,
+                    rowIndex,
+                    false,
+                    "date"
+                )}
+
+
+                ${this._cell(
+                    "nationality",
+                    row.nationality,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "accommodation",
+                    row.accommodation,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "transport",
+                    row.transport,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "employeeClass",
+                    row.employeeClass,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "overtime",
+                    row.overtime,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "specialApproval",
+                    row.specialApproval,
+                    rowIndex,
+                    false,
+                    "select"
+                )}
+
+
+                ${this._cell(
+                    "comment",
+                    row.comment,
+                    rowIndex,
+                    false,
+                    "text"
+                )}
+
+            `;
+
+
+            this._attachRowEvents(
+                tr,
+                rowIndex
             );
 
 
-            this.render();
+            return tr;
+
         }
 
 
-        /* =========================================================
-           CLEAR SELECTED ROW DATA
-        ========================================================= */
+        /* =====================================================
+           CREATE CELL
+           ===================================================== */
 
-        clearSelected() {
+        _cell(
+            field,
+            value,
+            rowIndex,
+            readonly,
+            type
+        ) {
 
-            const selectedIndexes =
-                this.getSelectedIndexes();
+            /*
+             * Get options assigned through
+             * setRowOptions().
+             */
 
-            if (!selectedIndexes.length) {
-                return;
+            var options = [];
+
+            if (
+                this._rowOptions[rowIndex] &&
+                this._rowOptions[rowIndex][field]
+            ) {
+
+                options =
+                    this._rowOptions[rowIndex][field];
+
             }
 
 
-            selectedIndexes.forEach(index => {
+            if (
+                type === "select"
+            ) {
 
-                const row =
-                    this.rows[index];
+                var optionHTML =
+                    `<option value="">Select</option>`;
 
-                this.fields.forEach(field => {
 
-                    /*
-                     * Clear all actual data.
-                     */
-                    row[field.key] = "";
-                });
+                for (
+                    var i = 0;
+                    i < options.length;
+                    i++
+                ) {
+
+                    var option =
+                        options[i];
+
+
+                    var optionValue =
+                        typeof option === "object"
+                            ? option.value
+                            : option;
+
+
+                    var optionText =
+                        typeof option === "object"
+                            ? (
+                                option.text !== undefined
+                                    ? option.text
+                                    : option.value
+                              )
+                            : option;
+
+
+                    optionHTML += `
+
+                        <option
+                            value="${this._escape(
+                                optionValue
+                            )}"
+                            ${
+                                String(
+                                    optionValue
+                                ) === String(
+                                    value
+                                )
+                                    ? "selected"
+                                    : ""
+                            }
+                        >
+                            ${this._escape(
+                                optionText
+                            )}
+                        </option>
+
+                    `;
+
+                }
+
+
+                return `
+
+                    <td>
+
+                        <select
+                            class="cell"
+                            data-field="${field}"
+                        >
+
+                            ${optionHTML}
+
+                        </select>
+
+                    </td>
+
+                `;
+
+            }
+
+
+            return `
+
+                <td>
+
+                    <input
+                        class="cell ${
+                            readonly
+                                ? "readonly"
+                                : ""
+                        }"
+                        type="${type || "text"}"
+                        data-field="${field}"
+                        value="${this._escape(
+                            value
+                        )}"
+                        ${
+                            readonly
+                                ? "readonly"
+                                : ""
+                        }
+                    >
+
+                </td>
+
+            `;
+
+        }
+
+
+        /* =====================================================
+           ROW EVENT HANDLING
+           ===================================================== */
+
+        _attachRowEvents(
+            tr,
+            rowIndex
+        ) {
+
+            var controls =
+                tr.querySelectorAll(
+                    "[data-field]"
+                );
+
+
+            for (
+                var i = 0;
+                i < controls.length;
+                i++
+            ) {
+
+                var control =
+                    controls[i];
+
+
+                var field =
+                    control.dataset.field;
+
+
+                /* =============================================
+                   CHECKBOX
+                   ============================================= */
+
+                if (
+                    field === "selected"
+                ) {
+
+                    control.addEventListener(
+                        "change",
+                        (event) => {
+
+                            var checked =
+                                event.target.checked;
+
+
+                            this._rows[rowIndex].selected =
+                                checked;
+
+
+                            this._status =
+                                "CHANGED";
+
+
+                            this._updateCounts();
+
+                            this._updateDeleteButton();
+
+                            this._updateSelectAll();
+
+
+                            if (
+                                checked
+                            ) {
+
+                                tr.classList.add(
+                                    "selected-row"
+                                );
+
+                            } else {
+
+                                tr.classList.remove(
+                                    "selected-row"
+                                );
+
+                            }
+
+
+                            this._emit(
+                                "onDataEntry",
+                                "select|" +
+                                rowIndex +
+                                "|" +
+                                checked
+                            );
+
+                        }
+                    );
+
+
+                    continue;
+
+                }
+
+
+                /* =============================================
+                   NORMAL FIELD
+                   ============================================= */
+
+                control.addEventListener(
+                    "change",
+                    () => {
+
+                        this._rows[rowIndex][field] =
+                            control.value;
+
+
+                        this._rows[rowIndex].isModified =
+                            true;
+
+
+                        this._status =
+                            "CHANGED";
+
+
+                        this._validation =
+                            null;
+
+
+                        this._updateStatus();
+
+
+                        /*
+                         * Field-specific event
+                         */
+
+                        this._emit(
+                            "onFieldChange",
+                            "fieldChange|" +
+                            rowIndex +
+                            "|" +
+                            field +
+                            "|" +
+                            control.value
+                        );
+
+
+                        /*
+                         * General data-entry event
+                         */
+
+                        this._emit(
+                            "onDataEntry",
+                            "dataEntry|" +
+                            rowIndex +
+                            "|" +
+                            field +
+                            "|" +
+                            control.value
+                        );
+
+                    }
+                );
+
+            }
+
+        }
+
+
+        /* =====================================================
+           DELETE BUTTON VISIBILITY
+           ===================================================== */
+
+        _updateDeleteButton() {
+
+            var selected =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    selected++;
+
+                }
+
+            }
+
+
+            var button =
+                this.shadowRoot
+                    .getElementById(
+                        "deleteButton"
+                    );
+
+
+            button.style.display =
+                selected > 0
+                    ? "inline-flex"
+                    : "none";
+
+        }
+
+
+        /* =====================================================
+           SELECT ALL
+           ===================================================== */
+
+        _updateSelectAll() {
+
+            var checkbox =
+                this.shadowRoot
+                    .getElementById(
+                        "selectAll"
+                    );
+
+
+            if (
+                this._rows.length === 0
+            ) {
+
+                checkbox.checked =
+                    false;
+
+                checkbox.indeterminate =
+                    false;
+
+                return;
+
+            }
+
+
+            var selected =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    selected++;
+
+                }
+
+            }
+
+
+            checkbox.checked =
+                selected ===
+                this._rows.length;
+
+
+            checkbox.indeterminate =
+                selected > 0 &&
+                selected <
+                this._rows.length;
+
+        }
+
+
+        /* =====================================================
+           COUNTS
+           ===================================================== */
+
+        _updateCounts() {
+
+            var selected =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    selected++;
+
+                }
+
+            }
+
+
+            this.shadowRoot
+                .getElementById(
+                    "rowCount"
+                )
+                .textContent =
+                    this._rows.length;
+
+
+            this.shadowRoot
+                .getElementById(
+                    "selectedCount"
+                )
+                .textContent =
+                    selected;
+
+        }
+
+
+        /* =====================================================
+           STATUS
+           ===================================================== */
+
+        _updateStatus() {
+
+            var validation =
+                this.shadowRoot
+                    .getElementById(
+                        "validationStatus"
+                    );
+
+
+            var errorCount =
+                this.shadowRoot
+                    .getElementById(
+                        "errorCount"
+                    );
+
+
+            validation.classList.remove(
+                "valid",
+                "invalid"
+            );
+
+
+            if (
+                this._validation === true
+            ) {
+
+                validation.textContent =
+                    "true";
+
+                validation.classList.add(
+                    "valid"
+                );
+
+
+                errorCount.textContent =
+                    "0";
+
+            } else if (
+                this._validation === false
+            ) {
+
+                validation.textContent =
+                    "false";
+
+                validation.classList.add(
+                    "invalid"
+                );
 
 
                 /*
-                 * IMPORTANT:
-                 * Keep the row.
-                 * Only clear its data.
+                 * Error count will be calculated
+                 * during validation.
                  */
-                row._selected = false;
 
-                row._valid = true;
-            });
-
-
-            this.lastEvent =
-                "clearSelected";
+                var errors =
+                    this._getValidationErrorCount();
 
 
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onClear",
-                    {
-                        detail: {
-                            rows: selectedIndexes,
-                            data: this.getData()
-                        }
-                    }
-                )
-            );
-
-
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onEvent",
-                    {
-                        detail: {
-                            type: "clearSelected",
-                            rows: selectedIndexes
-                        }
-                    }
-                )
-            );
-
-
-            this.render();
-        }
-
-
-        /* =========================================================
-           VALIDATION
-        ========================================================= */
-
-        validate() {
-
-            let errorCount = 0;
-
-            this.rows.forEach(row => {
-
-                let valid = true;
-
-                this.requiredFields.forEach(
-                    fieldName => {
-
-                        if (
-                            !row[fieldName] ||
-                            String(
-                                row[fieldName]
-                            ).trim() === ""
-                        ) {
-                            valid = false;
-                        }
-                    }
-                );
-
-
-                row._valid = valid;
-
-                if (!valid) {
-                    errorCount++;
-                }
-            });
-
-
-            const isValid =
-                errorCount === 0;
-
-
-            this.lastEvent =
-                "validate";
-
-
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onValidate",
-                    {
-                        detail: {
-                            valid: isValid,
-                            errorRows: errorCount,
-                            data: this.getData()
-                        }
-                    }
-                )
-            );
-
-
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onEvent",
-                    {
-                        detail: {
-                            type: "validate",
-                            valid: isValid,
-                            errorRows: errorCount
-                        }
-                    }
-                )
-            );
-
-
-            this.render();
-
-            return isValid;
-        }
-
-
-        /* =========================================================
-           SELECTED ROWS
-        ========================================================= */
-
-        getSelectedIndexes() {
-
-            const indexes = [];
-
-            this.rows.forEach(
-                (row, index) => {
-
-                    if (row._selected) {
-                        indexes.push(index);
-                    }
-                }
-            );
-
-            return indexes;
-        }
-
-
-        /* =========================================================
-           DELETE BUTTON VISIBILITY
-        ========================================================= */
-
-        updateDeleteButton() {
-
-            const button =
-                this.shadowRoot.getElementById(
-                    "deleteButton"
-                );
-
-            if (!button) {
-                return;
-            }
-
-
-            const selected =
-                this.getSelectedIndexes();
-
-
-            if (selected.length > 0) {
-
-                button.classList.remove(
-                    "hidden"
-                );
+                errorCount.textContent =
+                    errors;
 
             } else {
 
-                button.classList.add(
-                    "hidden"
-                );
+                validation.textContent =
+                    "-";
+
+                errorCount.textContent =
+                    "0";
+
             }
+
+
+            this.shadowRoot
+                .getElementById(
+                    "rowCount"
+                )
+                .textContent =
+                    this._rows.length;
+
+
+            this.shadowRoot
+                .getElementById(
+                    "selectedCount"
+                )
+                .textContent =
+                    this._getSelectedCount();
+
         }
 
 
-        /* =========================================================
-           PUBLIC METHOD:
+        /* =====================================================
+           GET SELECTED COUNT
+           ===================================================== */
+
+        _getSelectedCount() {
+
+            var count =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                if (
+                    this._rows[i].selected === true
+                ) {
+
+                    count++;
+
+                }
+
+            }
+
+
+            return count;
+
+        }
+
+
+        /* =====================================================
+           VALIDATION ERROR COUNT
+           ===================================================== */
+
+        _getValidationErrorCount() {
+
+            var errors =
+                0;
+
+
+            for (
+                var i = 0;
+                i < this._rows.length;
+                i++
+            ) {
+
+                var row =
+                    this._rows[i];
+
+
+                if (
+                    !this._rowHasData(
+                        row
+                    )
+                ) {
+
+                    continue;
+
+                }
+
+
+                if (
+                    !row.companyCode ||
+                    !row.division ||
+                    !row.department ||
+                    !row.costCenter ||
+                    !row.jobCode ||
+                    !row.positionTitle
+                ) {
+
+                    errors++;
+
+                }
+
+            }
+
+
+            return errors;
+
+        }
+
+
+        /* =====================================================
+           EVENT EMITTER
+           ===================================================== */
+
+        _emit(
+            name,
+            value
+        ) {
+
+            this._lastEvent =
+                String(value);
+
+
+            this.dispatchEvent(
+                new Event(name)
+            );
+
+        }
+
+
+        /* =====================================================
+           GET LAST EVENT
+           ===================================================== */
+
+        getLastEvent() {
+
+            return this._lastEvent;
+
+        }
+
+
+        /* =====================================================
            GET DATA
-        ========================================================= */
+           ===================================================== */
 
         getData() {
 
             return JSON.stringify(
-                this.rows.map(row => {
-
-                    const cleanRow = {};
-
-                    this.fields.forEach(
-                        field => {
-
-                            cleanRow[field.key] =
-                                row[field.key];
-                        }
-                    );
-
-                    return cleanRow;
-                })
+                this._rows
             );
+
         }
 
 
-        /* =========================================================
-           PUBLIC METHOD:
+        /* =====================================================
            SET DATA
-        ========================================================= */
+           ===================================================== */
 
-        setData(data) {
+        setData(
+            data
+        ) {
 
             try {
 
-                const parsed =
+                var parsed;
+
+
+                if (
                     typeof data === "string"
-                        ? JSON.parse(data)
-                        : data;
+                ) {
 
-
-                if (!Array.isArray(parsed)) {
-                    return;
-                }
-
-
-                this.rows =
-                    parsed.map(item => {
-
-                        const row =
-                            this.createEmptyRow();
-
-                        this.fields.forEach(
-                            field => {
-
-                                if (
-                                    item.hasOwnProperty(
-                                        field.key
-                                    )
-                                ) {
-                                    row[field.key] =
-                                        item[field.key];
-                                }
-                            }
+                    parsed =
+                        JSON.parse(
+                            data
                         );
 
-                        return row;
-                    });
+                } else {
 
+                    parsed =
+                        data;
 
-                if (!this.rows.length) {
-                    this.addRow(false);
                 }
 
 
-                this.lastEvent =
-                    "setData";
+                if (
+                    Array.isArray(
+                        parsed
+                    )
+                ) {
 
-                this.render();
+                    this._rows =
+                        parsed;
 
-            } catch (error) {
+                } else {
 
-                console.error(
-                    "PositionEntry setData error:",
-                    error
-                );
+                    this._rows = [];
+
+                }
+
+
+                /*
+                 * Never allow completely empty
+                 * widget on load.
+                 */
+
+                if (
+                    this._rows.length === 0
+                ) {
+
+                    this._rows.push(
+                        this._createEmptyRow()
+                    );
+
+                }
+
+
+                this._render();
+
+            } catch (
+                error
+            ) {
+
+                this._rows = [
+
+                    this._createEmptyRow()
+
+                ];
+
+
+                this._render();
+
             }
+
         }
 
 
-        /* =========================================================
-           PUBLIC METHOD:
+        /* =====================================================
            SET CELL VALUE
-        ========================================================= */
+           ===================================================== */
 
         setCellValue(
             rowIndex,
@@ -1969,51 +2725,34 @@
         ) {
 
             if (
-                rowIndex < 0 ||
-                rowIndex >= this.rows.length
+                !this._rows[rowIndex]
             ) {
+
                 return;
+
             }
 
 
-            if (
-                !this.rows[rowIndex]
-                    .hasOwnProperty(fieldName)
-            ) {
-                return;
-            }
-
-
-            this.rows[rowIndex][fieldName] =
+            this._rows[rowIndex][fieldName] =
                 value;
 
 
-            this.lastEvent =
-                "setCellValue";
+            this._rows[rowIndex].isModified =
+                true;
 
 
-            this.dispatchEvent(
-                new CustomEvent(
-                    "onDataChange",
-                    {
-                        detail: {
-                            rowIndex: rowIndex,
-                            fieldName: fieldName,
-                            value: value
-                        }
-                    }
-                )
-            );
+            this._validation =
+                null;
 
 
-            this.render();
+            this._render();
+
         }
 
 
-        /* =========================================================
-           PUBLIC METHOD:
-           SET DROPDOWN OPTIONS
-        ========================================================= */
+        /* =====================================================
+           SET ROW OPTIONS
+           ===================================================== */
 
         setRowOptions(
             rowIndex,
@@ -2021,61 +2760,98 @@
             options
         ) {
 
+            if (
+                !this._rowOptions[rowIndex]
+            ) {
+
+                this._rowOptions[rowIndex] =
+                    {};
+
+            }
+
+
             try {
 
-                const parsed =
+                this._rowOptions[rowIndex][fieldName] =
                     typeof options === "string"
-                        ? JSON.parse(options)
+                        ? JSON.parse(
+                            options
+                          )
                         : options;
 
 
-                if (!Array.isArray(parsed)) {
-                    return;
-                }
+                /*
+                 * Re-render so new options
+                 * immediately appear.
+                 */
 
+                this._render();
 
-                if (
-                    !this.rowOptions[rowIndex]
-                ) {
-                    this.rowOptions[rowIndex] = {};
-                }
+            } catch (
+                error
+            ) {
 
+                this._rowOptions[rowIndex][fieldName] =
+                    [];
 
-                this.rowOptions[rowIndex][fieldName] =
-                    parsed;
-
-
-                this.lastEvent =
-                    "setRowOptions";
-
-
-                this.render();
-
-            } catch (error) {
-
-                console.error(
-                    "setRowOptions error:",
-                    error
-                );
             }
+
         }
 
 
-        /* =========================================================
-           PUBLIC METHOD:
-           LAST EVENT
-        ========================================================= */
+        /* =====================================================
+           ESCAPE HTML
+           ===================================================== */
 
-        getLastEvent() {
+        _escape(
+            value
+        ) {
 
-            return this.lastEvent;
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return "";
+
+            }
+
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
         }
+
     }
 
 
-    /* =============================================================
-       REGISTER WEB COMPONENT
-    ============================================================= */
+    /* =========================================================
+       REGISTER COMPONENT
+       ========================================================= */
 
     if (
         !customElements.get(
@@ -2087,6 +2863,7 @@
             "com-madhav-positionentry",
             PositionEntry
         );
+
     }
 
 })();
