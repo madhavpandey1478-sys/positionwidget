@@ -4,8 +4,167 @@
 
     /* =========================================================
        POSITION ENTRY - SAC CUSTOM WIDGET
-       Create Position only
+       Tab 1: Create Position
+       Tab 2: Load / Modify / Delete
        ========================================================= */
+
+    /* =========================================================
+       ICONS (shared inline SVGs, colored via currentColor)
+       ========================================================= */
+
+    var ICONS = {
+
+        add: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>',
+
+        copy: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M4 12.5V5.5A1.5 1.5 0 0 1 5.5 4h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
+
+        deleteIcon: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.6 9.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+        check: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10.5l3.5 3.5L16 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+        send: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M3 10l14-6-6 14-2-6-6-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="currentColor"/></svg>',
+
+        clear: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+
+        load: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5M4 15h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+
+        save: '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 4h9l3 3v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 4v4h6V4" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><rect x="6" y="11" width="8" height="5" stroke="currentColor" stroke-width="1.4"/></svg>'
+    };
+
+    /* =========================================================
+       COLUMN DEFINITIONS
+       (shared field set, reordered per tab)
+       ========================================================= */
+
+    var CORE_COLUMNS = {
+
+        companyCode:     { field: "companyCode",     label: "Company Code",     type: "select", width: 120 },
+        division:        { field: "division",        label: "Division",         type: "select", width: 125 },
+        department:      { field: "department",      label: "Department",       type: "select", width: 145 },
+        costCenter:      { field: "costCenter",      label: "Cost Center",      type: "select", width: 135 },
+        jobCode:         { field: "jobCode",          label: "Job Code",         type: "select", width: 125 },
+        positionTitle:   { field: "positionTitle",   label: "Position Title",   type: "text",   width: 190 },
+        employeeId:      { field: "employeeId",      label: "Position ID",      type: "text",   width: 135, readonly: true },
+        payGradeGroup:   { field: "payGradeGroup",   label: "Pay Grade",        type: "select", width: 110 },
+        payGradeLevel:   { field: "payGradeLevel",   label: "Level",            type: "select", width: 90  },
+        hireDate:        { field: "hireDate",        label: "Hire Date",        type: "date",   width: 125 },
+        nationality:     { field: "nationality",     label: "Nationality",      type: "select", width: 125 },
+        accommodation:   { field: "accommodation",   label: "Accommodation",    type: "select", width: 140 },
+        transport:       { field: "transport",       label: "Transport",        type: "select", width: 115 },
+        employeeClass:   { field: "employeeClass",   label: "Employee Class",   type: "select", width: 135 },
+        overtime:        { field: "overtime",        label: "Overtime",         type: "select", width: 105 },
+        specialApproval: { field: "specialApproval", label: "Special Approval", type: "select", width: 140 },
+        comment:         { field: "comment",         label: "Comment",          type: "text",   width: 220 }
+    };
+
+    var ALL_FIELDS = [
+        "companyCode", "division", "department", "costCenter", "jobCode",
+        "positionTitle", "employeeId", "payGradeGroup", "payGradeLevel",
+        "hireDate", "nationality", "accommodation", "transport",
+        "employeeClass", "overtime", "specialApproval", "comment"
+    ];
+
+    /* =========================================================
+       TAB CONFIGURATION
+       ========================================================= */
+
+    var TAB_CONFIG = {
+
+        create: {
+
+            key: "create",
+            tabLabel: "Tab 1 - Create Position",
+            startingRows: 1,
+
+            columns: [
+                CORE_COLUMNS.companyCode,
+                CORE_COLUMNS.division,
+                CORE_COLUMNS.department,
+                CORE_COLUMNS.costCenter,
+                CORE_COLUMNS.jobCode,
+                CORE_COLUMNS.positionTitle,
+                CORE_COLUMNS.employeeId,
+                CORE_COLUMNS.payGradeGroup,
+                CORE_COLUMNS.payGradeLevel,
+                CORE_COLUMNS.hireDate,
+                CORE_COLUMNS.nationality,
+                CORE_COLUMNS.accommodation,
+                CORE_COLUMNS.transport,
+                CORE_COLUMNS.employeeClass,
+                CORE_COLUMNS.overtime,
+                CORE_COLUMNS.specialApproval,
+                CORE_COLUMNS.comment
+            ],
+
+            mandatoryFields: [
+                "companyCode", "division", "department",
+                "costCenter", "jobCode", "positionTitle"
+            ],
+
+            buttons: [
+                { id: "addButton",      label: "Add Row",           icon: ICONS.add,        handler: "_addRow" },
+                { id: "copyButton",     label: "Copy",              icon: ICONS.copy,       handler: "_copyRows" },
+                { id: "deleteButton",   label: "Delete Selected",   icon: ICONS.deleteIcon, handler: "_deleteRows",  cssClass: "delete", hiddenUnlessSelected: true },
+                { id: "validateButton", label: "Validate",          icon: ICONS.check,      handler: "_validate" },
+                { id: "approvalButton", label: "Send for Approval", icon: ICONS.send,       handler: "_sendForApproval", cssClass: "primary" },
+                { id: "clearButton",    label: "Clear",             icon: ICONS.clear,      handler: "_clear" }
+            ],
+
+            events: {
+                fieldChange: "onFieldChange",
+                dataEntry: "onDataEntry",
+                validate: "onValidate",
+                clearEvent: "onClear"
+            }
+        },
+
+        modify: {
+
+            key: "modify",
+            tabLabel: "Tab 2 - Load / Modify / Delete",
+            startingRows: 0,
+
+            columns: [
+                CORE_COLUMNS.employeeId,
+                CORE_COLUMNS.companyCode,
+                CORE_COLUMNS.division,
+                CORE_COLUMNS.department,
+                CORE_COLUMNS.costCenter,
+                CORE_COLUMNS.jobCode,
+                CORE_COLUMNS.positionTitle,
+                CORE_COLUMNS.payGradeGroup,
+                CORE_COLUMNS.payGradeLevel,
+                CORE_COLUMNS.hireDate,
+                CORE_COLUMNS.nationality,
+                CORE_COLUMNS.accommodation,
+                CORE_COLUMNS.transport,
+                CORE_COLUMNS.employeeClass,
+                CORE_COLUMNS.overtime,
+                CORE_COLUMNS.specialApproval,
+                CORE_COLUMNS.comment
+            ],
+
+            mandatoryFields: [
+                "employeeId", "companyCode", "division", "department",
+                "costCenter", "jobCode", "positionTitle"
+            ],
+
+            buttons: [
+                { id: "loadButton",      label: "Load Data",     icon: ICONS.load,       handler: "_loadData" },
+                { id: "deleteButton2",   label: "Delete Selected", icon: ICONS.deleteIcon, handler: "_deleteRows", cssClass: "delete", hiddenUnlessSelected: true },
+                { id: "validateButton2", label: "Validate",      icon: ICONS.check,      handler: "_validate" },
+                { id: "saveButton",      label: "Save Changes",  icon: ICONS.save,       handler: "_saveChanges", cssClass: "primary" },
+                { id: "clearButton2",    label: "Clear",         icon: ICONS.clear,      handler: "_clear" }
+            ],
+
+            events: {
+                fieldChange: "onFieldChange2",
+                dataEntry: "onDataEntry2",
+                validate: "onValidate2",
+                clearEvent: "onClear2"
+            }
+        }
+    };
 
     var template = document.createElement("template");
 
@@ -46,7 +205,10 @@
                 --text: #1d2d3e;
                 --muted: #687b8d;
 
-                --warning: #fff8df;
+                --error: #bb0000;
+                --error-bg: #fdecec;
+                --error-bg-hover: #fbdede;
+                --error-border: #e2a0a0;
 
                 box-sizing: border-box;
             }
@@ -72,6 +234,44 @@
                 box-shadow:
                     0 1px 3px rgba(0, 0, 0, 0.06),
                     0 4px 12px rgba(0, 0, 0, 0.04);
+            }
+
+            /* =================================================
+               TAB BAR
+               ================================================= */
+
+            .tab-bar {
+                display: flex;
+                align-items: center;
+                gap: 22px;
+                padding: 10px 14px 0;
+                background: #ffffff;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .tab-link {
+                height: auto;
+                padding: 4px 2px 10px;
+                border: none;
+                border-bottom: 2px solid transparent;
+                border-radius: 0;
+                background: transparent;
+                color: #5f7284;
+                font-size: 13px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+            .tab-link:hover {
+                background: transparent;
+                border-bottom-color: #c4d0db;
+                box-shadow: none;
+                color: #29465f;
+            }
+
+            .tab-link.active {
+                color: var(--blue);
+                border-bottom-color: var(--blue);
             }
 
             /* =================================================
@@ -230,7 +430,7 @@
                ================================================= */
 
             td {
-                height: 46px;
+                min-height: 46px;
                 padding: 6px 8px;
                 background: #ffffff;
                 border-bottom: 1px solid #e9edf1;
@@ -248,6 +448,30 @@
 
             tr.selected-row:hover td {
                 background: #d7e9ff;
+            }
+
+            tr.row-error td {
+                background: var(--error-bg);
+            }
+
+            tr.row-error:hover td {
+                background: var(--error-bg-hover);
+            }
+
+            tr.selected-row.row-error td {
+                background: #fbdcdc;
+            }
+
+            /* =================================================
+               FIELD ERROR TEXT
+               ================================================= */
+
+            .field-error {
+                margin-top: 4px;
+                font-size: 10px;
+                line-height: 1.25;
+                color: var(--error);
+                white-space: normal;
             }
 
             /* =================================================
@@ -295,6 +519,12 @@
                 padding-right: 7px;
             }
 
+            input.cell.has-error,
+            input.cell.has-error:hover {
+                border-color: var(--error-border);
+                background: #fffafa;
+            }
+
             /* =================================================
                SEARCHABLE DROPDOWN (COMBOBOX)
                ================================================= */
@@ -333,6 +563,11 @@
             .combo-toggle.is-open {
                 border-color: var(--blue);
                 box-shadow: 0 0 0 2px rgba(10, 110, 209, 0.10);
+            }
+
+            .combo-toggle.has-error {
+                border-color: var(--error-border);
+                background: #fffafa;
             }
 
             .combo-toggle-text {
@@ -520,82 +755,21 @@
                 display: block;
             }
 
-            /* =================================================
-               EMPTY STATE
-               ================================================= */
-
-            .empty-message {
-                padding: 30px;
-                text-align: center;
-                color: #728495;
-                font-size: 12px;
-            }
-
         </style>
 
         <div class="container">
 
+            <!-- TAB BAR -->
+            <div class="tab-bar" id="tabBar"></div>
+
             <!-- TOOLBAR -->
-            <div class="toolbar">
-
-                <button id="addButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    Add Row
-                </button>
-
-                <button id="copyButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M4 12.5V5.5A1.5 1.5 0 0 1 5.5 4h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                    Copy
-                </button>
-
-                <button id="deleteButton" class="delete" type="button" style="display:none;">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.6 9.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Delete Selected
-                </button>
-
-                <button id="validateButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10.5l3.5 3.5L16 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Validate
-                </button>
-
-                <button id="approvalButton" class="primary" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M3 10l14-6-6 14-2-6-6-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="currentColor"/></svg>
-                    Send for Approval
-                </button>
-
-                <button id="clearButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    Clear
-                </button>
-
-            </div>
+            <div class="toolbar" id="toolbar"></div>
 
             <!-- TABLE -->
             <div class="table-area">
                 <table>
                     <thead>
-                        <tr>
-                            <th class="checkbox-cell" title="Select all">
-                                <input id="selectAll" class="checkbox" type="checkbox">
-                            </th>
-                            <th style="width:120px;">Company Code</th>
-                            <th style="width:125px;">Division</th>
-                            <th style="width:145px;">Department</th>
-                            <th style="width:135px;">Cost Center</th>
-                            <th style="width:125px;">Job Code</th>
-                            <th style="width:190px;">Position Title</th>
-                            <th style="width:135px;">Position ID</th>
-                            <th style="width:110px;">Pay Grade</th>
-                            <th style="width:90px;">Level</th>
-                            <th style="width:125px;">Hire Date</th>
-                            <th style="width:125px;">Nationality</th>
-                            <th style="width:140px;">Accommodation</th>
-                            <th style="width:115px;">Transport</th>
-                            <th style="width:135px;">Employee Class</th>
-                            <th style="width:105px;">Overtime</th>
-                            <th style="width:140px;">Special Approval</th>
-                            <th style="width:220px;">Comment</th>
-                        </tr>
+                        <tr id="headRow"></tr>
                     </thead>
                     <tbody id="tbody"></tbody>
                 </table>
@@ -603,7 +777,7 @@
 
             <!-- STATUS -->
             <div class="status">
-                <span class="status-item">Total Rows: <span id="rowCount" class="status-value">1</span></span>
+                <span class="status-item">Total Rows: <span id="rowCount" class="status-value">0</span></span>
                 <span class="status-item">Selected Rows: <span id="selectedCount" class="status-value">0</span></span>
                 <span class="status-item">Validation: <span id="validationIcon" class="status-icon"></span><span id="validationStatus" class="status-value">-</span></span>
                 <span class="status-item">Error Rows: <span id="errorCount" class="status-value">0</span></span>
@@ -626,90 +800,208 @@
 
             this.shadowRoot.appendChild(template.content.cloneNode(true));
 
-            /* INTERNAL DATA */
-
-            this._rows = [];
-            this._rowOptions = {};
-            this._lastEvent = "";
-            this._status = "READY";
-            this._validation = null;
+            /* ACTIVE TAB */
+            this._activeTab = "create";
 
             /* Combobox (searchable dropdown) UI state - not part of row data */
             this._openDropdown = null; // { rowIndex, field }
             this._dropdownSearch = "";
 
-            /* START WITH ONE ROW */
-            this._rows.push(this._createEmptyRow());
+            this._lastEvent = "";
 
-            /* BIND UI */
-            this._bindButtons();
-            this._bindGlobalCloseHandler();
+            /* PER-TAB STATE */
+            this._tabs = {
+                create: this._createTabState(TAB_CONFIG.create),
+                modify: this._createTabState(TAB_CONFIG.modify)
+            };
+
+            /* BIND TAB SWITCHER (built once, only class toggling after) */
+            this._buildTabBar();
 
             this._render();
         }
 
         /* =====================================================
-           CREATE EMPTY ROW
+           TAB STATE FACTORY
            ===================================================== */
 
-        _createEmptyRow() {
+        _createTabState(config) {
+
+            var rows = [];
+
+            for (var i = 0; i < config.startingRows; i++) {
+                rows.push(this._createEmptyRow(config));
+            }
+
             return {
-                selected: false,
-                companyCode: "",
-                division: "",
-                department: "",
-                costCenter: "",
-                jobCode: "",
-                positionTitle: "",
-                employeeId: "",
-                payGradeGroup: "",
-                payGradeLevel: "",
-                hireDate: "",
-                nationality: "",
-                accommodation: "",
-                transport: "",
-                employeeClass: "",
-                overtime: "",
-                specialApproval: "",
-                comment: "",
-                isModified: false
+                config: config,
+                rows: rows,
+                rowOptions: {},
+                status: "READY",
+                validation: null
             };
         }
 
+        _createEmptyRow(config) {
+
+            var row = {
+                selected: false,
+                isModified: false
+            };
+
+            for (var i = 0; i < ALL_FIELDS.length; i++) {
+                row[ALL_FIELDS[i]] = "";
+            }
+
+            return row;
+        }
+
+        _currentTab() {
+            return this._tabs[this._activeTab];
+        }
+
         /* =====================================================
-           BUTTON BINDINGS
+           TAB BAR
            ===================================================== */
 
-        _bindButtons() {
+        _buildTabBar() {
 
-            this.shadowRoot.getElementById("addButton")
-                .addEventListener("click", () => { this._addRow(); });
+            var bar = this.shadowRoot.getElementById("tabBar");
 
-            this.shadowRoot.getElementById("copyButton")
-                .addEventListener("click", () => { this._copyRows(); });
+            var html = "";
 
-            this.shadowRoot.getElementById("deleteButton")
-                .addEventListener("click", () => { this._deleteRows(); });
+            html += this._tabButtonHTML(TAB_CONFIG.create);
+            html += this._tabButtonHTML(TAB_CONFIG.modify);
 
-            this.shadowRoot.getElementById("clearButton")
-                .addEventListener("click", () => { this._clear(); });
+            bar.innerHTML = html;
 
-            this.shadowRoot.getElementById("validateButton")
-                .addEventListener("click", () => { this._validate(); });
+            var links = bar.querySelectorAll(".tab-link");
 
-            this.shadowRoot.getElementById("approvalButton")
-                .addEventListener("click", () => { this._sendForApproval(); });
+            for (var i = 0; i < links.length; i++) {
+
+                links[i].addEventListener("click", (event) => {
+
+                    var tabKey = event.currentTarget.dataset.tab;
+
+                    if (tabKey === this._activeTab) {
+                        return;
+                    }
+
+                    this._activeTab = tabKey;
+
+                    this._openDropdown = null;
+                    this._dropdownSearch = "";
+
+                    this._render();
+
+                    this._emit("onTabChange", "tabChange|" + tabKey);
+                });
+            }
+        }
+
+        _tabButtonHTML(config) {
+
+            return `
+                <button type="button" class="tab-link ${config.key === this._activeTab ? "active" : ""}" data-tab="${config.key}">
+                    ${this._escape(config.tabLabel)}
+                </button>
+            `;
+        }
+
+        _updateTabBarActiveState() {
+
+            var links = this.shadowRoot.querySelectorAll(".tab-link");
+
+            for (var i = 0; i < links.length; i++) {
+
+                if (links[i].dataset.tab === this._activeTab) {
+                    links[i].classList.add("active");
+                } else {
+                    links[i].classList.remove("active");
+                }
+            }
+        }
+
+        /* =====================================================
+           TOOLBAR (rebuilt per active tab)
+           ===================================================== */
+
+        _renderToolbar() {
+
+            var toolbar = this.shadowRoot.getElementById("toolbar");
+            var config = this._currentTab().config;
+
+            var html = "";
+
+            for (var i = 0; i < config.buttons.length; i++) {
+
+                var btn = config.buttons[i];
+
+                html += `
+                    <button
+                        id="${btn.id}"
+                        type="button"
+                        class="${btn.cssClass || ""}"
+                        ${btn.hiddenUnlessSelected ? 'style="display:none;"' : ""}
+                    >
+                        ${btn.icon}
+                        ${this._escape(btn.label)}
+                    </button>
+                `;
+            }
+
+            toolbar.innerHTML = html;
+
+            for (var j = 0; j < config.buttons.length; j++) {
+
+                var buttonConfig = config.buttons[j];
+                var element = this.shadowRoot.getElementById(buttonConfig.id);
+
+                if (!element) {
+                    continue;
+                }
+
+                element.addEventListener("click", () => {
+                    this[buttonConfig.handler]();
+                });
+            }
+        }
+
+        /* =====================================================
+           TABLE HEADER (rebuilt per active tab)
+           ===================================================== */
+
+        _renderHead() {
+
+            var headRow = this.shadowRoot.getElementById("headRow");
+            var config = this._currentTab().config;
+
+            var html = `
+                <th class="checkbox-cell" title="Select all">
+                    <input id="selectAll" class="checkbox" type="checkbox">
+                </th>
+            `;
+
+            for (var i = 0; i < config.columns.length; i++) {
+
+                var column = config.columns[i];
+
+                html += `<th style="width:${column.width}px;">${this._escape(column.label)}</th>`;
+            }
+
+            headRow.innerHTML = html;
 
             this.shadowRoot.getElementById("selectAll")
                 .addEventListener("change", (event) => {
 
                     var checked = event.target.checked;
+                    var tab = this._currentTab();
 
-                    for (var i = 0; i < this._rows.length; i++) {
-                        this._rows[i].selected = checked;
+                    for (var r = 0; r < tab.rows.length; r++) {
+                        tab.rows[r].selected = checked;
                     }
 
-                    this._status = "CHANGED";
+                    tab.status = "CHANGED";
 
                     this._render();
 
@@ -718,52 +1010,34 @@
         }
 
         /* =====================================================
-           GLOBAL CLICK HANDLER - CLOSES OPEN DROPDOWN
-           ===================================================== */
-
-        _bindGlobalCloseHandler() {
-
-            this.shadowRoot.addEventListener("click", () => {
-
-                if (this._openDropdown) {
-
-                    this._openDropdown = null;
-                    this._dropdownSearch = "";
-
-                    this._render();
-                }
-            });
-        }
-
-        /* =====================================================
-           ADD ROW
+           BUTTON HANDLERS (operate on the active tab)
            ===================================================== */
 
         _addRow() {
 
-            this._rows.push(this._createEmptyRow());
+            var tab = this._currentTab();
 
-            this._status = "CHANGED";
-            this._validation = null;
+            tab.rows.push(this._createEmptyRow(tab.config));
+
+            tab.status = "CHANGED";
+            tab.validation = null;
 
             this._render();
 
-            this._emit("onDataEntry", "addRow|" + (this._rows.length - 1));
+            this._emit(tab.config.events.dataEntry, "addRow|" + (tab.rows.length - 1));
         }
-
-        /* =====================================================
-           COPY SELECTED ROWS
-           ===================================================== */
 
         _copyRows() {
 
+            var tab = this._currentTab();
+
             var copied = [];
 
-            for (var i = 0; i < this._rows.length; i++) {
+            for (var i = 0; i < tab.rows.length; i++) {
 
-                if (this._rows[i].selected === true) {
+                if (tab.rows[i].selected === true) {
 
-                    var newRow = JSON.parse(JSON.stringify(this._rows[i]));
+                    var newRow = JSON.parse(JSON.stringify(tab.rows[i]));
 
                     newRow.selected = false;
 
@@ -781,32 +1055,30 @@
             }
 
             for (var j = 0; j < copied.length; j++) {
-                this._rows.push(copied[j]);
+                tab.rows.push(copied[j]);
             }
 
-            this._status = "CHANGED";
-            this._validation = null;
+            tab.status = "CHANGED";
+            tab.validation = null;
 
             this._render();
 
-            this._emit("onDataEntry", "copy|" + copied.length);
+            this._emit(tab.config.events.dataEntry, "copy|" + copied.length);
         }
 
-        /* =====================================================
-           DELETE SELECTED ROWS
-           ===================================================== */
-
         _deleteRows() {
+
+            var tab = this._currentTab();
 
             var remaining = [];
             var deleted = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
+            for (var i = 0; i < tab.rows.length; i++) {
 
-                if (this._rows[i].selected === true) {
+                if (tab.rows[i].selected === true) {
                     deleted++;
                 } else {
-                    remaining.push(this._rows[i]);
+                    remaining.push(tab.rows[i]);
                 }
             }
 
@@ -814,32 +1086,30 @@
                 return;
             }
 
-            this._rows = remaining;
+            tab.rows = remaining;
 
-            /* Always leave one empty row in the widget. */
-            if (this._rows.length === 0) {
-                this._rows.push(this._createEmptyRow());
+            /* The Create Position tab always keeps at least one empty row. */
+            if (tab.rows.length === 0 && tab.config.key === "create") {
+                tab.rows.push(this._createEmptyRow(tab.config));
             }
 
-            this._status = "CHANGED";
-            this._validation = null;
+            tab.status = "CHANGED";
+            tab.validation = null;
 
             this._render();
 
-            this._emit("onDataEntry", "delete|" + deleted);
+            this._emit(tab.config.events.dataEntry, "delete|" + deleted);
         }
-
-        /* =====================================================
-           CLEAR SELECTED ROW DATA
-           ===================================================== */
 
         _clear() {
 
+            var tab = this._currentTab();
+
             var cleared = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
+            for (var i = 0; i < tab.rows.length; i++) {
 
-                var row = this._rows[i];
+                var row = tab.rows[i];
 
                 if (row.selected === true) {
 
@@ -856,110 +1126,96 @@
                 return;
             }
 
-            this._status = "CLEARED";
-            this._validation = null;
+            tab.status = "CLEARED";
+            tab.validation = null;
 
             this._render();
 
-            this._emit("onClear", "clear|" + cleared);
+            this._emit(tab.config.events.clearEvent, "clear|" + cleared);
         }
-
-        /* =====================================================
-           CLEAR ROW DATA
-           ===================================================== */
 
         _clearRow(row) {
 
-            row.companyCode = "";
-            row.division = "";
-            row.department = "";
-            row.costCenter = "";
-            row.jobCode = "";
-            row.positionTitle = "";
-            row.employeeId = "";
-            row.payGradeGroup = "";
-            row.payGradeLevel = "";
-            row.hireDate = "";
-            row.nationality = "";
-            row.accommodation = "";
-            row.transport = "";
-            row.employeeClass = "";
-            row.overtime = "";
-            row.specialApproval = "";
-            row.comment = "";
+            for (var i = 0; i < ALL_FIELDS.length; i++) {
+                row[ALL_FIELDS[i]] = "";
+            }
 
             row.isModified = true;
         }
 
-        /* =====================================================
-           VALIDATE
-           ===================================================== */
-
         _validate() {
+
+            var tab = this._currentTab();
 
             var errorRows = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
+            for (var i = 0; i < tab.rows.length; i++) {
 
-                var row = this._rows[i];
+                var row = tab.rows[i];
 
-                var hasData = this._rowHasData(row);
-
-                if (hasData === false) {
+                if (this._rowHasData(row) === false) {
                     continue;
                 }
 
-                if (
-                    !row.companyCode ||
-                    !row.division ||
-                    !row.department ||
-                    !row.costCenter ||
-                    !row.jobCode ||
-                    !row.positionTitle
-                ) {
+                if (this._getMissingFields(row, tab.config.mandatoryFields).length > 0) {
                     errorRows++;
                 }
             }
 
             if (errorRows === 0) {
 
-                this._validation = true;
-                this._status = "VALID";
+                tab.validation = true;
+                tab.status = "VALID";
 
-                this._emit("onValidate", "VALID|0");
+                this._emit(tab.config.events.validate, "VALID|0");
 
             } else {
 
-                this._validation = false;
-                this._status = "INVALID";
+                tab.validation = false;
+                tab.status = "INVALID";
 
-                this._emit("onValidate", "INVALID|" + errorRows);
+                this._emit(tab.config.events.validate, "INVALID|" + errorRows);
             }
 
-            this._updateStatus();
+            this._render();
+        }
+
+        _loadData() {
+
+            var tab = this._tabs.modify;
+
+            tab.status = "LOADING";
+
+            this._emit("onLoadData", "loadData");
+
+            /*
+             * Actual row population happens when the host
+             * script calls setData2() after fetching records.
+             */
+        }
+
+        _saveChanges() {
+
+            var tab = this._tabs.modify;
+
+            this._emit("onSaveChanges", "saveChanges|" + tab.rows.length);
+        }
+
+        _sendForApproval() {
+            this._emit("onSendForApproval", "sendForApproval");
         }
 
         /* =====================================================
-           CHECK IF ROW CONTAINS DATA
+           VALIDATION HELPERS
            ===================================================== */
 
         _rowHasData(row) {
 
-            var fields = [
-                "companyCode", "division", "department", "costCenter",
-                "jobCode", "positionTitle", "employeeId", "payGradeGroup",
-                "payGradeLevel", "hireDate", "nationality", "accommodation",
-                "transport", "employeeClass", "overtime", "specialApproval",
-                "comment"
-            ];
+            for (var i = 0; i < ALL_FIELDS.length; i++) {
 
-            for (var i = 0; i < fields.length; i++) {
+                var value = row[ALL_FIELDS[i]];
 
-                if (
-                    row[fields[i]] !== "" &&
-                    row[fields[i]] !== null &&
-                    row[fields[i]] !== undefined
-                ) {
+                if (value !== "" && value !== null && value !== undefined) {
                     return true;
                 }
             }
@@ -967,74 +1223,124 @@
             return false;
         }
 
-        /* =====================================================
-           SEND FOR APPROVAL
-           ===================================================== */
+        _getMissingFields(row, mandatoryFields) {
 
-        _sendForApproval() {
-            this._emit("onSendForApproval", "sendForApproval");
+            var missing = [];
+
+            for (var i = 0; i < mandatoryFields.length; i++) {
+
+                var field = mandatoryFields[i];
+
+                if (!row[field]) {
+                    missing.push(field);
+                }
+            }
+
+            return missing;
+        }
+
+        _getValidationErrorCount(tab) {
+
+            var errors = 0;
+
+            for (var i = 0; i < tab.rows.length; i++) {
+
+                var row = tab.rows[i];
+
+                if (!this._rowHasData(row)) {
+                    continue;
+                }
+
+                if (this._getMissingFields(row, tab.config.mandatoryFields).length > 0) {
+                    errors++;
+                }
+            }
+
+            return errors;
+        }
+
+        _fieldLabel(tab, field) {
+
+            for (var i = 0; i < tab.config.columns.length; i++) {
+
+                if (tab.config.columns[i].field === field) {
+                    return tab.config.columns[i].label;
+                }
+            }
+
+            return field;
         }
 
         /* =====================================================
-           RENDER
+           RENDER (full pipeline)
            ===================================================== */
 
         _render() {
 
-            var tbody = this.shadowRoot.getElementById("tbody");
+            this._updateTabBarActiveState();
 
-            tbody.innerHTML = "";
-
-            for (var i = 0; i < this._rows.length; i++) {
-                tbody.appendChild(this._createRow(this._rows[i], i));
-            }
+            this._renderToolbar();
+            this._renderHead();
+            this._renderBody();
 
             this._updateCounts();
-            this._updateDeleteButton();
+            this._updateDeleteButtonVisibility();
             this._updateSelectAll();
             this._updateStatus();
 
             this._attachOpenComboPanelEvents();
         }
 
+        _renderBody() {
+
+            var tbody = this.shadowRoot.getElementById("tbody");
+            var tab = this._currentTab();
+
+            tbody.innerHTML = "";
+
+            for (var i = 0; i < tab.rows.length; i++) {
+                tbody.appendChild(this._createRow(tab, tab.rows[i], i));
+            }
+        }
+
         /* =====================================================
            CREATE TABLE ROW
            ===================================================== */
 
-        _createRow(row, rowIndex) {
+        _createRow(tab, row, rowIndex) {
 
             var tr = document.createElement("tr");
+
+            var missingFields =
+                tab.validation === false && this._rowHasData(row)
+                    ? this._getMissingFields(row, tab.config.mandatoryFields)
+                    : [];
 
             if (row.selected === true) {
                 tr.classList.add("selected-row");
             }
 
-            tr.innerHTML = `
+            if (missingFields.length > 0) {
+                tr.classList.add("row-error");
+            }
 
+            var html = `
                 <td class="checkbox-cell">
                     <input class="checkbox" type="checkbox" data-field="selected" ${row.selected ? "checked" : ""}>
                 </td>
-
-                ${this._cell("companyCode", row.companyCode, rowIndex, false, "select")}
-                ${this._cell("division", row.division, rowIndex, false, "select")}
-                ${this._cell("department", row.department, rowIndex, false, "select")}
-                ${this._cell("costCenter", row.costCenter, rowIndex, false, "select")}
-                ${this._cell("jobCode", row.jobCode, rowIndex, false, "select")}
-                ${this._cell("positionTitle", row.positionTitle, rowIndex, false, "text")}
-                ${this._cell("employeeId", row.employeeId, rowIndex, true, "text")}
-                ${this._cell("payGradeGroup", row.payGradeGroup, rowIndex, false, "select")}
-                ${this._cell("payGradeLevel", row.payGradeLevel, rowIndex, false, "select")}
-                ${this._cell("hireDate", row.hireDate, rowIndex, false, "date")}
-                ${this._cell("nationality", row.nationality, rowIndex, false, "select")}
-                ${this._cell("accommodation", row.accommodation, rowIndex, false, "select")}
-                ${this._cell("transport", row.transport, rowIndex, false, "select")}
-                ${this._cell("employeeClass", row.employeeClass, rowIndex, false, "select")}
-                ${this._cell("overtime", row.overtime, rowIndex, false, "select")}
-                ${this._cell("specialApproval", row.specialApproval, rowIndex, false, "select")}
-                ${this._cell("comment", row.comment, rowIndex, false, "text")}
             `;
 
-            this._attachRowEvents(tr, rowIndex);
+            for (var i = 0; i < tab.config.columns.length; i++) {
+
+                var column = tab.config.columns[i];
+                var hasError = missingFields.indexOf(column.field) !== -1;
+
+                html += this._cell(tab, column, row[column.field], rowIndex, hasError);
+            }
+
+            tr.innerHTML = html;
+
+            this._attachRowEvents(tr, tab, rowIndex);
 
             return tr;
         }
@@ -1043,10 +1349,10 @@
            GET OPTIONS FOR A CELL
            ===================================================== */
 
-        _getOptionsFor(rowIndex, field) {
+        _getOptionsFor(tab, rowIndex, field) {
 
-            if (this._rowOptions[rowIndex] && this._rowOptions[rowIndex][field]) {
-                return this._rowOptions[rowIndex][field];
+            if (tab.rowOptions[rowIndex] && tab.rowOptions[rowIndex][field]) {
+                return tab.rowOptions[rowIndex][field];
             }
 
             return [];
@@ -1080,7 +1386,6 @@
                 }
             }
 
-            /* Fall back to the raw stored value if it no longer matches a known option. */
             return String(value);
         }
 
@@ -1111,21 +1416,26 @@
            CREATE CELL
            ===================================================== */
 
-        _cell(field, value, rowIndex, readonly, type) {
+        _cell(tab, column, value, rowIndex, hasError) {
 
-            if (type === "select") {
-                return this._comboCell(field, value, rowIndex);
+            var errorHTML = hasError
+                ? `<div class="field-error">${this._escape(column.label)} is required</div>`
+                : "";
+
+            if (column.type === "select") {
+                return this._comboCell(tab, column, value, rowIndex, hasError, errorHTML);
             }
 
             return `
                 <td>
                     <input
-                        class="cell ${readonly ? "readonly" : ""}"
-                        type="${type || "text"}"
-                        data-field="${field}"
+                        class="cell ${column.readonly ? "readonly" : ""} ${hasError ? "has-error" : ""}"
+                        type="${column.type || "text"}"
+                        data-field="${column.field}"
                         value="${this._escape(value)}"
-                        ${readonly ? "readonly" : ""}
+                        ${column.readonly ? "readonly" : ""}
                     >
+                    ${errorHTML}
                 </td>
             `;
         }
@@ -1134,12 +1444,14 @@
            CREATE SEARCHABLE DROPDOWN (COMBOBOX) CELL
            ===================================================== */
 
-        _comboCell(field, value, rowIndex) {
+        _comboCell(tab, column, value, rowIndex, hasError, errorHTML) {
 
-            var options = this._getOptionsFor(rowIndex, field);
+            var field = column.field;
+            var options = this._getOptionsFor(tab, rowIndex, field);
 
             var isOpen = !!(
                 this._openDropdown &&
+                this._openDropdown.tab === tab.config.key &&
                 this._openDropdown.rowIndex === rowIndex &&
                 this._openDropdown.field === field
             );
@@ -1173,8 +1485,8 @@
 
             return `
                 <td>
-                    <div class="combo-wrap" data-combo-row="${rowIndex}" data-combo-field="${field}">
-                        <button type="button" class="combo-toggle ${isOpen ? "is-open" : ""}" data-field="${field}">
+                    <div class="combo-wrap" data-combo-tab="${tab.config.key}" data-combo-row="${rowIndex}" data-combo-field="${field}">
+                        <button type="button" class="combo-toggle ${isOpen ? "is-open" : ""} ${hasError ? "has-error" : ""}" data-field="${field}">
                             <span class="combo-toggle-text ${selectedText ? "" : "is-placeholder"}">${this._escape(toggleLabel)}</span>
                             <svg class="combo-chevron" width="12" height="12" viewBox="0 0 20 20" fill="none">
                                 <path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -1182,6 +1494,7 @@
                         </button>
                         ${panelHTML}
                     </div>
+                    ${errorHTML}
                 </td>
             `;
         }
@@ -1219,7 +1532,7 @@
            ROW EVENT HANDLING
            ===================================================== */
 
-        _attachRowEvents(tr, rowIndex) {
+        _attachRowEvents(tr, tab, rowIndex) {
 
             var controls = tr.querySelectorAll("[data-field]");
 
@@ -1235,12 +1548,12 @@
 
                         var checked = event.target.checked;
 
-                        this._rows[rowIndex].selected = checked;
+                        tab.rows[rowIndex].selected = checked;
 
-                        this._status = "CHANGED";
+                        tab.status = "CHANGED";
 
                         this._updateCounts();
-                        this._updateDeleteButton();
+                        this._updateDeleteButtonVisibility();
                         this._updateSelectAll();
 
                         if (checked) {
@@ -1249,7 +1562,7 @@
                             tr.classList.remove("selected-row");
                         }
 
-                        this._emit("onDataEntry", "select|" + rowIndex + "|" + checked);
+                        this._emit(tab.config.events.dataEntry, "select|" + rowIndex + "|" + checked);
                     });
 
                     continue;
@@ -1264,6 +1577,7 @@
 
                         var isSame = !!(
                             this._openDropdown &&
+                            this._openDropdown.tab === tab.config.key &&
                             this._openDropdown.rowIndex === rowIndex &&
                             this._openDropdown.field === field
                         );
@@ -1271,7 +1585,7 @@
                         if (isSame) {
                             this._openDropdown = null;
                         } else {
-                            this._openDropdown = { rowIndex: rowIndex, field: field };
+                            this._openDropdown = { tab: tab.config.key, rowIndex: rowIndex, field: field };
                             this._dropdownSearch = "";
                         }
 
@@ -1282,8 +1596,12 @@
                 }
 
                 /* TEXT / DATE INPUT */
+                if (control.hasAttribute("readonly")) {
+                    continue;
+                }
+
                 control.addEventListener("change", () => {
-                    this._commitFieldChange(rowIndex, field, control.value);
+                    this._commitFieldChange(tab, rowIndex, field, control.value);
                 });
             }
         }
@@ -1298,11 +1616,17 @@
                 return;
             }
 
+            var tabKey = this._openDropdown.tab;
             var rowIndex = this._openDropdown.rowIndex;
             var field = this._openDropdown.field;
+            var tab = this._tabs[tabKey];
+
+            if (!tab || tabKey !== this._activeTab) {
+                return;
+            }
 
             var wrap = this.shadowRoot.querySelector(
-                '.combo-wrap[data-combo-row="' + rowIndex + '"][data-combo-field="' + field + '"]'
+                '.combo-wrap[data-combo-tab="' + tabKey + '"][data-combo-row="' + rowIndex + '"][data-combo-field="' + field + '"]'
             );
 
             if (!wrap) {
@@ -1315,16 +1639,15 @@
                 return;
             }
 
-            /* Clicks inside the panel must not bubble to the global close handler. */
             panel.addEventListener("click", (event) => { event.stopPropagation(); });
             panel.addEventListener("mousedown", (event) => { event.stopPropagation(); });
 
-            var options = this._getOptionsFor(rowIndex, field);
+            var options = this._getOptionsFor(tab, rowIndex, field);
 
             var searchInput = panel.querySelector(".combo-search-input");
             var optionsContainer = panel.querySelector(".combo-options");
 
-            this._attachComboOptionClicks(optionsContainer, rowIndex, field);
+            this._attachComboOptionClicks(optionsContainer, tab, rowIndex, field);
 
             var clearBtn = panel.querySelector(".combo-clear");
 
@@ -1344,10 +1667,10 @@
 
                     optionsContainer.innerHTML = this._renderComboOptionsHTML(
                         filtered,
-                        this._rows[rowIndex][field]
+                        tab.rows[rowIndex][field]
                     );
 
-                    this._attachComboOptionClicks(optionsContainer, rowIndex, field);
+                    this._attachComboOptionClicks(optionsContainer, tab, rowIndex, field);
 
                     clearBtn.remove();
 
@@ -1359,7 +1682,6 @@
 
             if (searchInput) {
 
-                /* Focus and place the caret at the end without re-rendering. */
                 searchInput.focus();
 
                 var len = searchInput.value.length;
@@ -1378,10 +1700,10 @@
 
                     optionsContainer.innerHTML = this._renderComboOptionsHTML(
                         filtered,
-                        this._rows[rowIndex][field]
+                        tab.rows[rowIndex][field]
                     );
 
-                    this._attachComboOptionClicks(optionsContainer, rowIndex, field);
+                    this._attachComboOptionClicks(optionsContainer, tab, rowIndex, field);
 
                     var existingClear = panel.querySelector(".combo-clear");
 
@@ -1407,10 +1729,10 @@
 
                             optionsContainer.innerHTML = this._renderComboOptionsHTML(
                                 refiltered,
-                                this._rows[rowIndex][field]
+                                tab.rows[rowIndex][field]
                             );
 
-                            this._attachComboOptionClicks(optionsContainer, rowIndex, field);
+                            this._attachComboOptionClicks(optionsContainer, tab, rowIndex, field);
 
                             newClear.remove();
 
@@ -1442,7 +1764,7 @@
            ATTACH CLICK HANDLERS TO OPTION ITEMS
            ===================================================== */
 
-        _attachComboOptionClicks(container, rowIndex, field) {
+        _attachComboOptionClicks(container, tab, rowIndex, field) {
 
             var items = container.querySelectorAll(".combo-option");
 
@@ -1455,7 +1777,7 @@
                     this._openDropdown = null;
                     this._dropdownSearch = "";
 
-                    this._commitFieldChange(rowIndex, field, value);
+                    this._commitFieldChange(tab, rowIndex, field, value);
 
                     this._render();
                 });
@@ -1467,40 +1789,50 @@
            and the searchable dropdown)
            ===================================================== */
 
-        _commitFieldChange(rowIndex, field, value) {
+        _commitFieldChange(tab, rowIndex, field, value) {
 
-            this._rows[rowIndex][field] = value;
-            this._rows[rowIndex].isModified = true;
+            tab.rows[rowIndex][field] = value;
+            tab.rows[rowIndex].isModified = true;
 
-            this._status = "CHANGED";
-            this._validation = null;
+            tab.status = "CHANGED";
+            tab.validation = null;
 
             this._updateStatus();
 
-            /* Field-specific event */
-            this._emit("onFieldChange", "fieldChange|" + rowIndex + "|" + field + "|" + value);
-
-            /* General data-entry event */
-            this._emit("onDataEntry", "dataEntry|" + rowIndex + "|" + field + "|" + value);
+            this._emit(tab.config.events.fieldChange, "fieldChange|" + rowIndex + "|" + field + "|" + value);
+            this._emit(tab.config.events.dataEntry, "dataEntry|" + rowIndex + "|" + field + "|" + value);
         }
 
         /* =====================================================
            DELETE BUTTON VISIBILITY
            ===================================================== */
 
-        _updateDeleteButton() {
+        _updateDeleteButtonVisibility() {
+
+            var tab = this._currentTab();
 
             var selected = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
+            for (var i = 0; i < tab.rows.length; i++) {
+                if (tab.rows[i].selected === true) {
                     selected++;
                 }
             }
 
-            var button = this.shadowRoot.getElementById("deleteButton");
+            for (var b = 0; b < tab.config.buttons.length; b++) {
 
-            button.style.display = selected > 0 ? "inline-flex" : "none";
+                var buttonConfig = tab.config.buttons[b];
+
+                if (!buttonConfig.hiddenUnlessSelected) {
+                    continue;
+                }
+
+                var element = this.shadowRoot.getElementById(buttonConfig.id);
+
+                if (element) {
+                    element.style.display = selected > 0 ? "inline-flex" : "none";
+                }
+            }
         }
 
         /* =====================================================
@@ -1511,7 +1843,13 @@
 
             var checkbox = this.shadowRoot.getElementById("selectAll");
 
-            if (this._rows.length === 0) {
+            if (!checkbox) {
+                return;
+            }
+
+            var tab = this._currentTab();
+
+            if (tab.rows.length === 0) {
                 checkbox.checked = false;
                 checkbox.indeterminate = false;
                 return;
@@ -1519,14 +1857,14 @@
 
             var selected = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
+            for (var i = 0; i < tab.rows.length; i++) {
+                if (tab.rows[i].selected === true) {
                     selected++;
                 }
             }
 
-            checkbox.checked = selected === this._rows.length;
-            checkbox.indeterminate = selected > 0 && selected < this._rows.length;
+            checkbox.checked = selected === tab.rows.length;
+            checkbox.indeterminate = selected > 0 && selected < tab.rows.length;
         }
 
         /* =====================================================
@@ -1535,10 +1873,10 @@
 
         _updateCounts() {
 
-            var selected = this._getSelectedCount();
+            var tab = this._currentTab();
 
-            this.shadowRoot.getElementById("rowCount").textContent = this._rows.length;
-            this.shadowRoot.getElementById("selectedCount").textContent = selected;
+            this.shadowRoot.getElementById("rowCount").textContent = tab.rows.length;
+            this.shadowRoot.getElementById("selectedCount").textContent = this._getSelectedCount(tab);
         }
 
         /* =====================================================
@@ -1547,13 +1885,15 @@
 
         _updateStatus() {
 
+            var tab = this._currentTab();
+
             var validation = this.shadowRoot.getElementById("validationStatus");
             var errorCount = this.shadowRoot.getElementById("errorCount");
             var validationIcon = this.shadowRoot.getElementById("validationIcon");
 
             validation.classList.remove("valid", "invalid");
 
-            if (this._validation === true) {
+            if (tab.validation === true) {
 
                 validation.textContent = "true";
                 validation.classList.add("valid");
@@ -1563,12 +1903,12 @@
                 validationIcon.innerHTML =
                     '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#107e3e" stroke-width="1.6"/><path d="M6 10.3l2.6 2.6L14 7.5" stroke="#107e3e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
 
-            } else if (this._validation === false) {
+            } else if (tab.validation === false) {
 
                 validation.textContent = "false";
                 validation.classList.add("invalid");
 
-                errorCount.textContent = this._getValidationErrorCount();
+                errorCount.textContent = this._getValidationErrorCount(tab);
 
                 validationIcon.innerHTML =
                     '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#bb0000" stroke-width="1.6"/><path d="M10 6v5" stroke="#bb0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.6" r="1" fill="#bb0000"/></svg>';
@@ -1581,56 +1921,25 @@
                 validationIcon.innerHTML = "";
             }
 
-            this.shadowRoot.getElementById("rowCount").textContent = this._rows.length;
-            this.shadowRoot.getElementById("selectedCount").textContent = this._getSelectedCount();
+            this.shadowRoot.getElementById("rowCount").textContent = tab.rows.length;
+            this.shadowRoot.getElementById("selectedCount").textContent = this._getSelectedCount(tab);
         }
 
         /* =====================================================
            GET SELECTED COUNT
            ===================================================== */
 
-        _getSelectedCount() {
+        _getSelectedCount(tab) {
 
             var count = 0;
 
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
+            for (var i = 0; i < tab.rows.length; i++) {
+                if (tab.rows[i].selected === true) {
                     count++;
                 }
             }
 
             return count;
-        }
-
-        /* =====================================================
-           VALIDATION ERROR COUNT
-           ===================================================== */
-
-        _getValidationErrorCount() {
-
-            var errors = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-
-                var row = this._rows[i];
-
-                if (!this._rowHasData(row)) {
-                    continue;
-                }
-
-                if (
-                    !row.companyCode ||
-                    !row.division ||
-                    !row.department ||
-                    !row.costCenter ||
-                    !row.jobCode ||
-                    !row.positionTitle
-                ) {
-                    errors++;
-                }
-            }
-
-            return errors;
         }
 
         /* =====================================================
@@ -1645,26 +1954,81 @@
         }
 
         /* =====================================================
-           GET LAST EVENT
+           PUBLIC API - SHARED
            ===================================================== */
 
         getLastEvent() {
             return this._lastEvent;
         }
 
-        /* =====================================================
-           GET DATA
-           ===================================================== */
+        getActiveTab() {
+            return this._activeTab;
+        }
 
-        getData() {
-            return JSON.stringify(this._rows);
+        setActiveTab(tabKey) {
+
+            if (tabKey !== "create" && tabKey !== "modify") {
+                return;
+            }
+
+            if (tabKey === this._activeTab) {
+                return;
+            }
+
+            this._activeTab = tabKey;
+
+            this._openDropdown = null;
+            this._dropdownSearch = "";
+
+            this._render();
         }
 
         /* =====================================================
-           SET DATA
+           PUBLIC API - TAB 1: CREATE POSITION
+           (unchanged method names for backward compatibility)
            ===================================================== */
 
+        getData() {
+            return JSON.stringify(this._tabs.create.rows);
+        }
+
         setData(data) {
+            this._setTabData(this._tabs.create, data, true);
+        }
+
+        setCellValue(rowIndex, fieldName, value) {
+            this._setTabCellValue(this._tabs.create, rowIndex, fieldName, value);
+        }
+
+        setRowOptions(rowIndex, fieldName, options) {
+            this._setTabRowOptions(this._tabs.create, rowIndex, fieldName, options);
+        }
+
+        /* =====================================================
+           PUBLIC API - TAB 2: LOAD / MODIFY / DELETE
+           ===================================================== */
+
+        getData2() {
+            return JSON.stringify(this._tabs.modify.rows);
+        }
+
+        setData2(data) {
+            this._setTabData(this._tabs.modify, data, false);
+        }
+
+        setCellValue2(rowIndex, fieldName, value) {
+            this._setTabCellValue(this._tabs.modify, rowIndex, fieldName, value);
+        }
+
+        setRowOptions2(rowIndex, fieldName, options) {
+            this._setTabRowOptions(this._tabs.modify, rowIndex, fieldName, options);
+        }
+
+        /* =====================================================
+           SHARED IMPLEMENTATIONS BEHIND THE PUBLIC API
+           ===================================================== */
+
+        _setTabData(tab, data, forceMinimumOneRow) {
 
             try {
 
@@ -1677,68 +2041,63 @@
                 }
 
                 if (Array.isArray(parsed)) {
-                    this._rows = parsed;
+                    tab.rows = parsed;
                 } else {
-                    this._rows = [];
+                    tab.rows = [];
                 }
 
-                /* Never allow completely empty widget on load. */
-                if (this._rows.length === 0) {
-                    this._rows.push(this._createEmptyRow());
+                if (forceMinimumOneRow && tab.rows.length === 0) {
+                    tab.rows.push(this._createEmptyRow(tab.config));
                 }
 
-                this._openDropdown = null;
-                this._dropdownSearch = "";
+                tab.validation = null;
+                tab.status = "READY";
+
+                if (this._openDropdown && this._openDropdown.tab === tab.config.key) {
+                    this._openDropdown = null;
+                    this._dropdownSearch = "";
+                }
 
                 this._render();
 
             } catch (error) {
 
-                this._rows = [this._createEmptyRow()];
+                tab.rows = forceMinimumOneRow ? [this._createEmptyRow(tab.config)] : [];
 
                 this._render();
             }
         }
 
-        /* =====================================================
-           SET CELL VALUE
-           ===================================================== */
+        _setTabCellValue(tab, rowIndex, fieldName, value) {
 
-        setCellValue(rowIndex, fieldName, value) {
-
-            if (!this._rows[rowIndex]) {
+            if (!tab.rows[rowIndex]) {
                 return;
             }
 
-            this._rows[rowIndex][fieldName] = value;
-            this._rows[rowIndex].isModified = true;
+            tab.rows[rowIndex][fieldName] = value;
+            tab.rows[rowIndex].isModified = true;
 
-            this._validation = null;
+            tab.validation = null;
 
             this._render();
         }
 
-        /* =====================================================
-           SET ROW OPTIONS
-           ===================================================== */
+        _setTabRowOptions(tab, rowIndex, fieldName, options) {
 
-        setRowOptions(rowIndex, fieldName, options) {
-
-            if (!this._rowOptions[rowIndex]) {
-                this._rowOptions[rowIndex] = {};
+            if (!tab.rowOptions[rowIndex]) {
+                tab.rowOptions[rowIndex] = {};
             }
 
             try {
 
-                this._rowOptions[rowIndex][fieldName] =
+                tab.rowOptions[rowIndex][fieldName] =
                     typeof options === "string" ? JSON.parse(options) : options;
 
-                /* Re-render so new options immediately appear. */
                 this._render();
 
             } catch (error) {
 
-                this._rowOptions[rowIndex][fieldName] = [];
+                tab.rowOptions[rowIndex][fieldName] = [];
             }
         }
 
