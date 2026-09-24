@@ -958,16 +958,19 @@
 
             for (var j = 0; j < config.buttons.length; j++) {
 
-                var buttonConfig = config.buttons[j];
-                var element = this.shadowRoot.getElementById(buttonConfig.id);
+                (function (widget, btn) {
 
-                if (!element) {
-                    continue;
-                }
+                    var element = widget.shadowRoot.getElementById(btn.id);
 
-                element.addEventListener("click", () => {
-                    this[buttonConfig.handler]();
-                });
+                    if (!element) {
+                        return;
+                    }
+
+                    element.addEventListener("click", function () {
+                        widget[btn.handler]();
+                    });
+
+                }(this, config.buttons[j]));
             }
         }
 
@@ -1542,13 +1545,12 @@
 
             for (var i = 0; i < controls.length; i++) {
 
-                var control = controls[i];
-                var field = control.dataset.field;
+                (function (widget, control, field) {
 
                 /* CHECKBOX */
                 if (field === "selected") {
 
-                    control.addEventListener("change", (event) => {
+                    control.addEventListener("change", function (event) {
 
                         var checked = event.target.checked;
 
@@ -1556,9 +1558,9 @@
 
                         tab.status = "CHANGED";
 
-                        this._updateCounts();
-                        this._updateDeleteButtonVisibility();
-                        this._updateSelectAll();
+                        widget._updateCounts();
+                        widget._updateDeleteButtonVisibility();
+                        widget._updateSelectAll();
 
                         if (checked) {
                             tr.classList.add("selected-row");
@@ -1566,34 +1568,34 @@
                             tr.classList.remove("selected-row");
                         }
 
-                        this._emit("onDataChange", (tab.config.key === "modify" ? "selectRow2|" : "selectRow|") + rowIndex + "|" + checked);
+                        widget._emit("onDataChange", (tab.config.key === "modify" ? "selectRow2|" : "selectRow|") + rowIndex + "|" + checked);
                     });
 
-                    continue;
+                    return;
                 }
 
                 /* SEARCHABLE DROPDOWN TOGGLE */
                 if (control.classList.contains("combo-toggle")) {
 
-                    control.addEventListener("click", (event) => {
+                    control.addEventListener("click", function (event) {
 
                         event.stopPropagation();
 
                         var isSame = !!(
-                            this._openDropdown &&
-                            this._openDropdown.tab === tab.config.key &&
-                            this._openDropdown.rowIndex === rowIndex &&
-                            this._openDropdown.field === field
+                            widget._openDropdown &&
+                            widget._openDropdown.tab === tab.config.key &&
+                            widget._openDropdown.rowIndex === rowIndex &&
+                            widget._openDropdown.field === field
                         );
 
                         if (isSame) {
-                            this._openDropdown = null;
+                            widget._openDropdown = null;
                         } else {
-                            this._openDropdown = { tab: tab.config.key, rowIndex: rowIndex, field: field };
-                            this._dropdownSearch = "";
+                            widget._openDropdown = { tab: tab.config.key, rowIndex: rowIndex, field: field };
+                            widget._dropdownSearch = "";
                         }
 
-                        this._render();
+                        widget._render();
                     });
 
                     continue;
@@ -1601,12 +1603,14 @@
 
                 /* TEXT / DATE INPUT */
                 if (control.hasAttribute("readonly")) {
-                    continue;
+                    return;
                 }
 
-                control.addEventListener("change", () => {
-                    this._commitFieldChange(tab, rowIndex, field, control.value);
+                control.addEventListener("change", function () {
+                    widget._commitFieldChange(tab, rowIndex, field, control.value);
                 });
+
+                }(this, controls[i], controls[i].dataset.field));
             }
         }
 
