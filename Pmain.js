@@ -821,6 +821,10 @@
             this._render();
         }
 
+        connectedCallback() {
+            this._emit("onReady", "ready");
+        }
+
         /* =====================================================
            TAB STATE FACTORY
            ===================================================== */
@@ -894,7 +898,7 @@
 
                     this._render();
 
-                    this._emit("onTabChange", "tabChange|" + tabKey);
+                    this._emit("onDataChange", "tabChange|" + tabKey);
                 });
             }
         }
@@ -1005,7 +1009,7 @@
 
                     this._render();
 
-                    this._emit("onDataEntry", "selectAll|" + checked);
+                    this._emit("onDataChange", "selectAll|" + checked);
                 });
         }
 
@@ -1024,7 +1028,7 @@
 
             this._render();
 
-            this._emit(tab.config.events.dataEntry, "addRow|" + (tab.rows.length - 1));
+            this._emit("onDataChange", (tab.config.key === "modify" ? "addRow2|" : "addRow|") + (tab.rows.length - 1));
         }
 
         _copyRows() {
@@ -1063,7 +1067,7 @@
 
             this._render();
 
-            this._emit(tab.config.events.dataEntry, "copy|" + copied.length);
+            this._emit("onDataChange", (tab.config.key === "modify" ? "copyRow2|" : "copyRow|") + copied.length);
         }
 
         _deleteRows() {
@@ -1098,7 +1102,7 @@
 
             this._render();
 
-            this._emit(tab.config.events.dataEntry, "delete|" + deleted);
+            this._emit("onDataChange", (tab.config.key === "modify" ? "deleteRow2|" : "deleteRow|") + deleted);
         }
 
         _clear() {
@@ -1131,7 +1135,7 @@
 
             this._render();
 
-            this._emit(tab.config.events.clearEvent, "clear|" + cleared);
+            this._emit("onDataChange", (tab.config.key === "modify" ? "clear2|" : "clear|") + cleared);
         }
 
         _clearRow(row) {
@@ -1167,14 +1171,14 @@
                 tab.validation = true;
                 tab.status = "VALID";
 
-                this._emit(tab.config.events.validate, "VALID|0");
+                this._emit("onValidate", tab.config.key === "modify" ? "VALID2|0" : "VALID|0");
 
             } else {
 
                 tab.validation = false;
                 tab.status = "INVALID";
 
-                this._emit(tab.config.events.validate, "INVALID|" + errorRows);
+                this._emit("onValidate", (tab.config.key === "modify" ? "INVALID2|" : "INVALID|") + errorRows);
             }
 
             this._render();
@@ -1186,7 +1190,7 @@
 
             tab.status = "LOADING";
 
-            this._emit("onLoadData", "loadData");
+            this._emit("onDataChange", "loadData");
 
             /*
              * Actual row population happens when the host
@@ -1198,11 +1202,11 @@
 
             var tab = this._tabs.modify;
 
-            this._emit("onSaveChanges", "saveChanges|" + tab.rows.length);
+            this._emit("onDataChange", "saveChanges|" + tab.rows.length);
         }
 
         _sendForApproval() {
-            this._emit("onSendForApproval", "sendForApproval");
+            this._emit("onDataChange", "sendForApproval");
         }
 
         /* =====================================================
@@ -1562,7 +1566,7 @@
                             tr.classList.remove("selected-row");
                         }
 
-                        this._emit(tab.config.events.dataEntry, "select|" + rowIndex + "|" + checked);
+                        this._emit("onDataChange", (tab.config.key === "modify" ? "selectRow2|" : "selectRow|") + rowIndex + "|" + checked);
                     });
 
                     continue;
@@ -1799,8 +1803,7 @@
 
             this._updateStatus();
 
-            this._emit(tab.config.events.fieldChange, "fieldChange|" + rowIndex + "|" + field + "|" + value);
-            this._emit(tab.config.events.dataEntry, "dataEntry|" + rowIndex + "|" + field + "|" + value);
+            this._emit("onDataChange", (tab.config.key === "modify" ? "fieldChange2|" : "fieldChange|") + rowIndex + "|" + field + "|" + value);
         }
 
         /* =====================================================
