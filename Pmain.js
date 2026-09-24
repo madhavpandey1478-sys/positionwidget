@@ -752,46 +752,96 @@
         }
 
         /* =====================================================
-           COPY SELECTED ROWS
-           ===================================================== */
+   COPY SELECTED ROWS
+   ===================================================== */
 
-        _copyRows() {
+_copyRows() {
 
-            var copied = [];
+    var copied = [];
 
-            for (var i = 0; i < this._rows.length; i++) {
+    for (
+        var i = 0;
+        i < this._rows.length;
+        i++
+    ) {
 
-                if (this._rows[i].selected === true) {
+        if (
+            this._rows[i].selected === true
+        ) {
 
-                    var newRow = JSON.parse(JSON.stringify(this._rows[i]));
+            /*
+             * Create a completely independent copy
+             * of the selected row.
+             */
+            var newRow =
+                JSON.parse(
+                    JSON.stringify(
+                        this._rows[i]
+                    )
+                );
 
-                    newRow.selected = false;
+            /*
+             * The copied row must not remain selected.
+             */
+            newRow.selected = false;
 
-                    /* Position ID should not be copied as a final ID. */
-                    newRow.employeeId = "";
+            /*
+             * Keep ALL field values.
+             *
+             * DO NOT clear employeeId,
+             * companyCode, positionTitle, etc.
+             *
+             * Only the selection state is reset.
+             */
+            newRow.isModified = false;
 
-                    newRow.isModified = false;
-
-                    copied.push(newRow);
-                }
-            }
-
-            if (copied.length === 0) {
-                return;
-            }
-
-            for (var j = 0; j < copied.length; j++) {
-                this._rows.push(copied[j]);
-            }
-
-            this._status = "CHANGED";
-            this._validation = null;
-
-            this._render();
-
-            this._emit("onDataEntry", "copy|" + copied.length);
+            copied.push(newRow);
         }
+    }
 
+    /*
+     * Nothing selected -> do nothing.
+     */
+    if (copied.length === 0) {
+        return;
+    }
+
+    /*
+     * Add the copied rows to the table.
+     */
+    for (
+        var j = 0;
+        j < copied.length;
+        j++
+    ) {
+
+        this._rows.push(
+            copied[j]
+        );
+    }
+
+    /*
+     * Mark widget as changed.
+     */
+    this._status = "CHANGED";
+
+    this._validation = null;
+
+    /*
+     * Re-render the table so the copied
+     * rows become visible immediately.
+     */
+    this._render();
+
+    /*
+     * Notify SAC.
+     */
+    this._emit(
+        "onDataEntry",
+        "copy|" +
+        copied.length
+    );
+}
         /* =====================================================
            DELETE SELECTED ROWS
            ===================================================== */
