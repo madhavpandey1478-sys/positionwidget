@@ -148,7 +148,14 @@
                     "name": "options",
                     "type": "string",
                     "description": "JSON array containing dropdown options."
-                }
+                },
+
+                "getData2":       { "returnType": "string", "description": "Returns Tab 2 (Load/Modify/Delete) table data." },
+"setData2":       { "description": "Sets Tab 2 table data.", "parameters": [{ "name": "data", "type": "string" }] },
+"setCellValue2":  { "description": "Sets a cell in Tab 2.", "parameters": [{ "name": "rowIndex", "type": "integer" }, { "name": "fieldName", "type": "string" }, { "name": "value", "type": "string" }] },
+"setRowOptions2": { "description": "Sets dropdown options for a Tab 2 row.", "parameters": [{ "name": "rowIndex", "type": "integer" }, { "name": "fieldName", "type": "string" }, { "name": "options", "type": "string" }] },
+"getActiveTab":   { "returnType": "string", "description": "Returns the currently active tab key (create or modify)." },
+"setActiveTab":   { "description": "Switches to the given tab.", "parameters": [{ "name": "tabKey", "type": "string" }] }
             ]
         }
     },
@@ -189,6 +196,14 @@
 
         "onDeleteManage": {
             "description": "Triggered when selected Manage rows are deleted."
-        }
+        },
+        
+        "onTabChange":    { "description": "Fired when the user switches tabs." },
+"onFieldChange2": { "description": "Tab 2 field value changed." },
+"onDataEntry2":   { "description": "Tab 2 data entry, row add/copy/delete/select." },
+"onValidate2":    { "description": "Tab 2 validate clicked." },
+"onClear2":       { "description": "Tab 2 clear clicked." },
+"onLoadData":     { "description": "Load Data button clicked on Tab 2." },
+"onSaveChanges":  { "description": "Save Changes button clicked on Tab 2." }
     }
 }
