@@ -1,1819 +1,856 @@
 (function () {
-
     "use strict";
 
     /* =========================================================
-       POSITION ENTRY - SAC CUSTOM WIDGET
-       Create Position only
+       ICONS
        ========================================================= */
-
-    var template = document.createElement("template");
-
-    template.innerHTML = `
-
-        <style>
-
-            /* =================================================
-               HOST
-               ================================================= */
-
-            :host {
-                display: block;
-                width: 100%;
-                height: auto;
-                min-height: 160px;
-
-                font-family:
-                    "72",
-                    "72full",
-                    Arial,
-                    Helvetica,
-                    sans-serif;
-
-                color: #1d2d3e;
-
-                --blue: #0070f2;
-                --blue-dark: #0040c1;
-                --blue-light: #e5f1ff;
-
-                --border: #d7e0e8;
-                --border-dark: #c4d0db;
-
-                --header: #eef4fa;
-                --surface: #ffffff;
-                --surface-soft: #f7f9fb;
-
-                --text: #1d2d3e;
-                --muted: #687b8d;
-
-                --warning: #fff8df;
-
-                box-sizing: border-box;
-            }
-
-            * {
-                box-sizing: border-box;
-            }
-
-            /* =================================================
-               MAIN CONTAINER
-               ================================================= */
-
-            .container {
-                width: 100%;
-                height: auto;
-                min-height: 160px;
-                display: flex;
-                flex-direction: column;
-                background: var(--surface);
-                border: 1px solid var(--border);
-                border-radius: 10px;
-                overflow: hidden;
-                box-shadow:
-                    0 1px 3px rgba(0, 0, 0, 0.06),
-                    0 4px 12px rgba(0, 0, 0, 0.04);
-            }
-
-            /* =================================================
-               TOOLBAR
-               ================================================= */
-
-            .toolbar {
-                min-height: 58px;
-                display: flex;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: flex-end;
-                gap: 8px;
-                row-gap: 8px;
-                padding: 10px 14px;
-                background: #ffffff;
-                border-bottom: 1px solid var(--border);
-            }
-
-            /* =================================================
-               BUTTONS
-               ================================================= */
-
-            button {
-                height: 34px;
-                padding: 0 14px;
-                border: 1px solid #c2c9d1;
-                border-radius: 8px;
-                background: #ffffff;
-                color: var(--blue);
-                font-family: inherit;
-                font-size: 12px;
-                font-weight: 600;
-                letter-spacing: 0.1px;
-                cursor: pointer;
-                display: inline-flex;
-                align-items: center;
-                gap: 6px;
-                transition:
-                    background 0.15s ease,
-                    border-color 0.15s ease,
-                    box-shadow 0.15s ease,
-                    transform 0.05s ease;
-                white-space: nowrap;
-            }
-
-            button:hover {
-                background: var(--blue-light);
-                border-color: #9fc2f2;
-                box-shadow: none;
-            }
-
-            button:active {
-                transform: translateY(1px);
-            }
-
-            button:focus-visible {
-                outline: 2px solid var(--blue);
-                outline-offset: 1px;
-            }
-
-            button.primary {
-                color: #ffffff;
-                background: var(--blue);
-                border-color: var(--blue);
-                box-shadow: none;
-            }
-
-            button.primary:hover {
-                background: var(--blue-dark);
-                border-color: var(--blue-dark);
-            }
-
-            button.delete {
-                color: #bb0000;
-                border-color: #e4b2b2;
-                background: #fffafa;
-            }
-
-            button.delete:hover {
-                background: #fdeaea;
-                border-color: #d98c8c;
-            }
-
-            button svg {
-                flex: 0 0 auto;
-            }
-
-            /* =================================================
-               TABLE AREA
-               ================================================= */
-
-            .table-area {
-                flex: 0 1 auto;
-                min-width: 0;
-                min-height: 0;
-                max-height: 520px;
-                overflow: auto;
-                background: #ffffff;
-                scrollbar-width: thin;
-                scrollbar-color: #aebdca #f2f5f7;
-            }
-
-            .table-area::-webkit-scrollbar {
-                width: 10px;
-                height: 10px;
-            }
-
-            .table-area::-webkit-scrollbar-track {
-                background: #f3f6f8;
-            }
-
-            .table-area::-webkit-scrollbar-thumb {
-                background: #b5c2cd;
-                border-radius: 8px;
-                border: 2px solid #f3f6f8;
-            }
-
-            .table-area::-webkit-scrollbar-thumb:hover {
-                background: #9eafbd;
-            }
-
-            /* =================================================
-               TABLE
-               ================================================= */
-
-            table {
-                border-collapse: collapse;
-                table-layout: fixed;
-                min-width: 2330px;
-                width: 2330px;
-            }
-
-            /* =================================================
-               HEADER
-               ================================================= */
-
-            th {
-                position: sticky;
-                top: 0;
-                z-index: 6;
-                height: 40px;
-                padding: 0 9px;
-                background: var(--header);
-                color: #29465f;
-                border-bottom: 1px solid #cbd8e3;
-                font-size: 11px;
-                font-weight: 700;
-                text-align: left;
-                white-space: nowrap;
-                vertical-align: middle;
-            }
-
-            /* =================================================
-               BODY CELLS
-               ================================================= */
-
-            td {
-                height: 46px;
-                padding: 6px 8px;
-                background: #ffffff;
-                border-bottom: 1px solid #e9edf1;
-                vertical-align: middle;
-                position: relative;
-            }
-
-            tr:hover td {
-                background: #f9fbfd;
-            }
-
-            tr.selected-row td {
-                background: var(--blue-light);
-            }
-
-            tr.selected-row:hover td {
-                background: #d7e9ff;
-            }
-
-            /* =================================================
-               INPUTS
-               ================================================= */
-
-            input.cell {
-                width: 100%;
-                height: 34px;
-                padding: 0 9px;
-                border: 1px solid #bfd0df;
-                border-radius: 6px;
-                background: #ffffff;
-                color: #253746;
-                font-family: inherit;
-                font-size: 12px;
-                outline: none;
-                transition:
-                    border-color 0.15s ease,
-                    box-shadow 0.15s ease,
-                    background 0.15s ease;
-            }
-
-            input.cell::placeholder {
-                color: #8797a6;
-                opacity: 1;
-            }
-
-            input.cell:hover {
-                border-color: #9fb5c8;
-            }
-
-            input.cell:focus {
-                border-color: var(--blue);
-                box-shadow: 0 0 0 2px rgba(10, 110, 209, 0.10);
-            }
-
-            input.cell.readonly {
-                background: #f1f4f7;
-                color: #607487;
-                cursor: not-allowed;
-            }
-
-            input.cell[type="date"] {
-                padding-right: 7px;
-            }
-
-            /* =================================================
-               SEARCHABLE DROPDOWN (COMBOBOX)
-               ================================================= */
-
-            .combo-wrap {
-                position: relative;
-                width: 100%;
-            }
-
-            .combo-toggle {
-                width: 100%;
-                height: 34px;
-                padding: 0 9px;
-                border: 1px solid #bfd0df;
-                border-radius: 6px;
-                background: #ffffff;
-                color: #253746;
-                font-family: inherit;
-                font-size: 12px;
-                font-weight: 400;
-                letter-spacing: normal;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                gap: 6px;
-                cursor: pointer;
-                transition: border-color 0.15s ease, box-shadow 0.15s ease;
-            }
-
-            .combo-toggle:hover {
-                background: #ffffff;
-                border-color: #9fb5c8;
-                box-shadow: none;
-            }
-
-            .combo-toggle.is-open {
-                border-color: var(--blue);
-                box-shadow: 0 0 0 2px rgba(10, 110, 209, 0.10);
-            }
-
-            .combo-toggle-text {
-                flex: 1;
-                min-width: 0;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-                text-align: left;
-                color: #253746;
-            }
-
-            .combo-toggle-text.is-placeholder {
-                color: #8797a6;
-            }
-
-            .combo-chevron {
-                flex: 0 0 auto;
-                color: #5f7284;
-                transition: transform 0.15s ease, color 0.15s ease;
-            }
-
-            .combo-toggle.is-open .combo-chevron {
-                transform: rotate(180deg);
-                color: var(--blue);
-            }
-
-            .combo-panel {
-                position: absolute;
-                top: calc(100% + 4px);
-                left: 0;
-                width: max(230px, 100%);
-                background: #ffffff;
-                border: 1px solid var(--border-dark);
-                border-radius: 8px;
-                box-shadow:
-                    0 10px 26px rgba(15, 40, 65, 0.16),
-                    0 2px 6px rgba(15, 40, 65, 0.08);
-                z-index: 50;
-                overflow: hidden;
-            }
-
-            .combo-search {
-                display: flex;
-                align-items: center;
-                gap: 6px;
-                padding: 8px 10px;
-                border-bottom: 1px solid var(--border);
-                background: var(--surface-soft);
-            }
-
-            .combo-search-icon {
-                flex: 0 0 auto;
-                color: var(--blue);
-            }
-
-            .combo-search-input {
-                flex: 1;
-                min-width: 0;
-                border: none;
-                outline: none;
-                background: transparent;
-                font-family: inherit;
-                font-size: 12px;
-                color: #253746;
-            }
-
-            .combo-search-input::placeholder {
-                color: #8797a6;
-            }
-
-            .combo-clear {
-                flex: 0 0 auto;
-                border: none;
-                background: transparent;
-                color: #8797a6;
-                font-size: 15px;
-                line-height: 1;
-                cursor: pointer;
-                padding: 2px 4px;
-                border-radius: 4px;
-            }
-
-            .combo-clear:hover {
-                color: #5f7284;
-                background: rgba(0, 0, 0, 0.04);
-            }
-
-            .combo-options {
-                max-height: 210px;
-                overflow-y: auto;
-            }
-
-            .combo-option {
-                padding: 9px 12px;
-                font-size: 12px;
-                color: #253746;
-                cursor: pointer;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-
-            .combo-option:hover {
-                background: var(--blue-light);
-            }
-
-            .combo-option.is-selected {
-                background: var(--blue-light);
-                color: var(--blue-dark);
-                font-weight: 600;
-            }
-
-            .combo-empty {
-                padding: 14px 12px;
-                font-size: 12px;
-                color: #8797a6;
-                text-align: center;
-            }
-
-            /* =================================================
-               CHECKBOX
-               ================================================= */
-
-            .checkbox-cell {
-                width: 50px;
-                min-width: 50px;
-                max-width: 50px;
-                padding: 0;
-                text-align: center;
-            }
-
-            .checkbox {
-                width: 18px;
-                height: 18px;
-                margin: 0;
-                cursor: pointer;
-                accent-color: var(--blue);
-                vertical-align: middle;
-            }
-
-            /* =================================================
-               STATUS BAR
-               ================================================= */
-
-            .status {
-                min-height: 36px;
-                height: 36px;
-                display: flex;
-                align-items: center;
-                gap: 22px;
-                padding: 0 12px;
-                background: #f7f9fb;
-                border-top: 1px solid var(--border);
-                color: #5f7284;
-                font-size: 11px;
-                white-space: nowrap;
-            }
-
-            .status-item {
-                display: inline-flex;
-                align-items: center;
-                gap: 4px;
-            }
-
-            .status-value {
-                color: #314a60;
-                font-weight: 700;
-            }
-
-            .status-value.valid {
-                color: #107e3e;
-            }
-
-            .status-value.invalid {
-                color: #bb0000;
-            }
-
-            .status-icon {
-                display: inline-flex;
-                align-items: center;
-            }
-
-            .status-icon svg {
-                display: block;
-            }
-
-            /* =================================================
-               EMPTY STATE
-               ================================================= */
-
-            .empty-message {
-                padding: 30px;
-                text-align: center;
-                color: #728495;
-                font-size: 12px;
-            }
-
-        </style>
-
-        <div class="container">
-
-            <!-- TOOLBAR -->
-            <div class="toolbar">
-
-                <button id="addButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-                    Add Row
-                </button>
-
-                <button id="copyButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M4 12.5V5.5A1.5 1.5 0 0 1 5.5 4h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
-                    Copy
-                </button>
-
-                <button id="deleteButton" class="delete" type="button" style="display:none;">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.6 9.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Delete Selected
-                </button>
-
-                <button id="validateButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10.5l3.5 3.5L16 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
-                    Validate
-                </button>
-
-                <button id="approvalButton" class="primary" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M3 10l14-6-6 14-2-6-6-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="currentColor"/></svg>
-                    Send for Approval
-                </button>
-
-                <button id="clearButton" type="button">
-                    <svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
-                    Clear
-                </button>
-
-            </div>
-
-            <!-- TABLE -->
-            <div class="table-area">
-                <table>
-                    <thead>
-                        <tr>
-                            <th class="checkbox-cell" title="Select all">
-                                <input id="selectAll" class="checkbox" type="checkbox">
-                            </th>
-                            <th style="width:120px;">Company Code</th>
-                            <th style="width:125px;">Division</th>
-                            <th style="width:145px;">Department</th>
-                            <th style="width:135px;">Cost Center</th>
-                            <th style="width:125px;">Job Code</th>
-                            <th style="width:190px;">Position Title</th>
-                            <th style="width:135px;">Position ID</th>
-                            <th style="width:110px;">Pay Grade</th>
-                            <th style="width:90px;">Level</th>
-                            <th style="width:125px;">Hire Date</th>
-                            <th style="width:125px;">Nationality</th>
-                            <th style="width:140px;">Accommodation</th>
-                            <th style="width:115px;">Transport</th>
-                            <th style="width:135px;">Employee Class</th>
-                            <th style="width:105px;">Overtime</th>
-                            <th style="width:140px;">Special Approval</th>
-                            <th style="width:220px;">Comment</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody"></tbody>
-                </table>
-            </div>
-
-            <!-- STATUS -->
-            <div class="status">
-                <span class="status-item">Total Rows: <span id="rowCount" class="status-value">1</span></span>
-                <span class="status-item">Selected Rows: <span id="selectedCount" class="status-value">0</span></span>
-                <span class="status-item">Validation: <span id="validationIcon" class="status-icon"></span><span id="validationStatus" class="status-value">-</span></span>
-                <span class="status-item">Error Rows: <span id="errorCount" class="status-value">0</span></span>
-            </div>
-
-        </div>
+    var ICON_ADD    = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+    var ICON_COPY   = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><rect x="7" y="7" width="9" height="9" rx="1.5" stroke="currentColor" stroke-width="1.6"/><path d="M4 12.5V5.5A1.5 1.5 0 0 1 5.5 4h7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
+    var ICON_DELETE = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 6h12M8 6V4.5A1 1 0 0 1 9 3.5h2a1 1 0 0 1 1 1V6M6 6l.6 9.4a1 1 0 0 0 1 .9h4.8a1 1 0 0 0 1-.9L14 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var ICON_CHECK  = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 10.5l3.5 3.5L16 5.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var ICON_SEND   = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M3 10l14-6-6 14-2-6-6-2z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" fill="currentColor"/></svg>';
+    var ICON_CLEAR  = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+    var ICON_LOAD   = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M10 3v9m0 0l-3.5-3.5M10 12l3.5-3.5M4 15h12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+    var ICON_SAVE   = '<svg width="13" height="13" viewBox="0 0 20 20" fill="none"><path d="M4 4h9l3 3v9a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V5a1 1 0 0 1 1-1z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M7 4v4h6V4" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><rect x="6" y="11" width="8" height="5" stroke="currentColor" stroke-width="1.4"/></svg>';
+
+    /* =========================================================
+       COLUMN DEFINITIONS
+       ========================================================= */
+    var ALL_FIELDS = [
+        "companyCode","division","department","costCenter","jobCode",
+        "positionTitle","employeeId","payGradeGroup","payGradeLevel",
+        "hireDate","nationality","accommodation","transport",
+        "employeeClass","overtime","specialApproval","comment"
+    ];
+
+    var COL = {
+        companyCode:     { field:"companyCode",     label:"Company Code",     type:"select", width:120 },
+        division:        { field:"division",        label:"Division",         type:"select", width:125 },
+        department:      { field:"department",      label:"Department",       type:"select", width:145 },
+        costCenter:      { field:"costCenter",      label:"Cost Center",      type:"select", width:135 },
+        jobCode:         { field:"jobCode",         label:"Job Code",         type:"select", width:125 },
+        positionTitle:   { field:"positionTitle",   label:"Position Title",   type:"text",   width:190 },
+        employeeId:      { field:"employeeId",      label:"Position ID",      type:"text",   width:135, readonly:true },
+        payGradeGroup:   { field:"payGradeGroup",   label:"Pay Grade",        type:"select", width:110 },
+        payGradeLevel:   { field:"payGradeLevel",   label:"Level",            type:"select", width:90  },
+        hireDate:        { field:"hireDate",        label:"Hire Date",        type:"date",   width:125 },
+        nationality:     { field:"nationality",     label:"Nationality",      type:"select", width:125 },
+        accommodation:   { field:"accommodation",   label:"Accommodation",    type:"select", width:140 },
+        transport:       { field:"transport",       label:"Transport",        type:"select", width:115 },
+        employeeClass:   { field:"employeeClass",   label:"Employee Class",   type:"select", width:135 },
+        overtime:        { field:"overtime",        label:"Overtime",         type:"select", width:105 },
+        specialApproval: { field:"specialApproval", label:"Special Approval", type:"select", width:140 },
+        comment:         { field:"comment",         label:"Comment",          type:"text",   width:220 }
+    };
+
+    var TAB1_COLS = [
+        COL.companyCode, COL.division, COL.department, COL.costCenter, COL.jobCode,
+        COL.positionTitle, COL.employeeId, COL.payGradeGroup, COL.payGradeLevel,
+        COL.hireDate, COL.nationality, COL.accommodation, COL.transport,
+        COL.employeeClass, COL.overtime, COL.specialApproval, COL.comment
+    ];
+
+    var TAB2_COLS = [
+        COL.employeeId, COL.companyCode, COL.division, COL.department, COL.costCenter,
+        COL.jobCode, COL.positionTitle, COL.payGradeGroup, COL.payGradeLevel,
+        COL.hireDate, COL.nationality, COL.accommodation, COL.transport,
+        COL.employeeClass, COL.overtime, COL.specialApproval, COL.comment
+    ];
+
+    var TAB1_MANDATORY = ["companyCode","division","department","costCenter","jobCode","positionTitle"];
+    var TAB2_MANDATORY = ["employeeId","companyCode","division","department","costCenter","jobCode","positionTitle"];
+
+    /* =========================================================
+       STYLES
+       ========================================================= */
+    var STYLES = `
+        :host {
+            display:block; width:100%; height:auto; min-height:160px;
+            font-family:"72","72full",Arial,Helvetica,sans-serif;
+            color:#1d2d3e;
+            --blue:#0070f2; --blue-dark:#0040c1; --blue-light:#e5f1ff;
+            --border:#d7e0e8; --border-dark:#c4d0db;
+            --header:#eef4fa; --surface:#fff; --surface-soft:#f7f9fb;
+            --error:#bb0000; --error-bg:#fdecec; --error-border:#e2a0a0;
+            box-sizing:border-box;
+        }
+        *{box-sizing:border-box;}
+        .container{
+            width:100%; height:auto; min-height:160px;
+            display:flex; flex-direction:column;
+            background:var(--surface); border:1px solid var(--border);
+            border-radius:10px; overflow:hidden;
+            box-shadow:0 1px 3px rgba(0,0,0,.06),0 4px 12px rgba(0,0,0,.04);
+        }
+        .tab-bar{
+            display:flex; align-items:center; gap:22px;
+            padding:10px 14px 0; background:#fff;
+            border-bottom:1px solid var(--border);
+        }
+        .tab-btn{
+            height:auto; padding:4px 2px 10px;
+            border:none; border-bottom:2px solid transparent; border-radius:0;
+            background:transparent; color:#5f7284;
+            font-family:inherit; font-size:13px; font-weight:600; cursor:pointer;
+        }
+        .tab-btn:hover{border-bottom-color:#c4d0db; color:#29465f; background:transparent; box-shadow:none;}
+        .tab-btn.active{color:var(--blue); border-bottom-color:var(--blue);}
+        .toolbar{
+            min-height:58px; display:flex; flex-wrap:wrap;
+            align-items:center; justify-content:flex-end;
+            gap:8px; row-gap:8px; padding:10px 14px;
+            background:#fff; border-bottom:1px solid var(--border);
+        }
+        button{
+            height:34px; padding:0 14px;
+            border:1px solid #c2c9d1; border-radius:8px;
+            background:#fff; color:var(--blue);
+            font-family:inherit; font-size:12px; font-weight:600;
+            cursor:pointer; display:inline-flex; align-items:center; gap:6px;
+            transition:background .15s,border-color .15s,transform .05s;
+            white-space:nowrap;
+        }
+        button:hover{background:var(--blue-light); border-color:#9fc2f2;}
+        button:active{transform:translateY(1px);}
+        button.primary{color:#fff; background:var(--blue); border-color:var(--blue);}
+        button.primary:hover{background:var(--blue-dark); border-color:var(--blue-dark);}
+        button.delete{color:#bb0000; border-color:#e4b2b2; background:#fffafa;}
+        button.delete:hover{background:#fdeaea; border-color:#d98c8c;}
+        button svg{flex:0 0 auto;}
+        .table-area{
+            flex:0 1 auto; min-width:0; min-height:0; max-height:520px;
+            overflow:auto; background:#fff;
+            scrollbar-width:thin; scrollbar-color:#aebdca #f2f5f7;
+        }
+        .table-area::-webkit-scrollbar{width:10px; height:10px;}
+        .table-area::-webkit-scrollbar-track{background:#f3f6f8;}
+        .table-area::-webkit-scrollbar-thumb{background:#b5c2cd; border-radius:8px; border:2px solid #f3f6f8;}
+        table{border-collapse:collapse; table-layout:fixed; min-width:2330px; width:2330px;}
+        th{
+            position:sticky; top:0; z-index:6; height:40px; padding:0 9px;
+            background:var(--header); color:#29465f;
+            border-bottom:1px solid #cbd8e3;
+            font-size:11px; font-weight:700; text-align:left;
+            white-space:nowrap; vertical-align:middle;
+        }
+        td{
+            min-height:46px; padding:6px 8px; background:#fff;
+            border-bottom:1px solid #e9edf1;
+            vertical-align:middle; position:relative;
+        }
+        tr:hover td{background:#f9fbfd;}
+        tr.sel td{background:var(--blue-light);}
+        tr.sel:hover td{background:#d7e9ff;}
+        tr.err td{background:var(--error-bg);}
+        tr.err:hover td{background:#fbdede;}
+        tr.sel.err td{background:#fbdcdc;}
+        .field-error{margin-top:4px; font-size:10px; line-height:1.25; color:var(--error);}
+        input.cell{
+            width:100%; height:34px; padding:0 9px;
+            border:1px solid #bfd0df; border-radius:6px;
+            background:#fff; color:#253746;
+            font-family:inherit; font-size:12px; outline:none;
+            transition:border-color .15s,box-shadow .15s;
+        }
+        input.cell::placeholder{color:#8797a6; opacity:1;}
+        input.cell:hover{border-color:#9fb5c8;}
+        input.cell:focus{border-color:var(--blue); box-shadow:0 0 0 2px rgba(10,110,209,.1);}
+        input.cell.ro{background:#f1f4f7; color:#607487; cursor:not-allowed;}
+        input.cell[type="date"]{padding-right:7px;}
+        input.cell.ce{border-color:var(--error-border); background:#fffafa;}
+        .cw{position:relative; width:100%;}
+        .ct{
+            width:100%; height:34px; padding:0 9px;
+            border:1px solid #bfd0df; border-radius:6px;
+            background:#fff; color:#253746;
+            font-family:inherit; font-size:12px; font-weight:400;
+            display:flex; align-items:center; justify-content:space-between; gap:6px;
+            cursor:pointer; transition:border-color .15s,box-shadow .15s;
+        }
+        .ct:hover{border-color:#9fb5c8;}
+        .ct.open{border-color:var(--blue); box-shadow:0 0 0 2px rgba(10,110,209,.1);}
+        .ct.ce{border-color:var(--error-border); background:#fffafa;}
+        .ct-text{flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; text-align:left; color:#253746;}
+        .ct-text.ph{color:#8797a6;}
+        .ct-chev{flex:0 0 auto; color:#5f7284; transition:transform .15s,color .15s;}
+        .ct.open .ct-chev{transform:rotate(180deg); color:var(--blue);}
+        .cp{
+            position:absolute; top:calc(100% + 4px); left:0;
+            width:max(230px,100%);
+            background:#fff; border:1px solid var(--border-dark);
+            border-radius:8px;
+            box-shadow:0 10px 26px rgba(15,40,65,.16),0 2px 6px rgba(15,40,65,.08);
+            z-index:50; overflow:hidden;
+        }
+        .cs{
+            display:flex; align-items:center; gap:6px; padding:8px 10px;
+            border-bottom:1px solid var(--border); background:var(--surface-soft);
+        }
+        .cs-icon{flex:0 0 auto; color:var(--blue);}
+        .cs-inp{flex:1; min-width:0; border:none; outline:none; background:transparent; font-family:inherit; font-size:12px; color:#253746;}
+        .cs-inp::placeholder{color:#8797a6;}
+        .cs-clr{flex:0 0 auto; border:none; background:transparent; color:#8797a6; font-size:15px; line-height:1; cursor:pointer; padding:2px 4px; border-radius:4px;}
+        .cs-clr:hover{color:#5f7284; background:rgba(0,0,0,.04);}
+        .co-list{max-height:210px; overflow-y:auto;}
+        .co-item{padding:9px 12px; font-size:12px; color:#253746; cursor:pointer; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+        .co-item:hover{background:var(--blue-light);}
+        .co-item.picked{background:var(--blue-light); color:var(--blue-dark); font-weight:600;}
+        .co-empty{padding:14px 12px; font-size:12px; color:#8797a6; text-align:center;}
+        .chk-cell{width:50px; min-width:50px; max-width:50px; padding:0; text-align:center;}
+        .chk{width:18px; height:18px; margin:0; cursor:pointer; accent-color:var(--blue); vertical-align:middle;}
+        .status{
+            min-height:36px; height:36px; display:flex; align-items:center;
+            gap:22px; padding:0 12px; background:#f7f9fb;
+            border-top:1px solid var(--border); color:#5f7284; font-size:11px; white-space:nowrap;
+        }
+        .si{display:inline-flex; align-items:center; gap:4px;}
+        .sv{color:#314a60; font-weight:700;}
+        .sv.ok{color:#107e3e;}
+        .sv.bad{color:#bb0000;}
+        .sico{display:inline-flex; align-items:center;}
+        .sico svg{display:block;}
     `;
 
     /* =========================================================
-       WEB COMPONENT
+       TEMPLATE
        ========================================================= */
+    var tmpl = document.createElement("template");
+    tmpl.innerHTML =
+        '<style>' + STYLES + '</style>' +
+        '<div class="container">' +
+          '<div class="tab-bar" id="tabBar"></div>' +
+          '<div class="toolbar" id="toolbar"></div>' +
+          '<div class="table-area">' +
+            '<table><thead><tr id="thead"></tr></thead><tbody id="tbody"></tbody></table>' +
+          '</div>' +
+          '<div class="status">' +
+            '<span class="si">Total Rows: <span id="sRows" class="sv">0</span></span>' +
+            '<span class="si">Selected Rows: <span id="sSel" class="sv">0</span></span>' +
+            '<span class="si">Validation: <span id="sIco" class="sico"></span><span id="sVal" class="sv">-</span></span>' +
+            '<span class="si">Error Rows: <span id="sErr" class="sv">0</span></span>' +
+          '</div>' +
+        '</div>';
 
+    /* =========================================================
+       COMPONENT
+       ========================================================= */
     class PositionEntry extends HTMLElement {
 
         constructor() {
-
             super();
+            this.attachShadow({ mode:"open" });
+            this.shadowRoot.appendChild(tmpl.content.cloneNode(true));
 
-            this.attachShadow({ mode: "open" });
+            /* state */
+            this._tab        = "create";   /* "create" | "modify" */
+            this._lastEvent  = "";
+            this._dd         = null;       /* open dropdown: {tab,row,field} */
+            this._ddSearch   = "";
 
-            this.shadowRoot.appendChild(template.content.cloneNode(true));
-
-            /* INTERNAL DATA */
-
-            this._rows = [];
-            this._rowOptions = {};
-            this._lastEvent = "";
-            this._status = "READY";
-            this._validation = null;
-
-            /* Combobox (searchable dropdown) UI state - not part of row data */
-            this._openDropdown = null; // { rowIndex, field }
-            this._dropdownSearch = "";
-
-            /* START WITH ONE ROW */
-            this._rows.push(this._createEmptyRow());
-
-            /* BIND UI */
-            this._bindButtons();
-            this._bindGlobalCloseHandler();
-
-            this._render();
-        }
-
-        /* =====================================================
-           CREATE EMPTY ROW
-           ===================================================== */
-
-        _createEmptyRow() {
-            return {
-                selected: false,
-                companyCode: "",
-                division: "",
-                department: "",
-                costCenter: "",
-                jobCode: "",
-                positionTitle: "",
-                employeeId: "",
-                payGradeGroup: "",
-                payGradeLevel: "",
-                hireDate: "",
-                nationality: "",
-                accommodation: "",
-                transport: "",
-                employeeClass: "",
-                overtime: "",
-                specialApproval: "",
-                comment: "",
-                isModified: false
+            /* per-tab data */
+            this._data = {
+                create: { rows:[ this._emptyRow() ], opts:{}, valid:null },
+                modify: { rows:[], opts:{}, valid:null }
             };
-        }
 
-        /* =====================================================
-           BUTTON BINDINGS
-           ===================================================== */
-
-        _bindButtons() {
-
-            this.shadowRoot.getElementById("addButton")
-                .addEventListener("click", () => { this._addRow(); });
-
-            this.shadowRoot.getElementById("copyButton")
-                .addEventListener("click", () => { this._copyRows(); });
-
-            this.shadowRoot.getElementById("deleteButton")
-                .addEventListener("click", () => { this._deleteRows(); });
-
-            this.shadowRoot.getElementById("clearButton")
-                .addEventListener("click", () => { this._clear(); });
-
-            this.shadowRoot.getElementById("validateButton")
-                .addEventListener("click", () => { this._validate(); });
-
-            this.shadowRoot.getElementById("approvalButton")
-                .addEventListener("click", () => { this._sendForApproval(); });
-
-            this.shadowRoot.getElementById("selectAll")
-                .addEventListener("change", (event) => {
-
-                    var checked = event.target.checked;
-
-                    for (var i = 0; i < this._rows.length; i++) {
-                        this._rows[i].selected = checked;
-                    }
-
-                    this._status = "CHANGED";
-
-                    this._render();
-
-                    this._emit("onDataEntry", "selectAll|" + checked);
-                });
-        }
-
-        /* =====================================================
-           GLOBAL CLICK HANDLER - CLOSES OPEN DROPDOWN
-           ===================================================== */
-
-        _bindGlobalCloseHandler() {
-
-            this.shadowRoot.addEventListener("click", () => {
-
-                if (this._openDropdown) {
-
-                    this._openDropdown = null;
-                    this._dropdownSearch = "";
-
-                    this._render();
-                }
-            });
-        }
-
-        /* =====================================================
-           ADD ROW
-           ===================================================== */
-
-        _addRow() {
-
-            this._rows.push(this._createEmptyRow());
-
-            this._status = "CHANGED";
-            this._validation = null;
-
+            this._buildTabBar();
             this._render();
-
-            this._emit("onDataEntry", "addRow|" + (this._rows.length - 1));
         }
 
-        /* =====================================================
-   COPY SELECTED ROWS
-   ===================================================== */
-
-_copyRows() {
-
-    var copied = [];
-
-    for (
-        var i = 0;
-        i < this._rows.length;
-        i++
-    ) {
-
-        if (
-            this._rows[i].selected === true
-        ) {
-
-            /*
-             * Create a completely independent copy
-             * of the selected row.
-             */
-            var newRow =
-                JSON.parse(
-                    JSON.stringify(
-                        this._rows[i]
-                    )
-                );
-
-            /*
-             * The copied row must not remain selected.
-             */
-            newRow.selected = false;
-
-            /*
-             * Keep ALL field values.
-             *
-             * DO NOT clear employeeId,
-             * companyCode, positionTitle, etc.
-             *
-             * Only the selection state is reset.
-             */
-            newRow.isModified = false;
-
-            copied.push(newRow);
-        }
-    }
-
-    /*
-     * Nothing selected -> do nothing.
-     */
-    if (copied.length === 0) {
-        return;
-    }
-
-    /*
-     * Add the copied rows to the table.
-     */
-    for (
-        var j = 0;
-        j < copied.length;
-        j++
-    ) {
-
-        this._rows.push(
-            copied[j]
-        );
-    }
-
-    /*
-     * Mark widget as changed.
-     */
-    this._status = "CHANGED";
-
-    this._validation = null;
-
-    /*
-     * Re-render the table so the copied
-     * rows become visible immediately.
-     */
-    this._render();
-
-    /*
-     * Notify SAC.
-     */
-    this._emit(
-        "onDataEntry",
-        "copy|" +
-        copied.length
-    );
-}
-        /* =====================================================
-           DELETE SELECTED ROWS
-           ===================================================== */
-
-        _deleteRows() {
-
-            var remaining = [];
-            var deleted = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-
-                if (this._rows[i].selected === true) {
-                    deleted++;
-                } else {
-                    remaining.push(this._rows[i]);
-                }
-            }
-
-            if (deleted === 0) {
-                return;
-            }
-
-            this._rows = remaining;
-
-            /* Always leave one empty row in the widget. */
-            if (this._rows.length === 0) {
-                this._rows.push(this._createEmptyRow());
-            }
-
-            this._status = "CHANGED";
-            this._validation = null;
-
-            this._render();
-
-            this._emit("onDataEntry", "delete|" + deleted);
+        connectedCallback() {
+            this._fire("onReady","ready");
         }
 
-        /* =====================================================
-           CLEAR SELECTED ROW DATA
-           ===================================================== */
+        /* ── helpers ── */
 
-        _clear() {
-
-            var cleared = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-
-                var row = this._rows[i];
-
-                if (row.selected === true) {
-
-                    this._clearRow(row);
-
-                    /* IMPORTANT: keep row, untick checkbox. */
-                    row.selected = false;
-
-                    cleared++;
-                }
-            }
-
-            if (cleared === 0) {
-                return;
-            }
-
-            this._status = "CLEARED";
-            this._validation = null;
-
-            this._render();
-
-            this._emit("onClear", "clear|" + cleared);
+        _emptyRow() {
+            var r = { selected:false, isModified:false };
+            for (var i=0;i<ALL_FIELDS.length;i++) { r[ALL_FIELDS[i]]=""; }
+            return r;
         }
 
-        /* =====================================================
-           CLEAR ROW DATA
-           ===================================================== */
+        _d()    { return this._data[this._tab]; }          /* current tab data object  */
+        _cols() { return this._tab==="create"?TAB1_COLS:TAB2_COLS; }
+        _mand() { return this._tab==="create"?TAB1_MANDATORY:TAB2_MANDATORY; }
+        _pfx()  { return this._tab==="modify"?"2":""; }    /* event suffix             */
 
-        _clearRow(row) {
-
-            row.companyCode = "";
-            row.division = "";
-            row.department = "";
-            row.costCenter = "";
-            row.jobCode = "";
-            row.positionTitle = "";
-            row.employeeId = "";
-            row.payGradeGroup = "";
-            row.payGradeLevel = "";
-            row.hireDate = "";
-            row.nationality = "";
-            row.accommodation = "";
-            row.transport = "";
-            row.employeeClass = "";
-            row.overtime = "";
-            row.specialApproval = "";
-            row.comment = "";
-
-            row.isModified = true;
+        _esc(v) {
+            if (v==null) { return ""; }
+            return String(v).replace(/&/g,"&amp;").replace(/</g,"&lt;")
+                            .replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
         }
 
-        /* =====================================================
-           VALIDATE
-           ===================================================== */
-
-        _validate() {
-
-            var errorRows = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-
-                var row = this._rows[i];
-
-                var hasData = this._rowHasData(row);
-
-                if (hasData === false) {
-                    continue;
-                }
-
-                if (
-                    !row.companyCode ||
-                    !row.division ||
-                    !row.department ||
-                    !row.costCenter ||
-                    !row.jobCode ||
-                    !row.positionTitle
-                ) {
-                    errorRows++;
-                }
-            }
-
-            if (errorRows === 0) {
-
-                this._validation = true;
-                this._status = "VALID";
-
-                this._emit("onValidate", "VALID|0");
-
-            } else {
-
-                this._validation = false;
-                this._status = "INVALID";
-
-                this._emit("onValidate", "INVALID|" + errorRows);
-            }
-
-            this._updateStatus();
+        _fire(name,value) {
+            this._lastEvent = String(value);
+            this.dispatchEvent(new Event(name));
         }
 
-        /* =====================================================
-           CHECK IF ROW CONTAINS DATA
-           ===================================================== */
+        /* ── option helpers ── */
 
-        _rowHasData(row) {
+        _oval(o)  { return typeof o==="object" ? o.value : o; }
+        _otxt(o)  { return typeof o==="object" ? (o.text!==undefined?o.text:o.value) : o; }
 
-            var fields = [
-                "companyCode", "division", "department", "costCenter",
-                "jobCode", "positionTitle", "employeeId", "payGradeGroup",
-                "payGradeLevel", "hireDate", "nationality", "accommodation",
-                "transport", "employeeClass", "overtime", "specialApproval",
-                "comment"
-            ];
-
-            for (var i = 0; i < fields.length; i++) {
-
-                if (
-                    row[fields[i]] !== "" &&
-                    row[fields[i]] !== null &&
-                    row[fields[i]] !== undefined
-                ) {
-                    return true;
-                }
+        _otext(opts,val) {
+            if (!val) { return ""; }
+            for (var i=0;i<opts.length;i++) {
+                if (String(this._oval(opts[i]))===String(val)) { return this._otxt(opts[i]); }
             }
+            return String(val);
+        }
 
+        _ofilt(opts,q) {
+            if (!q) { return opts; }
+            var n=String(q).toLowerCase(), r=[];
+            for (var i=0;i<opts.length;i++) {
+                if (String(this._otxt(opts[i])).toLowerCase().indexOf(n)!==-1 ||
+                    String(this._oval(opts[i])).toLowerCase().indexOf(n)!==-1) { r.push(opts[i]); }
+            }
+            return r;
+        }
+
+        _getOpts(tab,row,field) {
+            var d=this._data[tab];
+            return (d.opts[row]&&d.opts[row][field]) ? d.opts[row][field] : [];
+        }
+
+        /* ── validation helpers ── */
+
+        _hasData(row) {
+            for (var i=0;i<ALL_FIELDS.length;i++) {
+                var v=row[ALL_FIELDS[i]];
+                if (v!==""&&v!==null&&v!==undefined) { return true; }
+            }
             return false;
         }
 
-        /* =====================================================
-           SEND FOR APPROVAL
-           ===================================================== */
-
-        _sendForApproval() {
-            this._emit("onSendForApproval", "sendForApproval");
+        _missing(row,mand) {
+            var m=[];
+            for (var i=0;i<mand.length;i++) { if (!row[mand[i]]) { m.push(mand[i]); } }
+            return m;
         }
 
-        /* =====================================================
-           RENDER
-           ===================================================== */
+        _errCount(d,mand) {
+            var n=0;
+            for (var i=0;i<d.rows.length;i++) {
+                if (!this._hasData(d.rows[i])) { continue; }
+                if (this._missing(d.rows[i],mand).length>0) { n++; }
+            }
+            return n;
+        }
+
+        /* ── tab bar ── */
+
+        _buildTabBar() {
+            var self=this;
+            var bar=this.shadowRoot.getElementById("tabBar");
+            bar.innerHTML =
+                '<button class="tab-btn active" data-t="create">Tab 1 - Create Position</button>' +
+                '<button class="tab-btn" data-t="modify">Tab 2 - Load / Modify / Delete</button>';
+
+            var btns=bar.querySelectorAll(".tab-btn");
+            for (var i=0;i<btns.length;i++) {
+                btns[i].addEventListener("click", function(e) {
+                    var t=e.currentTarget.getAttribute("data-t");
+                    if (t===self._tab) { return; }
+                    self._tab=t;
+                    self._dd=null; self._ddSearch="";
+                    var all=self.shadowRoot.querySelectorAll(".tab-btn");
+                    for (var j=0;j<all.length;j++) {
+                        all[j].classList.toggle("active", all[j].getAttribute("data-t")===t);
+                    }
+                    self._render();
+                    self._fire("onDataChange","tabChange|"+t);
+                });
+            }
+        }
+
+        /* ── toolbar ── */
+
+        _buildToolbar() {
+            var self=this;
+            var tb=this.shadowRoot.getElementById("toolbar");
+
+            if (this._tab==="create") {
+                tb.innerHTML=
+                    '<button id="btnAdd">'+ICON_ADD+' Add Row</button>'+
+                    '<button id="btnCopy">'+ICON_COPY+' Copy</button>'+
+                    '<button id="btnDel" class="delete" style="display:none">'+ICON_DELETE+' Delete Selected</button>'+
+                    '<button id="btnVal">'+ICON_CHECK+' Validate</button>'+
+                    '<button id="btnApp" class="primary">'+ICON_SEND+' Send for Approval</button>'+
+                    '<button id="btnClr">'+ICON_CLEAR+' Clear</button>';
+
+                self.shadowRoot.getElementById("btnAdd").onclick  = function(){ self._addRow(); };
+                self.shadowRoot.getElementById("btnCopy").onclick = function(){ self._copyRows(); };
+                self.shadowRoot.getElementById("btnDel").onclick  = function(){ self._deleteRows(); };
+                self.shadowRoot.getElementById("btnVal").onclick  = function(){ self._validate(); };
+                self.shadowRoot.getElementById("btnApp").onclick  = function(){ self._fire("onDataChange","sendForApproval"); };
+                self.shadowRoot.getElementById("btnClr").onclick  = function(){ self._clearRows(); };
+            } else {
+                tb.innerHTML=
+                    '<button id="btnLoad">'+ICON_LOAD+' Load Data</button>'+
+                    '<button id="btnDel2" class="delete" style="display:none">'+ICON_DELETE+' Delete Selected</button>'+
+                    '<button id="btnVal2">'+ICON_CHECK+' Validate</button>'+
+                    '<button id="btnSave" class="primary">'+ICON_SAVE+' Save Changes</button>'+
+                    '<button id="btnClr2">'+ICON_CLEAR+' Clear</button>';
+
+                self.shadowRoot.getElementById("btnLoad").onclick  = function(){ self._fire("onDataChange","loadData"); };
+                self.shadowRoot.getElementById("btnDel2").onclick  = function(){ self._deleteRows(); };
+                self.shadowRoot.getElementById("btnVal2").onclick  = function(){ self._validate(); };
+                self.shadowRoot.getElementById("btnSave").onclick  = function(){ self._fire("onDataChange","saveChanges|"+self._d().rows.length); };
+                self.shadowRoot.getElementById("btnClr2").onclick  = function(){ self._clearRows(); };
+            }
+        }
+
+        /* ── row operations ── */
+
+        _addRow() {
+            var d=this._d();
+            d.rows.push(this._emptyRow());
+            d.valid=null;
+            this._render();
+            this._fire("onDataChange","addRow"+this._pfx()+"|"+(d.rows.length-1));
+        }
+
+        _copyRows() {
+            var d=this._d(), copied=[];
+            for (var i=0;i<d.rows.length;i++) {
+                if (!d.rows[i].selected) { continue; }
+                var nr=JSON.parse(JSON.stringify(d.rows[i]));
+                nr.selected=false; nr.employeeId=""; nr.isModified=false;
+                copied.push(nr);
+            }
+            if (!copied.length) { return; }
+            for (var j=0;j<copied.length;j++) { d.rows.push(copied[j]); }
+            d.valid=null;
+            this._render();
+            this._fire("onDataChange","copyRow"+this._pfx()+"|"+copied.length);
+        }
+
+        _deleteRows() {
+            var d=this._d(), kept=[], del=0;
+            for (var i=0;i<d.rows.length;i++) {
+                if (d.rows[i].selected) { del++; } else { kept.push(d.rows[i]); }
+            }
+            if (!del) { return; }
+            d.rows=kept;
+            if (!d.rows.length&&this._tab==="create") { d.rows.push(this._emptyRow()); }
+            d.valid=null;
+            this._render();
+            this._fire("onDataChange","deleteRow"+this._pfx()+"|"+del);
+        }
+
+        _clearRows() {
+            var d=this._d(), n=0;
+            for (var i=0;i<d.rows.length;i++) {
+                if (!d.rows[i].selected) { continue; }
+                for (var f=0;f<ALL_FIELDS.length;f++) { d.rows[i][ALL_FIELDS[f]]=""; }
+                d.rows[i].isModified=true; d.rows[i].selected=false; n++;
+            }
+            if (!n) { return; }
+            d.valid=null;
+            this._render();
+            this._fire("onDataChange","clear"+this._pfx()+"|"+n);
+        }
+
+        _validate() {
+            var d=this._d(), mand=this._mand(), errs=0;
+            for (var i=0;i<d.rows.length;i++) {
+                if (!this._hasData(d.rows[i])) { continue; }
+                if (this._missing(d.rows[i],mand).length) { errs++; }
+            }
+            d.valid=(errs===0);
+            this._render();
+            if (errs===0) {
+                this._fire("onValidate","VALID"+this._pfx()+"|0");
+            } else {
+                this._fire("onValidate","INVALID"+this._pfx()+"|"+errs);
+            }
+        }
+
+        /* ── main render ── */
 
         _render() {
-
-            var tbody = this.shadowRoot.getElementById("tbody");
-
-            tbody.innerHTML = "";
-
-            for (var i = 0; i < this._rows.length; i++) {
-                tbody.appendChild(this._createRow(this._rows[i], i));
-            }
-
-            this._updateCounts();
-            this._updateDeleteButton();
-            this._updateSelectAll();
+            this._buildToolbar();
+            this._buildHead();
+            this._buildBody();
             this._updateStatus();
-
-            this._attachOpenComboPanelEvents();
         }
 
-        /* =====================================================
-           CREATE TABLE ROW
-           ===================================================== */
+        /* ── head ── */
 
-        _createRow(row, rowIndex) {
+        _buildHead() {
+            var self=this;
+            var cols=this._cols();
+            var h='<th class="chk-cell"><input id="chkAll" class="chk" type="checkbox"></th>';
+            for (var i=0;i<cols.length;i++) {
+                h+='<th style="width:'+cols[i].width+'px;">'+this._esc(cols[i].label)+'</th>';
+            }
+            this.shadowRoot.getElementById("thead").innerHTML=h;
 
-            var tr = document.createElement("tr");
+            this.shadowRoot.getElementById("chkAll").onchange=function(e) {
+                var d=self._d(), chk=e.target.checked;
+                for (var r=0;r<d.rows.length;r++) { d.rows[r].selected=chk; }
+                self._buildBody();
+                self._updateStatus();
+                self._fire("onDataChange","selectAll|"+chk);
+            };
+        }
 
-            if (row.selected === true) {
-                tr.classList.add("selected-row");
+        /* ── body ── */
+
+        _buildBody() {
+            var self=this;
+            var tab=this._tab;
+            var d=this._d();
+            var cols=this._cols();
+            var mand=this._mand();
+            var tbody=this.shadowRoot.getElementById("tbody");
+            tbody.innerHTML="";
+
+            for (var ri=0;ri<d.rows.length;ri++) {
+                tbody.appendChild(this._buildRow(tab,d,cols,mand,ri));
             }
 
-            tr.innerHTML = `
+            this._updateDelBtn();
+            this._updateChkAll();
+        }
 
-                <td class="checkbox-cell">
-                    <input class="checkbox" type="checkbox" data-field="selected" ${row.selected ? "checked" : ""}>
-                </td>
+        _buildRow(tab,d,cols,mand,ri) {
+            var self=this;
+            var row=d.rows[ri];
 
-                ${this._cell("companyCode", row.companyCode, rowIndex, false, "select")}
-                ${this._cell("division", row.division, rowIndex, false, "select")}
-                ${this._cell("department", row.department, rowIndex, false, "select")}
-                ${this._cell("costCenter", row.costCenter, rowIndex, false, "select")}
-                ${this._cell("jobCode", row.jobCode, rowIndex, false, "select")}
-                ${this._cell("positionTitle", row.positionTitle, rowIndex, false, "text")}
-                ${this._cell("employeeId", row.employeeId, rowIndex, true, "text")}
-                ${this._cell("payGradeGroup", row.payGradeGroup, rowIndex, false, "select")}
-                ${this._cell("payGradeLevel", row.payGradeLevel, rowIndex, false, "select")}
-                ${this._cell("hireDate", row.hireDate, rowIndex, false, "date")}
-                ${this._cell("nationality", row.nationality, rowIndex, false, "select")}
-                ${this._cell("accommodation", row.accommodation, rowIndex, false, "select")}
-                ${this._cell("transport", row.transport, rowIndex, false, "select")}
-                ${this._cell("employeeClass", row.employeeClass, rowIndex, false, "select")}
-                ${this._cell("overtime", row.overtime, rowIndex, false, "select")}
-                ${this._cell("specialApproval", row.specialApproval, rowIndex, false, "select")}
-                ${this._cell("comment", row.comment, rowIndex, false, "text")}
-            `;
+            var miss=(d.valid===false&&this._hasData(row)) ? this._missing(row,mand) : [];
 
-            this._attachRowEvents(tr, rowIndex);
+            var tr=document.createElement("tr");
+            if (row.selected) { tr.classList.add("sel"); }
+            if (miss.length)  { tr.classList.add("err"); }
+
+            /* checkbox cell */
+            var chkTd=document.createElement("td");
+            chkTd.className="chk-cell";
+            var chk=document.createElement("input");
+            chk.type="checkbox"; chk.className="chk";
+            chk.checked=!!row.selected;
+            chk.onchange=(function(rowIdx,trEl){
+                return function(e) {
+                    var chkd=e.target.checked;
+                    d.rows[rowIdx].selected=chkd;
+                    if (chkd) { trEl.classList.add("sel"); } else { trEl.classList.remove("sel"); }
+                    self._updateDelBtn();
+                    self._updateChkAll();
+                    self._updateStatus();
+                    self._fire("onDataChange","selectRow"+(tab==="modify"?"2":"")+"|"+rowIdx+"|"+chkd);
+                };
+            }(ri,tr));
+            chkTd.appendChild(chk);
+            tr.appendChild(chkTd);
+
+            /* data cells */
+            for (var ci=0;ci<cols.length;ci++) {
+                var col=cols[ci];
+                var hasErr=(miss.indexOf(col.field)!==-1);
+                var td=document.createElement("td");
+
+                if (col.type==="select") {
+                    td.appendChild(this._buildCombo(tab,d,ri,col,hasErr));
+                } else {
+                    td.appendChild(this._buildInput(tab,d,ri,col,hasErr));
+                }
+
+                if (hasErr) {
+                    var ep=document.createElement("div");
+                    ep.className="field-error";
+                    ep.textContent=col.label+" is required";
+                    td.appendChild(ep);
+                }
+
+                tr.appendChild(td);
+            }
 
             return tr;
         }
 
-        /* =====================================================
-           GET OPTIONS FOR A CELL
-           ===================================================== */
+        /* ── input cell ── */
 
-        _getOptionsFor(rowIndex, field) {
+        _buildInput(tab,d,ri,col,hasErr) {
+            var self=this;
+            var inp=document.createElement("input");
+            inp.className="cell"+(col.readonly?" ro":"")+(hasErr?" ce":"");
+            inp.type=col.type||"text";
+            inp.value=d.rows[ri][col.field]||"";
+            if (col.readonly) { inp.readOnly=true; }
 
-            if (this._rowOptions[rowIndex] && this._rowOptions[rowIndex][field]) {
-                return this._rowOptions[rowIndex][field];
+            if (!col.readonly) {
+                inp.onchange=function() {
+                    d.rows[ri][col.field]=inp.value;
+                    d.rows[ri].isModified=true;
+                    d.valid=null;
+                    self._updateStatus();
+                    self._fire("onDataChange","fieldChange"+(tab==="modify"?"2":"")+"|"+ri+"|"+col.field+"|"+inp.value);
+                };
             }
-
-            return [];
+            return inp;
         }
 
-        /* =====================================================
-           OPTION VALUE / TEXT HELPERS
-           ===================================================== */
+        /* ── combo cell ── */
 
-        _optionValue(option) {
-            return typeof option === "object" ? option.value : option;
-        }
+        _buildCombo(tab,d,ri,col,hasErr) {
+            var self=this;
+            var field=col.field;
+            var opts=this._getOpts(tab,ri,field);
+            var curVal=d.rows[ri][field]||"";
+            var curTxt=this._otext(opts,curVal)||"";
 
-        _optionText(option) {
-            if (typeof option === "object") {
-                return option.text !== undefined ? option.text : option.value;
-            }
-            return option;
-        }
+            var isOpen=!!(this._dd&&this._dd.tab===tab&&this._dd.row===ri&&this._dd.field===field);
 
-        _getOptionText(options, value) {
+            /* wrapper */
+            var wrap=document.createElement("div");
+            wrap.className="cw";
+            wrap.setAttribute("data-ct",tab+"|"+ri+"|"+field);
 
-            if (!value) {
-                return "";
-            }
+            /* toggle button */
+            var btn=document.createElement("button");
+            btn.type="button";
+            btn.className="ct"+(isOpen?" open":"")+(hasErr?" ce":"");
 
-            for (var i = 0; i < options.length; i++) {
+            var span=document.createElement("span");
+            span.className="ct-text"+(curTxt?"":" ph");
+            span.textContent=curTxt||"Select";
 
-                if (String(this._optionValue(options[i])) === String(value)) {
-                    return this._optionText(options[i]);
+            var chev=document.createElement("span");
+            chev.className="ct-chev";
+            chev.innerHTML='<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+
+            btn.appendChild(span);
+            btn.appendChild(chev);
+
+            btn.onclick=function(e) {
+                e.stopPropagation();
+                if (isOpen) {
+                    self._dd=null;
+                } else {
+                    self._dd={tab:tab,row:ri,field:field};
+                    self._ddSearch="";
                 }
-            }
+                self._buildBody();
+            };
 
-            /* Fall back to the raw stored value if it no longer matches a known option. */
-            return String(value);
-        }
+            wrap.appendChild(btn);
 
-        _filterOptions(options, searchText) {
-
-            if (!searchText) {
-                return options;
-            }
-
-            var needle = String(searchText).toLowerCase();
-
-            var result = [];
-
-            for (var i = 0; i < options.length; i++) {
-
-                var text = String(this._optionText(options[i])).toLowerCase();
-                var value = String(this._optionValue(options[i])).toLowerCase();
-
-                if (text.indexOf(needle) !== -1 || value.indexOf(needle) !== -1) {
-                    result.push(options[i]);
-                }
-            }
-
-            return result;
-        }
-
-        /* =====================================================
-           CREATE CELL
-           ===================================================== */
-
-        _cell(field, value, rowIndex, readonly, type) {
-
-            if (type === "select") {
-                return this._comboCell(field, value, rowIndex);
-            }
-
-            return `
-                <td>
-                    <input
-                        class="cell ${readonly ? "readonly" : ""}"
-                        type="${type || "text"}"
-                        data-field="${field}"
-                        value="${this._escape(value)}"
-                        ${readonly ? "readonly" : ""}
-                    >
-                </td>
-            `;
-        }
-
-        /* =====================================================
-           CREATE SEARCHABLE DROPDOWN (COMBOBOX) CELL
-           ===================================================== */
-
-        _comboCell(field, value, rowIndex) {
-
-            var options = this._getOptionsFor(rowIndex, field);
-
-            var isOpen = !!(
-                this._openDropdown &&
-                this._openDropdown.rowIndex === rowIndex &&
-                this._openDropdown.field === field
-            );
-
-            var selectedText = this._getOptionText(options, value);
-            var toggleLabel = selectedText || "Select";
-
-            var panelHTML = "";
-
+            /* panel */
             if (isOpen) {
+                var panel=document.createElement("div");
+                panel.className="cp";
 
-                var searchText = this._dropdownSearch || "";
-                var filtered = this._filterOptions(options, searchText);
+                /* stop panel clicks bubbling to global close */
+                panel.onclick=function(e) { e.stopPropagation(); };
 
-                panelHTML = `
-                    <div class="combo-panel">
-                        <div class="combo-search">
-                            <svg class="combo-search-icon" width="14" height="14" viewBox="0 0 20 20" fill="none">
-                                <circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/>
-                                <path d="M13 13l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
-                            </svg>
-                            <input type="text" class="combo-search-input" placeholder="Search" value="${this._escape(searchText)}" autocomplete="off">
-                            ${searchText ? '<button type="button" class="combo-clear" title="Clear search">&times;</button>' : ""}
-                        </div>
-                        <div class="combo-options">
-                            ${this._renderComboOptionsHTML(filtered, value)}
-                        </div>
-                    </div>
-                `;
-            }
+                /* search row */
+                var sRow=document.createElement("div");
+                sRow.className="cs";
 
-            return `
-                <td>
-                    <div class="combo-wrap" data-combo-row="${rowIndex}" data-combo-field="${field}">
-                        <button type="button" class="combo-toggle ${isOpen ? "is-open" : ""}" data-field="${field}">
-                            <span class="combo-toggle-text ${selectedText ? "" : "is-placeholder"}">${this._escape(toggleLabel)}</span>
-                            <svg class="combo-chevron" width="12" height="12" viewBox="0 0 20 20" fill="none">
-                                <path d="M5 7.5l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </button>
-                        ${panelHTML}
-                    </div>
-                </td>
-            `;
-        }
+                var sIco=document.createElement("span");
+                sIco.className="cs-icon";
+                sIco.innerHTML='<svg width="14" height="14" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="5.5" stroke="currentColor" stroke-width="1.6"/><path d="M13 13l4 4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>';
 
-        /* =====================================================
-           RENDER COMBO OPTION LIST HTML
-           ===================================================== */
+                var sInp=document.createElement("input");
+                sInp.type="text"; sInp.className="cs-inp";
+                sInp.placeholder="Search"; sInp.value=this._ddSearch;
+                sInp.autocomplete="off";
 
-        _renderComboOptionsHTML(options, selectedValue) {
+                sRow.appendChild(sIco);
+                sRow.appendChild(sInp);
 
-            if (options.length === 0) {
-                return `<div class="combo-empty">No matches</div>`;
-            }
-
-            var html = "";
-
-            for (var i = 0; i < options.length; i++) {
-
-                var optValue = this._optionValue(options[i]);
-                var optText = this._optionText(options[i]);
-
-                var isSelected = String(optValue) === String(selectedValue);
-
-                html += `
-                    <div class="combo-option ${isSelected ? "is-selected" : ""}" data-value="${this._escape(optValue)}">
-                        ${this._escape(optText)}
-                    </div>
-                `;
-            }
-
-            return html;
-        }
-
-        /* =====================================================
-           ROW EVENT HANDLING
-           ===================================================== */
-
-        _attachRowEvents(tr, rowIndex) {
-
-            var controls = tr.querySelectorAll("[data-field]");
-
-            for (var i = 0; i < controls.length; i++) {
-
-                var control = controls[i];
-                var field = control.dataset.field;
-
-                /* CHECKBOX */
-                if (field === "selected") {
-
-                    control.addEventListener("change", (event) => {
-
-                        var checked = event.target.checked;
-
-                        this._rows[rowIndex].selected = checked;
-
-                        this._status = "CHANGED";
-
-                        this._updateCounts();
-                        this._updateDeleteButton();
-                        this._updateSelectAll();
-
-                        if (checked) {
-                            tr.classList.add("selected-row");
-                        } else {
-                            tr.classList.remove("selected-row");
-                        }
-
-                        this._emit("onDataEntry", "select|" + rowIndex + "|" + checked);
-                    });
-
-                    continue;
+                /* clear search btn (shown only when there is text) */
+                var sClr=null;
+                if (this._ddSearch) {
+                    sClr=document.createElement("button");
+                    sClr.type="button"; sClr.className="cs-clr"; sClr.innerHTML="&times;";
+                    sClr.onclick=function(e) {
+                        e.stopPropagation();
+                        self._ddSearch="";
+                        self._buildBody();
+                    };
+                    sRow.appendChild(sClr);
                 }
 
-                /* SEARCHABLE DROPDOWN TOGGLE */
-                if (control.classList.contains("combo-toggle")) {
+                panel.appendChild(sRow);
 
-                    control.addEventListener("click", (event) => {
+                /* options list */
+                var list=document.createElement("div");
+                list.className="co-list";
 
-                        event.stopPropagation();
+                var filtered=this._ofilt(opts,this._ddSearch);
 
-                        var isSame = !!(
-                            this._openDropdown &&
-                            this._openDropdown.rowIndex === rowIndex &&
-                            this._openDropdown.field === field
-                        );
+                if (!filtered.length) {
+                    var emp=document.createElement("div");
+                    emp.className="co-empty"; emp.textContent="No matches";
+                    list.appendChild(emp);
+                } else {
+                    for (var oi=0;oi<filtered.length;oi++) {
+                        var ov=this._oval(filtered[oi]);
+                        var ot=this._otxt(filtered[oi]);
+                        var item=document.createElement("div");
+                        item.className="co-item"+(String(ov)===String(curVal)?" picked":"");
+                        item.textContent=ot;
+                        item.setAttribute("data-v",ov);
 
-                        if (isSame) {
-                            this._openDropdown = null;
-                        } else {
-                            this._openDropdown = { rowIndex: rowIndex, field: field };
-                            this._dropdownSearch = "";
-                        }
+                        item.onclick=(function(optVal){
+                            return function(e) {
+                                e.stopPropagation();
+                                d.rows[ri][field]=optVal;
+                                d.rows[ri].isModified=true;
+                                d.valid=null;
+                                self._dd=null;
+                                self._ddSearch="";
+                                self._buildBody();
+                                self._updateStatus();
+                                self._fire("onDataChange","fieldChange"+(tab==="modify"?"2":"")+"|"+ri+"|"+field+"|"+optVal);
+                            };
+                        }(String(ov)));
 
-                        this._render();
-                    });
-
-                    continue;
-                }
-
-                /* TEXT / DATE INPUT */
-                control.addEventListener("change", () => {
-                    this._commitFieldChange(rowIndex, field, control.value);
-                });
-            }
-        }
-
-        /* =====================================================
-           WIRE UP THE CURRENTLY OPEN DROPDOWN PANEL
-           ===================================================== */
-
-        _attachOpenComboPanelEvents() {
-
-            if (!this._openDropdown) {
-                return;
-            }
-
-            var rowIndex = this._openDropdown.rowIndex;
-            var field = this._openDropdown.field;
-
-            var wrap = this.shadowRoot.querySelector(
-                '.combo-wrap[data-combo-row="' + rowIndex + '"][data-combo-field="' + field + '"]'
-            );
-
-            if (!wrap) {
-                return;
-            }
-
-            var panel = wrap.querySelector(".combo-panel");
-
-            if (!panel) {
-                return;
-            }
-
-            /* Clicks inside the panel must not bubble to the global close handler. */
-            panel.addEventListener("click", (event) => { event.stopPropagation(); });
-            panel.addEventListener("mousedown", (event) => { event.stopPropagation(); });
-
-            var options = this._getOptionsFor(rowIndex, field);
-
-            var searchInput = panel.querySelector(".combo-search-input");
-            var optionsContainer = panel.querySelector(".combo-options");
-
-            this._attachComboOptionClicks(optionsContainer, rowIndex, field);
-
-            var clearBtn = panel.querySelector(".combo-clear");
-
-            if (clearBtn) {
-
-                clearBtn.addEventListener("click", (event) => {
-
-                    event.stopPropagation();
-
-                    this._dropdownSearch = "";
-
-                    if (searchInput) {
-                        searchInput.value = "";
+                        list.appendChild(item);
                     }
-
-                    var filtered = this._filterOptions(options, "");
-
-                    optionsContainer.innerHTML = this._renderComboOptionsHTML(
-                        filtered,
-                        this._rows[rowIndex][field]
-                    );
-
-                    this._attachComboOptionClicks(optionsContainer, rowIndex, field);
-
-                    clearBtn.remove();
-
-                    if (searchInput) {
-                        searchInput.focus();
-                    }
-                });
-            }
-
-            if (searchInput) {
-
-                /* Focus and place the caret at the end without re-rendering. */
-                searchInput.focus();
-
-                var len = searchInput.value.length;
-
-                try {
-                    searchInput.setSelectionRange(len, len);
-                } catch (error) {
-                    /* Some input states do not support selection ranges; ignore. */
                 }
 
-                searchInput.addEventListener("input", (event) => {
+                panel.appendChild(list);
+                wrap.appendChild(panel);
 
-                    this._dropdownSearch = event.target.value;
+                /* focus search and wire live filtering */
+                setTimeout(function() { sInp.focus(); }, 0);
 
-                    var filtered = this._filterOptions(options, this._dropdownSearch);
+                sInp.oninput=function() {
+                    self._ddSearch=sInp.value;
+                    self._buildBody();
+                };
 
-                    optionsContainer.innerHTML = this._renderComboOptionsHTML(
-                        filtered,
-                        this._rows[rowIndex][field]
-                    );
-
-                    this._attachComboOptionClicks(optionsContainer, rowIndex, field);
-
-                    var existingClear = panel.querySelector(".combo-clear");
-
-                    if (this._dropdownSearch && !existingClear) {
-
-                        var searchBar = panel.querySelector(".combo-search");
-
-                        var newClear = document.createElement("button");
-
-                        newClear.type = "button";
-                        newClear.className = "combo-clear";
-                        newClear.title = "Clear search";
-                        newClear.innerHTML = "&times;";
-
-                        newClear.addEventListener("click", (clickEvent) => {
-
-                            clickEvent.stopPropagation();
-
-                            this._dropdownSearch = "";
-                            searchInput.value = "";
-
-                            var refiltered = this._filterOptions(options, "");
-
-                            optionsContainer.innerHTML = this._renderComboOptionsHTML(
-                                refiltered,
-                                this._rows[rowIndex][field]
-                            );
-
-                            this._attachComboOptionClicks(optionsContainer, rowIndex, field);
-
-                            newClear.remove();
-
-                            searchInput.focus();
-                        });
-
-                        searchBar.appendChild(newClear);
-
-                    } else if (!this._dropdownSearch && existingClear) {
-
-                        existingClear.remove();
-                    }
-                });
-
-                searchInput.addEventListener("keydown", (event) => {
-
-                    if (event.key === "Escape") {
-
-                        this._openDropdown = null;
-                        this._dropdownSearch = "";
-
-                        this._render();
-                    }
-                });
-            }
-        }
-
-        /* =====================================================
-           ATTACH CLICK HANDLERS TO OPTION ITEMS
-           ===================================================== */
-
-        _attachComboOptionClicks(container, rowIndex, field) {
-
-            var items = container.querySelectorAll(".combo-option");
-
-            for (var i = 0; i < items.length; i++) {
-
-                items[i].addEventListener("click", (event) => {
-
-                    var value = event.currentTarget.dataset.value;
-
-                    this._openDropdown = null;
-                    this._dropdownSearch = "";
-
-                    this._commitFieldChange(rowIndex, field, value);
-
-                    this._render();
-                });
-            }
-        }
-
-        /* =====================================================
-           COMMIT A FIELD CHANGE (shared by text/date inputs
-           and the searchable dropdown)
-           ===================================================== */
-
-        _commitFieldChange(rowIndex, field, value) {
-
-            this._rows[rowIndex][field] = value;
-            this._rows[rowIndex].isModified = true;
-
-            this._status = "CHANGED";
-            this._validation = null;
-
-            this._updateStatus();
-
-            /* Field-specific event */
-            this._emit("onFieldChange", "fieldChange|" + rowIndex + "|" + field + "|" + value);
-
-            /* General data-entry event */
-            this._emit("onDataEntry", "dataEntry|" + rowIndex + "|" + field + "|" + value);
-        }
-
-        /* =====================================================
-           DELETE BUTTON VISIBILITY
-           ===================================================== */
-
-        _updateDeleteButton() {
-
-            var selected = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
-                    selected++;
-                }
+                sInp.onkeydown=function(e) {
+                    if (e.key==="Escape") { self._dd=null; self._ddSearch=""; self._buildBody(); }
+                };
             }
 
-            var button = this.shadowRoot.getElementById("deleteButton");
-
-            button.style.display = selected > 0 ? "inline-flex" : "none";
+            return wrap;
         }
 
-        /* =====================================================
-           SELECT ALL
-           ===================================================== */
-
-        _updateSelectAll() {
-
-            var checkbox = this.shadowRoot.getElementById("selectAll");
-
-            if (this._rows.length === 0) {
-                checkbox.checked = false;
-                checkbox.indeterminate = false;
-                return;
-            }
-
-            var selected = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
-                    selected++;
-                }
-            }
-
-            checkbox.checked = selected === this._rows.length;
-            checkbox.indeterminate = selected > 0 && selected < this._rows.length;
-        }
-
-        /* =====================================================
-           COUNTS
-           ===================================================== */
-
-        _updateCounts() {
-
-            var selected = this._getSelectedCount();
-
-            this.shadowRoot.getElementById("rowCount").textContent = this._rows.length;
-            this.shadowRoot.getElementById("selectedCount").textContent = selected;
-        }
-
-        /* =====================================================
-           STATUS
-           ===================================================== */
+        /* ── status bar ── */
 
         _updateStatus() {
+            var d=this._d();
+            var mand=this._mand();
+            var sel=0;
+            for (var i=0;i<d.rows.length;i++) { if (d.rows[i].selected) { sel++; } }
 
-            var validation = this.shadowRoot.getElementById("validationStatus");
-            var errorCount = this.shadowRoot.getElementById("errorCount");
-            var validationIcon = this.shadowRoot.getElementById("validationIcon");
+            this.shadowRoot.getElementById("sRows").textContent=d.rows.length;
+            this.shadowRoot.getElementById("sSel").textContent=sel;
 
-            validation.classList.remove("valid", "invalid");
+            var valEl=this.shadowRoot.getElementById("sVal");
+            var ico=this.shadowRoot.getElementById("sIco");
+            var errEl=this.shadowRoot.getElementById("sErr");
 
-            if (this._validation === true) {
-
-                validation.textContent = "true";
-                validation.classList.add("valid");
-
-                errorCount.textContent = "0";
-
-                validationIcon.innerHTML =
-                    '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#107e3e" stroke-width="1.6"/><path d="M6 10.3l2.6 2.6L14 7.5" stroke="#107e3e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
-
-            } else if (this._validation === false) {
-
-                validation.textContent = "false";
-                validation.classList.add("invalid");
-
-                errorCount.textContent = this._getValidationErrorCount();
-
-                validationIcon.innerHTML =
-                    '<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#bb0000" stroke-width="1.6"/><path d="M10 6v5" stroke="#bb0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.6" r="1" fill="#bb0000"/></svg>';
-
+            valEl.className="sv";
+            if (d.valid===true) {
+                valEl.textContent="true"; valEl.classList.add("ok");
+                errEl.textContent="0";
+                ico.innerHTML='<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#107e3e" stroke-width="1.6"/><path d="M6 10.3l2.6 2.6L14 7.5" stroke="#107e3e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            } else if (d.valid===false) {
+                valEl.textContent="false"; valEl.classList.add("bad");
+                errEl.textContent=String(this._errCount(d,mand));
+                ico.innerHTML='<svg width="12" height="12" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="9" stroke="#bb0000" stroke-width="1.6"/><path d="M10 6v5" stroke="#bb0000" stroke-width="1.8" stroke-linecap="round"/><circle cx="10" cy="13.6" r="1" fill="#bb0000"/></svg>';
             } else {
-
-                validation.textContent = "-";
-                errorCount.textContent = "0";
-
-                validationIcon.innerHTML = "";
-            }
-
-            this.shadowRoot.getElementById("rowCount").textContent = this._rows.length;
-            this.shadowRoot.getElementById("selectedCount").textContent = this._getSelectedCount();
-        }
-
-        /* =====================================================
-           GET SELECTED COUNT
-           ===================================================== */
-
-        _getSelectedCount() {
-
-            var count = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-                if (this._rows[i].selected === true) {
-                    count++;
-                }
-            }
-
-            return count;
-        }
-
-        /* =====================================================
-           VALIDATION ERROR COUNT
-           ===================================================== */
-
-        _getValidationErrorCount() {
-
-            var errors = 0;
-
-            for (var i = 0; i < this._rows.length; i++) {
-
-                var row = this._rows[i];
-
-                if (!this._rowHasData(row)) {
-                    continue;
-                }
-
-                if (
-                    !row.companyCode ||
-                    !row.division ||
-                    !row.department ||
-                    !row.costCenter ||
-                    !row.jobCode ||
-                    !row.positionTitle
-                ) {
-                    errors++;
-                }
-            }
-
-            return errors;
-        }
-
-        /* =====================================================
-           EVENT EMITTER
-           ===================================================== */
-
-        _emit(name, value) {
-
-            this._lastEvent = String(value);
-
-            this.dispatchEvent(new Event(name));
-        }
-
-        /* =====================================================
-           GET LAST EVENT
-           ===================================================== */
-
-        getLastEvent() {
-            return this._lastEvent;
-        }
-
-        /* =====================================================
-           GET DATA
-           ===================================================== */
-
-        getData() {
-            return JSON.stringify(this._rows);
-        }
-
-        /* =====================================================
-           SET DATA
-           ===================================================== */
-
-        setData(data) {
-
-            try {
-
-                var parsed;
-
-                if (typeof data === "string") {
-                    parsed = JSON.parse(data);
-                } else {
-                    parsed = data;
-                }
-
-                if (Array.isArray(parsed)) {
-                    this._rows = parsed;
-                } else {
-                    this._rows = [];
-                }
-
-                /* Never allow completely empty widget on load. */
-                if (this._rows.length === 0) {
-                    this._rows.push(this._createEmptyRow());
-                }
-
-                this._openDropdown = null;
-                this._dropdownSearch = "";
-
-                this._render();
-
-            } catch (error) {
-
-                this._rows = [this._createEmptyRow()];
-
-                this._render();
+                valEl.textContent="-"; errEl.textContent="0"; ico.innerHTML="";
             }
         }
 
-        /* =====================================================
-           SET CELL VALUE
-           ===================================================== */
+        _updateDelBtn() {
+            var d=this._d(), sel=0;
+            for (var i=0;i<d.rows.length;i++) { if (d.rows[i].selected) { sel++; } }
+            var id=this._tab==="create"?"btnDel":"btnDel2";
+            var el=this.shadowRoot.getElementById(id);
+            if (el) { el.style.display=sel>0?"inline-flex":"none"; }
+        }
 
-        setCellValue(rowIndex, fieldName, value) {
+        _updateChkAll() {
+            var d=this._d(), sel=0;
+            for (var i=0;i<d.rows.length;i++) { if (d.rows[i].selected) { sel++; } }
+            var ca=this.shadowRoot.getElementById("chkAll");
+            if (!ca) { return; }
+            ca.checked=(d.rows.length>0&&sel===d.rows.length);
+            ca.indeterminate=(sel>0&&sel<d.rows.length);
+        }
 
-            if (!this._rows[rowIndex]) {
-                return;
+        /* ── global click to close dropdown ── */
+
+        connectedCallback() {
+            var self=this;
+            this._globalClose=function() {
+                if (self._dd) { self._dd=null; self._ddSearch=""; self._buildBody(); }
+            };
+            document.addEventListener("click",this._globalClose);
+            this._fire("onReady","ready");
+        }
+
+        disconnectedCallback() {
+            if (this._globalClose) { document.removeEventListener("click",this._globalClose); }
+        }
+
+        /* =========================================================
+           PUBLIC API
+           ========================================================= */
+
+        getLastEvent()  { return this._lastEvent; }
+        getActiveTab()  { return this._tab; }
+
+        setActiveTab(t) {
+            if (t!=="create"&&t!=="modify") { return; }
+            if (t===this._tab) { return; }
+            this._tab=t; this._dd=null; this._ddSearch="";
+            var all=this.shadowRoot.querySelectorAll(".tab-btn");
+            for (var i=0;i<all.length;i++) {
+                all[i].classList.toggle("active",all[i].getAttribute("data-t")===t);
             }
-
-            this._rows[rowIndex][fieldName] = value;
-            this._rows[rowIndex].isModified = true;
-
-            this._validation = null;
-
             this._render();
         }
 
-        /* =====================================================
-           SET ROW OPTIONS
-           ===================================================== */
+        /* Tab 1 */
+        getData()               { return JSON.stringify(this._data.create.rows); }
+        setData(v)              { this._loadData("create",v,true); }
+        setCellValue(r,f,v)    { this._setCell("create",r,f,v); }
+        setRowOptions(r,f,o)   { this._setOpts("create",r,f,o); }
 
-        setRowOptions(rowIndex, fieldName, options) {
+        /* Tab 2 */
+        getData2()              { return JSON.stringify(this._data.modify.rows); }
+        setData2(v)             { this._loadData("modify",v,false); }
+        setCellValue2(r,f,v)   { this._setCell("modify",r,f,v); }
+        setRowOptions2(r,f,o)  { this._setOpts("modify",r,f,o); }
 
-            if (!this._rowOptions[rowIndex]) {
-                this._rowOptions[rowIndex] = {};
-            }
-
+        /* shared internals */
+        _loadData(tab,raw,forceOne) {
+            var d=this._data[tab];
             try {
-
-                this._rowOptions[rowIndex][fieldName] =
-                    typeof options === "string" ? JSON.parse(options) : options;
-
-                /* Re-render so new options immediately appear. */
-                this._render();
-
-            } catch (error) {
-
-                this._rowOptions[rowIndex][fieldName] = [];
-            }
+                var p=typeof raw==="string"?JSON.parse(raw):raw;
+                d.rows=Array.isArray(p)?p:[];
+            } catch(e) { d.rows=[]; }
+            if (forceOne&&!d.rows.length) { d.rows.push(this._emptyRow()); }
+            d.valid=null;
+            if (this._dd&&this._dd.tab===tab) { this._dd=null; this._ddSearch=""; }
+            if (this._tab===tab) { this._render(); }
         }
 
-        /* =====================================================
-           ESCAPE HTML
-           ===================================================== */
+        _setCell(tab,ri,field,val) {
+            var d=this._data[tab];
+            if (!d.rows[ri]) { return; }
+            d.rows[ri][field]=val; d.rows[ri].isModified=true; d.valid=null;
+            if (this._tab===tab) { this._render(); }
+        }
 
-        _escape(value) {
-
-            if (value === null || value === undefined) {
-                return "";
-            }
-
-            return String(value)
-                .replace(/&/g, "&amp;")
-                .replace(/</g, "&lt;")
-                .replace(/>/g, "&gt;")
-                .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#039;");
+        _setOpts(tab,ri,field,raw) {
+            var d=this._data[tab];
+            if (!d.opts[ri]) { d.opts[ri]={}; }
+            try { d.opts[ri][field]=typeof raw==="string"?JSON.parse(raw):raw; }
+            catch(e) { d.opts[ri][field]=[]; }
+            if (this._tab===tab) { this._buildBody(); }
         }
     }
-
-    /* =========================================================
-       REGISTER COMPONENT
-       ========================================================= */
 
     if (!customElements.get("com-madhav-positionentry")) {
         customElements.define("com-madhav-positionentry", PositionEntry);
